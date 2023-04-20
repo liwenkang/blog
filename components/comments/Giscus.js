@@ -43,6 +43,7 @@ const Giscus = () => {
     script.setAttribute('data-lang', lang)
     script.setAttribute('data-theme', commentsTheme)
     script.setAttribute('crossorigin', 'anonymous')
+    script.setAttribute('data-loading', 'lazy')
     script.async = true
 
     const comments = document.getElementById(COMMENTS_ID)
