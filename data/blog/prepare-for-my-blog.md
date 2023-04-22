@@ -1,12 +1,10 @@
 ---
-title: Prepare for my blog
+title: Prepare For My Blog
 date: '2023-04-20'
 tags: ['blog config']
 draft: false
 summary: Two mistakes in my blog config
 ---
-
-# Prepare for my blog
 
 After I deploy my website, I find two mistakes in my blog config.
 
