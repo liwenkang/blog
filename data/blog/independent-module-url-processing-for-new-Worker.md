@@ -1,5 +1,5 @@
 ---
-title: independent-module-url-processing-for-new-Worker
+title: Independent Module Url Processing For New Worker()
 date: '2023-05-27'
 tags: ['new Worker()', 'new URL()', 'module']
 draft: false
