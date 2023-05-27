@@ -2,7 +2,7 @@
 title: independent-module-url-processing-for-new-Worker
 date: '2023-05-27'
 tags: ['new Worker()', 'new URL()', 'module']
-draft: true
+draft: false
 summary: One way to get right url in new Worker()
 ---
 
