@@ -133,7 +133,7 @@ use `startTransition`: the function in it will not block UI
 
 [drag/drop api](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API)
 
-use `createPortal`: place the component in what you want. example: <Modal />
+use `createPortal`: place the component in what you want. example: `<Modal />`
 
 use `flushSync`
 
