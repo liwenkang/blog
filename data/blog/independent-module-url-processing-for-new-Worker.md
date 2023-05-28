@@ -1,7 +1,7 @@
 ---
 title: Independent Module Url Processing For New Worker()
 date: '2023-05-27'
-tags: ['new Worker()', 'new URL()', 'module']
+tags: ['New Worker()', 'New URL()', 'Module']
 draft: false
 summary: One way to get right url in new Worker()
 ---

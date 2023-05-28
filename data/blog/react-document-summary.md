@@ -1,7 +1,7 @@
 ---
-title: react-document-summary
+title: React Document Summary
 date: '2023-05-08'
-tags: ['react', 'hook', 'React Components']
+tags: ['React', 'Hook', 'React Components']
 draft: false
 ---
 
@@ -29,43 +29,52 @@ try to separate a object dependencies to more single variable.
 a example explain `useCallback` and `useMemo`
 
 ```js
-const handleSubmit = useMemo(() => { // no arguments
-    return (data) => {
-        axios.post(url, {
-            data
-        })
-            .then()
-            .catch()
-    }
+const handleSubmit = useMemo(() => {
+  // no arguments
+  return (data) => {
+    axios
+      .post(url, {
+        data,
+      })
+      .then()
+      .catch()
+  }
 }, [url])
 
-const handleSubmit = useCallback((data) => {
-   axios.post(url, {
-        data
-    })
-        .then()
-        .catch()
-}, [url])
+const handleSubmit = useCallback(
+  (data) => {
+    axios
+      .post(url, {
+        data,
+      })
+      .then()
+      .catch()
+  },
+  [url]
+)
 ```
 
 use `useReducer` to set initial state and change state by dispatch action.
 
 use `useRef` to store data that won't change in screen, If you want to change `ref.current`, You should change it during `useEffect` or in a event handler like `handleSubmit`.
 If use map/EChart/VideoPlayer, just initial constructor once.
+
 ```js
 useEffect(() => {
-    // the initial value is a function, and it will be called in every render
-    const playerRef = useRef(new VideoPlayer())
-    
-    const playerRef = useRef(null)
-    if (playerRef.current === null) {
-        playerRef.current = new VideoPlayer()
-    }
+  // the initial value is a function, and it will be called in every render
+  const playerRef = useRef(new VideoPlayer())
+
+  const playerRef = useRef(null)
+  if (playerRef.current === null) {
+    playerRef.current = new VideoPlayer()
+  }
 }, [])
 ```
+
 use `forwardRef`,if you want to expose the child component ref to the parent component
 
 use `useState`, if you initial a state by passing a function which look like
+
 ```js
 // The function computeNum will execute in every render
 const [num, setNum] = useState(computeNum())
@@ -77,29 +86,29 @@ const [num, setNum] = useState(computeNum)
 if you need to integrate with existing non-React code. such as `navigator.onLine` use `useSyncExternalStore`
 
 ```js
-import { useSyncExternalStore } from 'react';
+import { useSyncExternalStore } from 'react'
 
 export default function ChatIndicator() {
-  const isOnline = useSyncExternalStore(subscribe, getSnapshot);
-  return <h1>{isOnline ? '✅ Online' : '❌ Disconnected'}</h1>;
+  const isOnline = useSyncExternalStore(subscribe, getSnapshot)
+  return <h1>{isOnline ? '✅ Online' : '❌ Disconnected'}</h1>
 }
 
 function getSnapshot() {
-  return navigator.onLine;
+  return navigator.onLine
 }
 
 function subscribe(callback) {
-  window.addEventListener('online', callback);
-  window.addEventListener('offline', callback);
+  window.addEventListener('online', callback)
+  window.addEventListener('offline', callback)
   return () => {
-    window.removeEventListener('online', callback);
-    window.removeEventListener('offline', callback);
-  };
+    window.removeEventListener('online', callback)
+    window.removeEventListener('offline', callback)
+  }
 }
 ```
 
 use `useTransition` update the state without blocking the UI.
-Toggle components by changing tab, UI will be blocked, put the `setTab(nextTab)` in `useTransition` function. 
+Toggle components by changing tab, UI will be blocked, put the `setTab(nextTab)` in `useTransition` function.
 
 ## React Components
 
@@ -126,6 +135,6 @@ use `startTransition`: the function in it will not block UI
 
 use `createPortal`: place the component in what you want. example: <Modal />
 
-use `flushSync` 
+use `flushSync`
 
 For example, the browser onbeforeprint API allows you to change the page immediately before the print dialog opens. This is useful for applying custom print styles that allow the document to display better for printing. In the example below, you use flushSync inside of the onbeforeprint callback to immediately “flush” the React state to the DOM. Then, by the time the print dialog opens, isPrinting displays “yes”:

@@ -1,7 +1,7 @@
 ---
 title: Prepare For My Blog
 date: '2023-04-20'
-tags: ['blog config']
+tags: ['Blog Config']
 draft: false
 summary: Two mistakes in my blog config
 ---
