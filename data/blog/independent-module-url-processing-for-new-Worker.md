@@ -88,7 +88,7 @@ const getMD5 = (file: File): Promise<{ md5: string }> => {
 
 I think it could work until the file upload module was split as a independent module(We call it UploadFileApp) from a big web application(We call it BigWebApp, it's based on Next and React). So I want to compare what's the difference between them.
 
-First, I try to hit some brekpoints, and use `console.log` to show me more information
+First, I try to hit some breakpoints, and use `console.log` to show me more information
 
 ```js
 // `UploadFileApp`: main.js
@@ -129,7 +129,7 @@ The key is that when you use `new Worker()`, `new URL()` and `import.meta.url`, 
 
 So When I use `UploadFileApp` inside `BigWebApp`, its incoming parameter is totally wrong.
 
-There is a less elegant solution for me, just replace `new Worker()` with asynchronously read and process the file. Actually my script in `new Worker()` is just to caculate MD5. So, I change my code, and caculate MD5 without `new Worker()`.
+There is a less elegant solution for me, just replace `new Worker()` with asynchronously read and process the file. Actually my script in `new Worker()` is just to calculate MD5. So, I change my code, and calculate MD5 without `new Worker()`.
 
 ```js
 const asyncGetFileMD5 = ({ file, resolve }) => {
@@ -199,6 +199,6 @@ const getMD5 = (file: File): Promise<{ md5: string }> => {
 }
 ```
 
-I dont't known why the [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Worker/Worker) say the `new Worker()` first incoming parameter is just a string representing the URL of the script the worker will execute. But you can even pass a function, and use it's result as first incoming parameter
+I don't known why the [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Worker/Worker) say the `new Worker()` first incoming parameter is just a string representing the URL of the script the worker will execute. But you can even pass a function, and use it's result as first incoming parameter
 
 Finally, you can see there is a `URL.revokeObjectURL()` method to releases an existing object URL which was previously created by calling URL.createObjectURL().But in my application, I can't find a fit place to use it. Maybe, one day, it will give me a hammer blow. o(╥﹏╥)o
