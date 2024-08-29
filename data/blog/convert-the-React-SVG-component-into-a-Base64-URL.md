@@ -1,6 +1,6 @@
 ---
 title: Convert the React SVG component into a Base64 URL
-date: '2024-0-20'
+date: '2024-08-29'
 tags: ['IMG', 'WEB', 'BASE64', 'SVG']
 draft: false
 summary: One way to convert the React SVG component into a real DOM element and then into a Base64 URL
