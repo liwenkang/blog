@@ -12,7 +12,7 @@ const siteMetadata = {
   socialBanner: '/static/images/twitter-card.png',
   email: 'changzhiliwenkang@outlook.com',
   github: 'https://github.com/liwenkang',
-  twitter: 'https://x.com/changzhiliwenk1',
+  twitter: 'https://x.com/liwenkang_space',
   locale: 'en-US',
   analytics: {
     // If you want to use an analytics provider you have to add it to the
