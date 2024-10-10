@@ -7,7 +7,7 @@ draft: false
 
 The error message displayed in my terminal was as follows:
 
-```YAML
+```
 npx lint-staged
 
 ✔ Preparing lint-staged...
