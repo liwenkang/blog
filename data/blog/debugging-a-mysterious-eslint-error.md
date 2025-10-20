@@ -1,7 +1,7 @@
 ---
 title: Debugging a Mysterious ESLint Error
-date: "2024-10-10"
-tags: ["ESLINT", "REACT"]
+date: '2024-10-10'
+tags: ['ESLINT', 'REACT']
 draft: false
 ---
 

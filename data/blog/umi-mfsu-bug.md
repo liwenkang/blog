@@ -1,7 +1,7 @@
 ---
 title: Umi MFSU BUG
-date: "2024-10-14"
-tags: ["UMI", "MFSU"]
+date: '2024-10-14'
+tags: ['UMI', 'MFSU']
 draft: true
 ---
 
@@ -9,7 +9,7 @@ draft: true
 
 ```ts
 // config.ts
-import { defineConfig } from 'umi';
+import { defineConfig } from 'umi'
 
 export default defineConfig({
   // ...
@@ -18,7 +18,7 @@ export default defineConfig({
 })
 ```
 
-if you open your chrome and open chrome devtools. then you run 
+if you open your chrome and open chrome devtools. then you run
 
 ```
 npm run dev

@@ -13,7 +13,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@fontsource/inter": "5.2.8",
+    "@fontsource/inter": "^5.2.8",
     "@mailchimp/mailchimp_marketing": "^3.0.80",
     "@next/bundle-analyzer": "^15.5.6",
     "@tailwindcss/forms": "^0.5.10",
@@ -37,11 +37,9 @@
     "rehype-preset-minify": "7.0.1",
     "rehype-prism-plus": "^2.0.1",
     "rehype-slug": "^6.0.0",
-    "remark-footnotes": "^5.0.0",
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
     "sharp": "^0.34.4",
-    "tailwindcss": "^4.1.15",
     "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
@@ -51,6 +49,7 @@
     "eslint": "^9.38.0",
     "eslint-config-next": "15.5.6",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-mdx": "^3.6.2",
     "eslint-plugin-prettier": "^5.5.4",
     "file-loader": "^6.2.0",
     "globby": "15.0.0",
@@ -61,7 +60,8 @@
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.7.1",
     "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1"
+    "socket.io-client": "^4.8.1",
+    "tailwindcss": "^3.4.18"
   },
   "lint-staged": {
     "*.+(js|jsx|ts|tsx)": [
