@@ -21,11 +21,12 @@ const getLayouts = () => {
 }
 
 const genFrontMatter = (answers) => {
-  let d = new Date()
+  // 使用当前时间生成文章日期
+  const now = new Date()
   const date = [
-    d.getFullYear(),
-    ('0' + (d.getMonth() + 1)).slice(-2),
-    ('0' + d.getDate()).slice(-2),
+    now.getFullYear(),
+    ('0' + (now.getMonth() + 1)).slice(-2),
+    ('0' + now.getDate()).slice(-2),
   ].join('-')
   const tagArray = answers.tags.split(',')
   tagArray.forEach((tag, index) => (tagArray[index] = tag.trim()))
@@ -108,9 +109,7 @@ inquirer
       .replace(/-+/g, '-')
     const frontMatter = genFrontMatter(answers)
     if (!fs.existsSync('data/blog')) fs.mkdirSync('data/blog', { recursive: true })
-    const filePath = `data/blog/${fileName ? fileName : 'untitled'}.${
-      answers.extension ? answers.extension : 'md'
-    }`
+    const filePath = `data/blog/${fileName ? fileName : 'untitled'}.${answers.extension ? answers.extension : 'md'}`
     fs.writeFile(filePath, frontMatter, { flag: 'wx' }, (err) => {
       if (err) {
         throw err

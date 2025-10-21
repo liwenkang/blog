@@ -5,7 +5,14 @@ import siteMetadata from '@/data/siteMetadata'
 
 const Utterances = () => {
   const [enableLoadComments, setEnabledLoadComments] = useState(true)
+  const [mounted, setMounted] = useState(false)
   const { theme, resolvedTheme } = useTheme()
+
+  // 确保组件在客户端挂载后才渲染主题相关的内容
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const commentsTheme =
     theme === 'dark' || resolvedTheme === 'dark'
       ? siteMetadata.comment.utterancesConfig.darkTheme
@@ -35,10 +42,21 @@ const Utterances = () => {
 
   // Reload on theme change
   useEffect(() => {
-    const iframe = document.querySelector('iframe.utterances-frame')
-    if (!iframe) return
-    LoadComments()
-  }, [LoadComments])
+    if (mounted) {
+      const iframe = document.querySelector('iframe.utterances-frame')
+      if (!iframe) return
+      LoadComments()
+    }
+  }, [LoadComments, mounted])
+
+  // 在服务端渲染时返回一个占位符，避免水合错误
+  if (!mounted) {
+    return (
+      <div className="pt-6 pb-6 text-center text-gray-700 dark:text-gray-300">
+        <div className="utterances-frame relative" id={COMMENTS_ID} />
+      </div>
+    )
+  }
 
   // Added `relative` to fix a weird bug with `utterances-frame` position
   return (

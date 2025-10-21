@@ -7,7 +7,7 @@
 
 const chalk = require('chalk')
 const chokidar = require('chokidar')
-const program = require('commander')
+const { program } = require('commander')
 const http = require('http')
 const SocketIO = require('socket.io')
 const express = require('express')
@@ -20,7 +20,7 @@ const pkg = require('../package.json')
 
 const defaultWatchEvent = 'change'
 
-program.storeOptionsAsProperties().version(pkg.version)
+program.version(pkg.version)
 program
   .option('-r, --root [dir]', 'root directory of your nextjs app')
   .option('-s, --script [path]', 'path to the script you want to trigger on a watcher event', false)
@@ -31,6 +31,7 @@ program
     defaultWatchEvent
   )
   .option('-p, --polling [name]', `use polling for the watcher, defaults to false`, false)
+  .argument('[dirs...]', 'directories to watch')
   .parse(process.argv)
 
 const shell = process.env.SHELL
@@ -40,9 +41,10 @@ const handle = app.getRequestHandler()
 
 app.prepare().then(() => {
   // if directories are provided, watch them for changes and trigger reload
-  if (program.args.length > 0) {
+  const watchDirs = program.args || []
+  if (watchDirs.length > 0) {
     chokidar
-      .watch(program.args, { usePolling: Boolean(program.polling) })
+      .watch(watchDirs, { usePolling: Boolean(program.polling) })
       .on(program.event, async (filePathContext, eventContext = defaultWatchEvent) => {
         // Emit changes via socketio
         io.sockets.emit('reload', filePathContext)

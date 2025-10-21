@@ -1,8 +1,16 @@
 import Script from 'next/script'
+import { useEffect } from 'react'
 
 import siteMetadata from '@/data/siteMetadata'
 
 const GAScript = () => {
+  useEffect(() => {
+    // 确保只在客户端执行，避免 SSR/CSR 不一致
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('js', new Date())
+    }
+  }, [])
+
   return (
     <>
       <Script
@@ -14,7 +22,6 @@ const GAScript = () => {
         {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
             gtag('config', '${siteMetadata.analytics.googleAnalyticsId}', {
               page_path: window.location.pathname,
             });

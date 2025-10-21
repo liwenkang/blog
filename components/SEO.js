@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import siteMetadata from '@/data/siteMetadata'
+import { toISOString } from '@/lib/utils/formatDate'
 
 const CommonSEO = ({ title, description, ogType, ogImage, twImage, canonicalUrl }) => {
   const router = useRouter()
@@ -82,8 +83,8 @@ export const BlogSEO = ({
   canonicalUrl,
 }) => {
   const router = useRouter()
-  const publishedAt = new Date(date).toISOString()
-  const modifiedAt = new Date(lastmod || date).toISOString()
+  const publishedAt = toISOString(date)
+  const modifiedAt = toISOString(lastmod || date)
   let imagesArr =
     images.length === 0
       ? [siteMetadata.socialBanner]

@@ -6,6 +6,19 @@ import TOCInline from './TOCInline'
 import Pre from './Pre'
 import { BlogNewsletterForm } from './NewsletterForm'
 
+// Import all layouts statically to avoid dynamic require
+import PostLayout from '../layouts/PostLayout'
+import PostSimple from '../layouts/PostSimple'
+import ListLayout from '../layouts/ListLayout'
+import AuthorLayout from '../layouts/AuthorLayout'
+
+const layouts = {
+  PostLayout,
+  PostSimple,
+  ListLayout,
+  AuthorLayout,
+}
+
 export const MDXComponents = {
   Image,
   TOCInline,
@@ -13,7 +26,7 @@ export const MDXComponents = {
   pre: Pre,
   BlogNewsletterForm: BlogNewsletterForm,
   wrapper: ({ components, layout, ...rest }) => {
-    const Layout = require(`../layouts/${layout}`).default
+    const Layout = layouts[layout]
     return Layout ? <Layout {...rest} /> : null
   },
 }
