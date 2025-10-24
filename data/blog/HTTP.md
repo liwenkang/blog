@@ -1,7 +1,7 @@
 ---
 title: HTTP
 date: '2025-10-21'
-tags: ['HTTP', 'NETWORK']
+tags: ['HTTP', 'Network']
 draft: false
 ---
 

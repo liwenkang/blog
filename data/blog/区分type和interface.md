@@ -1,7 +1,7 @@
 ---
 title: 区分 type 和 interface
 date: '2025-10-22'
-tags: ['TYPESCRIPT']
+tags: ['TypeScript']
 draft: false
 ---
 

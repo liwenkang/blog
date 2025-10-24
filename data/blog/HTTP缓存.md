@@ -1,7 +1,7 @@
 ---
 title: HTTP缓存
 date: '2025-10-21'
-tags: ['HTTP', 'NETWORK', 'CACHE']
+tags: ['HTTP', 'Network', 'Cache']
 draft: false
 ---
 
