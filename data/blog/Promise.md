@@ -6,9 +6,11 @@ draft: false
 ---
 
 什么是 Promise ?
+
 Promise 是 es6 提出的处理异步任务的"承诺容器"。它只有三个状态 pending，fulfilled，rejected，状态一旦从 pending 变成后面两个，就不会再发生变化了，支持链式调用，通过.then() 方法，可以将异步任务的结果参数传递下去，实现了更好的异步任务执行控制和错误处理。
 
 为什么要有 Promise？解决了什么问题？
+
 在 Promise 之前，为了处理 JavaScript 中的异步任务，一般都是通过在回调函数中，拿到异步任务的结果，然后再进行下一步操作。如果涉及多个异步任务嵌套的场景，就会出现"嵌套地狱"。Promise 将嵌套的回调拍平了，可以竖着发展，而不是横向发展。
 
 核心机制？
@@ -19,34 +21,34 @@ Promise 是 es6 提出的处理异步任务的"承诺容器"。它只有三个�
 
 如何实现 Promise？核心在于实现 .then 方法
 
-```
+```javascript
 const MyPromise = (fn) => {
-    this.callbackList = [] // 存储要执行的回调
+  this.callbackList = [] // 存储要执行的回调
 
-    const resolve = (value) => {
-        setTimeout(() => {
-            this.data = value;
-            this.callbackList.forEach(cb => cb(value))
-        }, 0)
-    }
+  const resolve = (value) => {
+    setTimeout(() => {
+      this.data = value
+      this.callbackList.forEach((cb) => cb(value))
+    }, 0)
+  }
 
-    fn(resolve);
+  fn(resolve)
 }
 
 MyPromise.prototype.then = (onResolved) => {
-    return new MyPromise((resolve) => {
-        this.callbackList.push(() => {
-            const response = onResolved(this.data)
-            // 执行结果是否是一个 promise
-            if (response instanceof MyPromise) {
-                // 1. 还是 promise
-                response.then(resolve)
-            } else {
-                // 2. 不是 promise
-                resolve(response)
-            }
-        })
+  return new MyPromise((resolve) => {
+    this.callbackList.push(() => {
+      const response = onResolved(this.data)
+      // 执行结果是否是一个 promise
+      if (response instanceof MyPromise) {
+        // 1. 还是 promise
+        response.then(resolve)
+      } else {
+        // 2. 不是 promise
+        resolve(response)
+      }
     })
+  })
 }
 ```
 
