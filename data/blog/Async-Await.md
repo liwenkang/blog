@@ -19,9 +19,14 @@ await 仅暂停当前 async 函数内的代码，不阻塞 JavaScript 主线程�
 
 ```javascript
 function asyncToGenerator(generatorFunc) {
-  const g = generatorFunc()
-
   return new Promise((resolve, reject) => {
+    let g
+    try {
+      g = generatorFunc()
+    } catch (e) {
+      reject(e)
+    }
+
     function autoNext(g, nextVal, throwError = false) {
       try {
         let result
@@ -37,7 +42,7 @@ function asyncToGenerator(generatorFunc) {
           resolve(value)
         } else {
           // 还没结束
-          value
+          ;(value instanceof Promise ? value : Promise.resolve(value))
             .then((res) => {
               autoNext(g, res, false)
             })

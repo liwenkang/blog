@@ -21,6 +21,8 @@ Promise 是 es6 提出的处理异步任务的"承诺容器"。它只有三个�
 
 如何实现 Promise？核心在于实现 .then 方法
 
+最基础实现
+
 ```javascript
 const MyPromise = (fn) => {
   this.callbackList = [] // 存储要执行的回调
@@ -51,6 +53,141 @@ MyPromise.prototype.then = (onResolved) => {
   })
 }
 ```
+
+一个包含了状态和错误处理的实现
+
+```javascript
+function MyPromise(fn) {
+  this.data = undefined
+  this.callbackList = []
+  this.errorCallbackList = []
+  this.state = 'pending'
+
+  const resolve = (value) => {
+    if (this.state === 'pending') {
+      this.data = value
+      this.state = 'fulfilled'
+      this.callbackList.forEach((cb) => cb(value))
+      this.callbackList = []
+    }
+  }
+
+  const reject = (error) => {
+    if (this.state === 'pending') {
+      this.data = error
+      this.state = 'rejected'
+      this.errorCallbackList.forEach((cb) => cb(error))
+      this.errorCallbackList = []
+    }
+  }
+
+  try {
+    fn(resolve, reject)
+  } catch (error) {
+    reject(error)
+  }
+}
+
+MyPromise.prototype.then = function (onResolved) {
+  // 返回一个新的 promise
+  const parent = this
+  return new MyPromise((resolve, reject) => {
+    const callback = () => {
+      try {
+        const response = onResolved(parent.data)
+        if (response instanceof MyPromise) {
+          // 还是 promise
+          response
+            .then((v) => {
+              resolve(v)
+            })
+            .catch((e) => {
+              reject(e)
+            })
+        } else {
+          // 不是 promise 了
+          resolve(response)
+        }
+      } catch (e) {
+        reject(e)
+      }
+    }
+
+    const errorCallback = () => {
+      if (parent.state === 'rejected') {
+        reject(parent.data)
+      }
+    }
+
+    if (parent.state === 'pending') {
+      parent.callbackList.push(callback)
+      parent.errorCallbackList.push(errorCallback)
+    } else if (parent.state === 'fulfilled') {
+      setTimeout(callback, 0)
+    } else if (parent.state === 'rejected') {
+      setTimeout(errorCallback, 0)
+    }
+  })
+}
+
+MyPromise.prototype.catch = function (onRejected) {
+  // 返回一个新的 promise
+  const parent = this
+  return new MyPromise((resolve, reject) => {
+    const errorCallback = () => {
+      try {
+        const response = onRejected(parent.data)
+        if (response instanceof MyPromise) {
+          // 还是 promise
+          response
+            .then((v) => {
+              resolve(v)
+            })
+            .catch((e) => {
+              reject(e)
+            })
+        } else {
+          // 不是 promise 了
+          resolve(response)
+        }
+      } catch (e) {
+        reject(e)
+      }
+    }
+
+    const callback = () => {
+      if (parent.state === 'fulfilled') {
+        resolve(parent.data)
+      }
+    }
+
+    if (parent.state === 'pending') {
+      parent.callbackList.push(callback)
+      parent.errorCallbackList.push(errorCallback)
+    } else if (parent.state === 'fulfilled') {
+      setTimeout(callback, 0)
+    } else if (parent.state === 'rejected') {
+      setTimeout(errorCallback, 0)
+    }
+  })
+}
+
+const res = new MyPromise((resolve, reject) => {
+  setTimeout(() => {
+    reject('时间')
+  }, 1000)
+})
+
+res
+  .then((v) => {
+    console.log('v', v)
+  })
+  .catch((e) => {
+    console.log('e', e)
+  })
+```
+
+TODO：完整实现
 
 最佳实践
 
