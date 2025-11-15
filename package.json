@@ -53,7 +53,7 @@
     "eslint-plugin-mdx": "^3.6.2",
     "eslint-plugin-prettier": "^5.5.4",
     "file-loader": "^6.2.0",
-    "globby": "15.0.0",
+    "globby": "16.0.0",
     "husky": "^9.1.7",
     "inquirer": "^12.10.0",
     "lint-staged": "^16.2.5",
