@@ -1,0 +1,5 @@
+.github
+.next
+.husky
+dist
+node_modules
