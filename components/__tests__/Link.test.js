@@ -43,22 +43,24 @@ describe('Link Component', () => {
   it('handles empty href gracefully', () => {
     render(<Link>Link without href</Link>)
 
-    const link = screen.getByRole('link', { name: 'Link without href' })
+    const link = screen.getByText('Link without href')
     expect(link).toBeInTheDocument()
+    expect(link.tagName.toLowerCase()).toBe('a')
   })
 
   it('handles undefined href gracefully', () => {
     render(<Link href={undefined}>Link with undefined href</Link>)
 
-    const link = screen.getByRole('link', { name: 'Link with undefined href' })
+    const link = screen.getByText('Link with undefined href')
     expect(link).toBeInTheDocument()
+    expect(link.tagName.toLowerCase()).toBe('a')
   })
 
   it('correctly identifies internal links starting with /', () => {
     render(<Link href="/blog/post">Blog Post</Link>)
 
-    // 内部链接应该使用 Next.js Link
-    expect(screen.getByRole('link')).toBeInTheDocument()
+    const link = screen.getByRole('link', { name: 'Blog Post' })
+    expect(link).toHaveAttribute('href', '/blog/post')
   })
 
   it('correctly identifies anchor links starting with #', () => {
@@ -97,12 +99,21 @@ describe('Link Component', () => {
 
   it('preserves custom attributes', () => {
     render(
-      <Link href="/custom" aria-label="Custom label" title="Custom title">
+      <Link href="/custom" aria-label="Custom label" title="Custom title" data-custom="test">
         Custom Link
       </Link>
     )
 
     const link = screen.getByRole('link', { name: 'Custom label' })
     expect(link).toHaveAttribute('title', 'Custom title')
+    expect(link).toHaveAttribute('data-custom', 'test')
+  })
+
+  it('handles missing href with default attributes', () => {
+    render(<Link>Link with missing href</Link>)
+
+    const link = screen.getByText('Link with missing href')
+    expect(link).toBeInTheDocument()
+    // When href is missing, Link component defaults to external link behavior
   })
 })

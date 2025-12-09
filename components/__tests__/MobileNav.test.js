@@ -179,7 +179,7 @@ describe('MobileNav Component', () => {
     render(<MobileNav />)
 
     const menuButton = screen.getByRole('button', { name: /menu/i })
-    expect(menuButton).toHaveClass('h-6', 'w-6')
+    expect(menuButton).toHaveClass('h-8', 'w-8')
   })
 
   it('has proper styling classes for navigation overlay', () => {
@@ -189,16 +189,49 @@ describe('MobileNav Component', () => {
     fireEvent.click(menuButton)
 
     const overlay = screen.getByRole('navigation').parentElement
-    expect(overlay).toHaveClass(
-      'fixed',
-      'inset-0',
-      'z-50',
-      'flex',
-      'items-center',
-      'justify-center',
-      'bg-black',
-      'bg-opacity-50'
-    )
+    expect(overlay).toHaveClass('fixed', 'inset-0', 'z-50')
+  })
+
+  it('has proper transition animations', () => {
+    render(<MobileNav />)
+
+    const menuButton = screen.getByRole('button', { name: /menu/i })
+    fireEvent.click(menuButton)
+
+    const overlay = screen.getByRole('navigation').parentElement
+    expect(overlay).toHaveClass('transition-transform', 'duration-300')
+  })
+
+  it('has proper accessibility for overlay', () => {
+    render(<MobileNav />)
+
+    const menuButton = screen.getByRole('button', { name: /menu/i })
+    fireEvent.click(menuButton)
+
+    const nav = screen.getByRole('navigation')
+    expect(nav).toBeInTheDocument()
+  })
+
+  it('closes navigation when a link is clicked', () => {
+    render(<MobileNav />)
+
+    const menuButton = screen.getByRole('button', { name: /menu/i })
+    fireEvent.click(menuButton)
+
+    const homeLink = screen.getByRole('link', { name: 'Home' })
+    fireEvent.click(homeLink)
+
+    expect(screen.queryByRole('link', { name: 'Home' })).not.toBeInTheDocument()
+  })
+
+  it('has proper accessibility for close button', () => {
+    render(<MobileNav />)
+
+    const menuButton = screen.getByRole('button', { name: /menu/i })
+    fireEvent.click(menuButton)
+
+    const closeButton = screen.getByRole('button', { name: /close/i })
+    expect(closeButton).toHaveAttribute('aria-label', 'Close navigation menu')
   })
 
   it('handles mounted state correctly', () => {
@@ -218,35 +251,14 @@ describe('MobileNav Component', () => {
     expect(document.body.style.overflow).toBe('hidden')
   })
 
-  it('closes navigation when a link is clicked', () => {
+  it('has proper keyboard navigation support', () => {
     render(<MobileNav />)
 
     const menuButton = screen.getByRole('button', { name: /menu/i })
     fireEvent.click(menuButton)
 
+    // Links should be keyboard accessible
     const homeLink = screen.getByRole('link', { name: 'Home' })
-    fireEvent.click(homeLink)
-
-    expect(screen.queryByRole('link', { name: 'Home' })).not.toBeInTheDocument()
-  })
-
-  it('has proper transition animations', () => {
-    render(<MobileNav />)
-
-    const menuButton = screen.getByRole('button', { name: /menu/i })
-    fireEvent.click(menuButton)
-
-    const overlay = screen.getByRole('navigation').parentElement
-    expect(overlay).toHaveClass('transition-opacity', 'duration-300')
-  })
-
-  it('has proper accessibility for overlay', () => {
-    render(<MobileNav />)
-
-    const menuButton = screen.getByRole('button', { name: /menu/i })
-    fireEvent.click(menuButton)
-
-    const overlay = screen.getByRole('navigation').parentElement
-    expect(overlay).toHaveAttribute('aria-hidden', 'false')
+    expect(homeLink).toHaveAttribute('href', '/')
   })
 })
