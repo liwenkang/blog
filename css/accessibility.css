@@ -1,0 +1,285 @@
+/* Accessibility-focused CSS improvements */
+
+/* Ensure proper focus states for all interactive elements */
+a,
+button,
+input,
+textarea,
+select,
+[tabindex]:not([tabindex='-1']) {
+  &:focus-visible {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2 dark:ring-offset-black;
+  }
+}
+
+/* Ensure proper contrast for focus states */
+.focus-ring {
+  &:focus-visible {
+    @apply ring-2 ring-primary-500 ring-offset-2 dark:ring-offset-black ring-offset-white dark:ring-offset-black;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .text-gray-300 {
+    @apply text-gray-200;
+  }
+
+  .text-gray-500 {
+    @apply text-gray-300;
+  }
+
+  .border-gray-300 {
+    @apply border-gray-400;
+  }
+
+  .border-gray-600 {
+    @apply border-gray-500;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Skip link improvements */
+.skip-link {
+  @apply text-white bg-gray-900 dark:bg-gray-100 dark:text-gray-900;
+  @apply border border-gray-300 dark:border-gray-700;
+  @apply px-4 py-2;
+  @apply -translate-y-full;
+  @apply transition-transform duration-200;
+
+  &:focus {
+    @apply translate-y-0;
+    @apply ring-2 ring-primary-500 ring-offset-2;
+  }
+}
+
+/* Enhanced button focus styles */
+.btn-focus {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black;
+  @apply focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-black;
+}
+
+/* Link focus styles */
+.link-focus {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-black rounded;
+  @apply focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:focus-visible:ring-offset-black rounded;
+}
+
+/* Form control focus styles */
+.form-control {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black;
+  @apply focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:border-transparent focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-black;
+}
+
+/* Ensure text remains readable in all themes */
+.text-readable {
+  @apply text-gray-900 dark:text-gray-100;
+}
+
+.text-readable-secondary {
+  @apply text-gray-700 dark:text-gray-300;
+}
+
+.text-readable-muted {
+  @apply text-gray-600 dark:text-gray-400;
+}
+
+/* Interactive element states */
+.interactive {
+  @apply cursor-pointer;
+  @apply transition-colors duration-200;
+
+  &:hover {
+    @apply opacity-80;
+  }
+
+  &:focus-visible {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2 dark:ring-offset-black;
+    @apply opacity-100;
+  }
+
+  &:active {
+    @apply transform scale-95;
+  }
+}
+
+/* Screen reader only text (but not display: none) */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Focus styles for code blocks and pre */
+pre,
+code {
+  &:focus-visible {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2 dark:ring-offset-black rounded;
+  }
+}
+
+/* Table accessibility */
+table {
+  @apply border-collapse;
+
+  caption {
+    @apply text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2;
+    caption-side: top;
+  }
+
+  th,
+  td {
+    @apply border border-gray-200 dark:border-gray-700 px-4 py-2;
+  }
+
+  th {
+    @apply text-left font-medium text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-800;
+  }
+}
+
+/* List accessibility */
+ul,
+ol {
+  @apply list-inside;
+
+  li {
+    @apply mb-1;
+  }
+}
+
+/* Link styles with proper focus indicators */
+.link-underline {
+  @apply text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300;
+  @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 rounded;
+  @apply focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-1 rounded;
+  @apply underline decoration-2 underline-offset-2;
+
+  &:hover {
+    @apply decoration-primary-400 dark:decoration-primary-600;
+  }
+}
+
+/* Image accessibility */
+img {
+  @apply max-w-full h-auto;
+}
+
+[alt=''] {
+  @apply border-2 border-red-500;
+}
+
+::after {
+  content: ' (missing alt text)';
+  @apply text-red-500 text-xs ml-2;
+}
+
+/* Accessibility live regions */
+.a11y-live-region {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Print styles for accessibility */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .print-break-before {
+    page-break-before: always;
+  }
+
+  .print-break-after {
+    page-break-after: always;
+  }
+
+  .print-break-inside-avoid {
+    page-break-inside: avoid;
+  }
+
+  a {
+    @apply text-black dark:text-black no-underline;
+
+    &::after {
+      content: ' (' attr(href) ')';
+      @apply text-xs;
+    }
+  }
+}
+
+/* Dark mode specific accessibility improvements */
+.dark {
+  /* Ensure proper contrast in dark mode */
+  .dark-text {
+    @apply text-gray-100;
+  }
+
+  .dark-border {
+    @apply border-gray-700;
+  }
+
+  .dark-bg {
+    @apply bg-gray-900;
+  }
+
+  /* Focus ring in dark mode */
+  *:focus-visible {
+    --tw-ring-offset-color: theme('colors.black');
+  }
+}
+
+/* High contrast mode specific styles */
+@media (prefers-contrast: high) {
+  .focus-ring {
+    @apply ring-2 ring-primary-600 ring-offset-2;
+  }
+
+  .text-readable-secondary {
+    @apply text-gray-900 dark:text-gray-100;
+  }
+
+  .text-readable-muted {
+    @apply text-gray-800 dark:text-gray-200;
+  }
+}
+
+/* Custom scrollbar for accessibility (if visible) */
+.custom-scrollbar::-webkit-scrollbar {
+  @apply w-2 h-2;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-500;
+}
+
+/* Responsive focus indicators */
+@media (hover: hover) {
+  .interactive:hover {
+    @apply ring-2 ring-primary-500 ring-opacity-50 ring-offset-2 dark:ring-offset-black ring-offset-white dark:ring-offset-black;
+  }
+}

@@ -31,10 +31,16 @@ const ThemeSwitch = () => {
 
   return (
     <button
-      aria-label="Toggle Dark Mode"
+      aria-label={`Toggle ${theme === 'dark' || resolvedTheme === 'dark' ? 'light' : 'dark'} mode`}
       type="button"
-      className="ml-1 mr-1 h-8 w-8 rounded-sm p-1 sm:ml-4"
+      className="ml-1 mr-1 h-8 w-8 rounded-sm p-1 sm:ml-4 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
       onClick={() => setTheme(theme === 'dark' || resolvedTheme === 'dark' ? 'light' : 'dark')}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          setTheme(theme === 'dark' || resolvedTheme === 'dark' ? 'light' : 'dark')
+        }
+      }}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
