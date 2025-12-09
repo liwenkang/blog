@@ -1,8 +1,14 @@
 ---
 title: React中的useEffect
 date: '2025-10-24'
-tags: ['react', 'useEffect']
+tags:
+  - react
+  - useEffect
 draft: false
+summary: >-
+  1. 在单次渲染的范围内，props和state始终保持不变，可以看成固定值，在任何地方读取都是一样的（Capture Value） 2.
+  React只会在浏览器绘制后运行effects。这使得你的应用更流畅因为大多数effects并不会阻塞屏幕的更新。Effect的清除同样被延迟了。上一次的effect会在重新渲染后被清除。
+  3. useEffect 里的 return，清理的也是当前渲染的这一...
 ---
 
 1. 在单次渲染的范围内，props和state始终保持不变，可以看成固定值，在任何地方读取都是一样的（Capture Value）

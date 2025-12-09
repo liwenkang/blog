@@ -1,8 +1,14 @@
 ---
 title: Design Pattern - Simple Factory Pattern
 date: '2024-10-13'
-tags: ['DESIGN PATTERN', 'SIMPLE FACTORY PATTERN']
+tags:
+  - DESIGN PATTERN
+  - SIMPLE FACTORY PATTERN
 draft: false
+summary: >-
+  The design pattern is a general, reusable solution to a commonly occurring
+  problem within a given context in software design. I have learned some design
+  patterns in the past, but I don't think I have ...
 ---
 
 The design pattern is a general, reusable solution to a commonly occurring problem within a given context in software design.

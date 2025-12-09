@@ -1,8 +1,14 @@
 ---
 title: Promise
 date: '2025-10-27'
-tags: ['JavaScript', 'Promise']
+tags:
+  - JavaScript
+  - Promise
 draft: false
+summary: >-
+  什么是 Promise ? Promise 是 es6 提出的处理异步任务的"承诺容器"。它只有三个状态
+  pending，fulfilled，rejected，状态一旦从 pending 变成后面两个，就不会再发生变化了，支持链式调用，通过.then()
+  方法，可以将异步任务的结果参数传递下去，实现了更好的异步任务执行控制和错误处理。 为什么要有 Promise？解决了什么问题？ 在 Promis...
 ---
 
 什么是 Promise ?

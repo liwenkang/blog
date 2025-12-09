@@ -1,8 +1,14 @@
 ---
 title: 区分 type 和 interface
 date: '2025-10-22'
-tags: ['TypeScript']
+tags:
+  - TypeScript
 draft: false
+summary: >-
+  typescript 就是在 JavaScript
+  的基础上，增加了类型系统，让代码在编写的时候，就可以发现错误。通过丰富的配置项，使得类型检查的严格程度可以自定义。 type
+  是类型别名，通过&实现交叉类型，不支持声明合并，不可被类实现 interface 是接口，使用 extends 继承，支持声明合并，可被类实现
+  解决什么问题？ 将弱类型的 JavaScript，转向"强类型"。更强的约束提...
 ---
 
 typescript 就是在 JavaScript 的基础上，增加了类型系统，让代码在编写的时候，就可以发现错误。通过丰富的配置项，使得类型检查的严格程度可以自定义。

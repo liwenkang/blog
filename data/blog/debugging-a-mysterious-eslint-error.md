@@ -1,8 +1,14 @@
 ---
 title: Debugging a Mysterious ESLint Error
 date: '2024-10-10'
-tags: ['ESLINT', 'REACT']
+tags:
+  - ESLINT
+  - REACT
 draft: false
+summary: >-
+  The error message displayed in my terminal was as follows:
+  <tsconfigRootDir>/src\xxx.tsxparserOptions.project I tried to fix it by
+  following the steps in the error message, but it didn't work. Then I ...
 ---
 
 The error message displayed in my terminal was as follows:

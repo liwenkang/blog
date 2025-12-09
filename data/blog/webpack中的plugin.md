@@ -1,8 +1,13 @@
 ---
 title: webpack中的plugin
 date: '2025-10-29'
-tags: ['webpack']
+tags:
+  - webpack
 draft: true
+summary: >-
+  webpack中的plugin是什么？ plugin的本质是扩展Webpack功能的工具。比如很常见的一个插件
+  HtmlWebpackPlugin，它可以生成一个 html，同时把打包好的 js，css 动态塞进去。CleanWebpackPlugin清理旧文件。
+  为什么需要 plugin？ 解决更多打包中遇到的问题 它是如何工作的？ plugin必须是一个有apply方法的JavaScript类...
 ---
 
 webpack中的plugin是什么？

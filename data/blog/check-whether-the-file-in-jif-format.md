@@ -1,8 +1,12 @@
 ---
 title: Check whether the file is in .jif format.
 date: '2024-09-05'
-tags: ['IMG', 'WEB', '.jif']
+tags:
+  - IMG
+  - WEB
+  - .jif
 draft: false
+summary: 使用 JavaScript 检查文件是否为 JFIF 格式的方法，通过读取文件头部的 JFIF 签名来验证图像格式
 ---
 
 ```html

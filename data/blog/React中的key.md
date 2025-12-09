@@ -1,8 +1,14 @@
 ---
 title: React中的key
 date: '2025-10-24'
-tags: ['react', 'react diff']
+tags:
+  - react
+  - react diff
 draft: false
+summary: >-
+  key 是什么？ 是一个特殊属性，主要针对列表，map 后的 react 组件，以及相邻的同类型 DOM，需要手动指定 key，帮助 react 做区分
+  为什么要有 key？ 1. React Diff 算法的需要。如果修改数组，没有指定 key 时，React 的 Diff 算法（优先通过 key
+  匹配），只能退化为按索引顺序对比。 2. 提升性能，比如说我在列表的开头新增了一个元素，如果不指定...
 ---
 
 ## key 是什么？

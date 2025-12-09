@@ -1,8 +1,13 @@
 ---
 title: webpack中的loader
 date: '2025-10-29'
-tags: ['webpack']
+tags:
+  - webpack
 draft: false
+summary: >-
+  loader 是什么？ 是一个文件处理器 为什么需要 loader？ webpack本身只能处理 js 文件，而通过 loader 可以让 webpack
+  处理非 js 的文件（比如图片，css等），把它们变成可以识别和打包的模块。 它是如何工作的？ 1. 匹配文件：在配置中定义规则（如 test:
+  /\.css$/），指定哪些文件由 loader 处理。 2. ​转换内容​：loader 是函数...
 ---
 
 loader 是什么？

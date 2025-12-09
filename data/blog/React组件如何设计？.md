@@ -1,8 +1,15 @@
 ---
 title: React组件如何设计？
 date: '2025-10-24'
-tags: ['react', 'react component']
+tags:
+  - react
+  - react component
 draft: false
+summary: >-
+  四点建议： 1. 一开始不要过度考虑组件的扩展性。如果在一开始就把各种情况都考虑到，会导致组件核心功能不清晰，为了实现各个
+  props，可能会导致代码存在很多的逻辑判断 2. 如果为了高扩展性设计，可以考虑更多使用 props.children
+  插槽的方式，让外界更自由的使用。而组件只关心自己的核心功能。如果是为了让用户即插即用，可能确实需要支持更多的 props。 3. 关注传入 props
+  的...
 ---
 
 四点建议：

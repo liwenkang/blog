@@ -25,7 +25,7 @@ function validateFile(filePath) {
 
   // 检查推荐字段
   recommendedFields.forEach((field) => {
-    if (!data[field]) {
+    if (data[field] === undefined || data[field] === null || data[field] === '') {
       warnings.push(`缺少推荐字段: ${field}`)
     }
   })

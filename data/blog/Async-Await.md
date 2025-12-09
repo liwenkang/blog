@@ -1,8 +1,15 @@
 ---
 title: Async/Await
 date: '2025-10-27'
-tags: ['JavaScript', 'Async/Await']
+tags:
+  - JavaScript
+  - Async/Await
 draft: false
+summary: >-
+  async/await 是什么？ "async/await 是 JavaScript
+  处理异步操作（如网络请求、文件读取）的"语法糖"，它让我们能用写同步代码的方式写异步逻辑，避免层层嵌套的回调函数。 底层依赖 Generator
+  的暂停/恢复机制和 Promise 的状态管理，async 函数总返回 Promise，即使内部返回普通值也会被自动包装为
+  Promise.resolve(value)...
 ---
 
 async/await 是什么？

@@ -1,8 +1,14 @@
 ---
 title: HTTP
 date: '2025-10-21'
-tags: ['HTTP', 'Network']
+tags:
+  - HTTP
+  - Network
 draft: false
+summary: >-
+  HTTP是超文本传输协议，HTTP1.1，HTTP2，HTTP3分别代表三个版本，可用于前后端数据通信。 升级后，优化了哪些功能？解决了哪些问题？ 1.
+  HTTP1.1 时期，默认复用TCP连接（持久连接），请求必须按照顺序响应，会造成队头阻塞。浏览器最多支持 6 个 TCP
+  连接。重复传输了头部字段，无优先级控制。 2. 从 HTTP1.1，升级到 HTTP 2 后，通过二进制分帧和多路复用的能...
 ---
 
 HTTP是超文本传输协议，HTTP1.1，HTTP2，HTTP3分别代表三个版本，可用于前后端数据通信。
