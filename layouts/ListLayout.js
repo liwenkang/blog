@@ -4,6 +4,8 @@ import siteMetadata from '@/data/siteMetadata'
 import { useState } from 'react'
 import Pagination from '@/components/Pagination'
 import formatDate from '@/lib/utils/formatDate'
+import Head from 'next/head'
+import { CollectionPageStructuredData, BreadcrumbStructuredData } from '@/components/StructuredData'
 
 export default function ListLayout({ posts, title, initialDisplayPosts = [], pagination }) {
   const [searchValue, setSearchValue] = useState('')
@@ -16,8 +18,27 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
   const displayPosts =
     initialDisplayPosts.length > 0 && !searchValue ? initialDisplayPosts : filteredBlogPosts
 
+  // Breadcrumb data for list pages
+  const breadcrumbs = [
+    { name: '首页', url: siteMetadata.siteUrl },
+    { name: title, url: `${siteMetadata.siteUrl}${title === '博客' ? '/blog' : ''}` },
+  ]
+
   return (
     <>
+      <Head>
+        {/* Collection page structured data */}
+        <CollectionPageStructuredData
+          name={title}
+          description={`Browse ${title} on Li Wenkang's personal blog. Find articles about web development, JavaScript, React, and more.`}
+          url={title === '博客' ? '/blog' : '/'}
+          siteUrl={siteMetadata.siteUrl}
+        />
+
+        {/* Breadcrumb structured data */}
+        <BreadcrumbStructuredData breadcrumbs={breadcrumbs} />
+      </Head>
+
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
         <div className="space-y-2 pt-6 pb-8 md:space-y-5">
           <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">

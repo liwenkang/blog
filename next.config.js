@@ -60,14 +60,45 @@ const moduleExports = withBundleAnalyzer({
   eslint: {
     dirs: ['pages', 'components', 'lib', 'layouts', 'scripts'],
   },
+  experimental: {
+    optimizePackageImports: ['react-intersection-observer'],
+    scrollRestoration: true,
+  },
   async headers() {
     return [
       {
         source: '/(.*)',
         headers: securityHeaders,
       },
+      {
+        source: '/(.*)\\.(png|jpg|jpeg|gif|webp|svg|ico|woff|woff2|ttf|eot)$',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/(.*)\\.(js|css)$',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
     ]
   },
+  images: {
+    domains: ['localhost'],
+    formats: ['image/webp', 'image/avif'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
+  },
+  compress: true,
+  poweredByHeader: false,
   webpack: (config, { dev, isServer }) => {
     config.module.rules.push({
       test: /\.svg$/,

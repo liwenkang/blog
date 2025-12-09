@@ -15,6 +15,7 @@ import SkipToContent from '@/components/SkipToContent'
 import { ClientReload } from '@/components/ClientReload'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import PerformanceMonitor from '@/components/PerformanceMonitor'
+import { WebVitalsTracker, RoutePerformanceTracker } from '@/components/PerformanceTracker'
 import { reportWebVitals } from '@/lib/web-vitals'
 
 // 开发环境下导入环境验证
@@ -45,6 +46,8 @@ export default function App({ Component, pageProps }) {
       {isDevelopment && isSocket && <ClientReload />}
       <Analytics />
       <PerformanceMonitor />
+      <WebVitalsTracker />
+      <RoutePerformanceTracker />
       <ErrorBoundary>
         <LayoutWrapper>
           <Component {...pageProps} />

@@ -4,8 +4,13 @@ import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import { getAllFilesFrontMatter } from '@/lib/mdx'
 import formatDate from '@/lib/utils/formatDate'
-
 import NewsletterForm from '@/components/NewsletterForm'
+import Head from 'next/head'
+import {
+  WebSiteStructuredData,
+  PersonStructuredData,
+  OrganizationStructuredData,
+} from '@/components/StructuredData'
 
 const MAX_DISPLAY = 5
 
@@ -18,6 +23,25 @@ export async function getStaticProps() {
 export default function Home({ posts }) {
   return (
     <>
+      <Head>
+        {/* WebSite structured data */}
+        <WebSiteStructuredData siteUrl={siteMetadata.siteUrl} siteName={siteMetadata.title} />
+
+        {/* Person structured data for author */}
+        <PersonStructuredData
+          name={siteMetadata.author}
+          url={siteMetadata.siteUrl}
+          description="Frontend developer passionate about modern web technologies, JavaScript, React, and creating amazing user experiences."
+        />
+
+        {/* Organization structured data */}
+        <OrganizationStructuredData
+          name={siteMetadata.title}
+          url={siteMetadata.siteUrl}
+          description="Personal blog and portfolio showcasing web development projects and technical articles."
+        />
+      </Head>
+
       <PageSEO title={siteMetadata.title} description={siteMetadata.description} />
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
         <div className="space-y-2 pt-6 pb-8 md:space-y-5">
