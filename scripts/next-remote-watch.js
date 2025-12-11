@@ -15,6 +15,17 @@ const spawn = require('child_process').spawn
 const next = require('next')
 const path = require('path')
 const { parse } = require('url')
+const { logger } = require('./utils/script-logger')
+
+// unify console outputs through script logger
+console.log = (...args) => logger.info(args[0], typeof args[1] === 'object' ? args[1] : {})
+console.warn = (...args) => logger.warn(args[0], typeof args[1] === 'object' ? args[1] : {})
+console.error = (...args) => {
+  const [msg, maybeError, meta] = args
+  if (maybeError instanceof Error)
+    return logger.error(msg, maybeError, typeof meta === 'object' ? meta : {})
+  return logger.error(msg, null, typeof maybeError === 'object' ? maybeError : {})
+}
 
 const pkg = require('../package.json')
 
@@ -77,8 +88,7 @@ app.prepare().then(() => {
             // run the exported function from your --script script
             executeFile(filePathContext, eventContext)
           } catch (e) {
-            console.error('Remote script failed')
-            console.error(e)
+            console.error('Remote script failed', e)
             return e
           }
         }

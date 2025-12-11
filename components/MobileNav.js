@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from './Link'
 import headerNavLinks from '@/data/headerNavLinks'
 import { trapFocus } from '@/lib/focus-management'
@@ -26,7 +26,7 @@ const MobileNav = () => {
     }
   }, [navShow])
 
-  const onToggleNav = () => {
+  const onToggleNav = useCallback(() => {
     setNavShow((status) => {
       const newState = !status
 
@@ -44,7 +44,7 @@ const MobileNav = () => {
 
       return newState
     })
-  }
+  }, [mounted])
 
   // Handle escape key to close menu
   useEffect(() => {

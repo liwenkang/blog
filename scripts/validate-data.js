@@ -1,6 +1,17 @@
 const fs = require('fs')
 const path = require('path')
 const matter = require('gray-matter')
+const { logger } = require('./utils/script-logger')
+
+// unify console outputs through script logger
+console.log = (...args) => logger.info(args[0], typeof args[1] === 'object' ? args[1] : {})
+console.warn = (...args) => logger.warn(args[0], typeof args[1] === 'object' ? args[1] : {})
+console.error = (...args) => {
+  const [msg, maybeError, meta] = args
+  if (maybeError instanceof Error)
+    return logger.error(msg, maybeError, typeof meta === 'object' ? meta : {})
+  return logger.error(msg, null, typeof maybeError === 'object' ? maybeError : {})
+}
 
 const blogDir = path.join(process.cwd(), 'data', 'blog')
 
