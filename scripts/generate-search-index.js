@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const matter = require('gray-matter')
 const readingTime = require('reading-time')
+const { logger } = require('./utils/script-logger')
 
 // 搜索索引数据存放路径
 const SEARCH_INDEX_PATH = path.join(process.cwd(), 'public', 'search.json')
@@ -53,10 +54,10 @@ function cleanText(text) {
  */
 async function generateSearchIndex() {
   try {
-    console.log('开始生成搜索索引...')
+    logger.info('开始生成搜索索引...')
 
     if (!fs.existsSync(CONTENT_DIR)) {
-      console.error(`内容目录不存在: ${CONTENT_DIR}`)
+      logger.error('内容目录不存在', null, { dir: CONTENT_DIR })
       process.exit(1)
     }
 
@@ -99,9 +100,9 @@ async function generateSearchIndex() {
           searchText: searchText, // 用于搜索的纯文本
         })
 
-        console.log(`已处理: ${file}`)
+        logger.info('已处理', { file })
       } catch (error) {
-        console.error(`处理文件 ${file} 时出错:`, error.message)
+        logger.error('处理文件时出错', error, { file })
       }
     }
 
@@ -114,10 +115,10 @@ async function generateSearchIndex() {
     // 写入搜索索引文件
     fs.writeFileSync(SEARCH_INDEX_PATH, JSON.stringify(searchIndex, null, 2))
 
-    console.log(`搜索索引生成成功！共索引 ${searchIndex.length} 篇文章`)
-    console.log(`索引文件路径: ${SEARCH_INDEX_PATH}`)
+    logger.success('搜索索引生成成功', { count: searchIndex.length })
+    logger.info('索引文件路径', { path: SEARCH_INDEX_PATH })
   } catch (error) {
-    console.error('生成搜索索引时出错:', error)
+    logger.error('生成搜索索引时出错', error)
     process.exit(1)
   }
 }

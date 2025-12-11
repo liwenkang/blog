@@ -3,9 +3,11 @@ const { globby } = require('globby')
 const matter = require('gray-matter')
 const prettier = require('prettier')
 const siteMetadata = require('../data/siteMetadata')
+const { logger } = require('./utils/script-logger')
 
 ;(async () => {
   const prettierConfig = await prettier.resolveConfig('./.prettierrc.js')
+  logger.info('开始生成站点地图...')
   const pages = await globby([
     'pages/*.js',
     'pages/*.tsx',
@@ -63,4 +65,5 @@ const siteMetadata = require('../data/siteMetadata')
   })
 
   fs.writeFileSync('public/sitemap.xml', formatted)
+  logger.success('站点地图生成成功', { output: 'public/sitemap.xml' })
 })()
