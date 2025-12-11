@@ -1,35 +1,52 @@
-/* eslint-disable import/no-anonymous-default-export */
-export default async (req, res) => {
+import { apiHandler, validateBody, isValidEmail } from '@/lib/core/api-handler'
+import { ValidationError, ExternalServiceError } from '@/lib/core/api-errors'
+import { env } from '@/lib/config/env'
+import { logger } from '@/lib/core/logger'
+
+const convertkitHandler = async (req, res) => {
   const { email } = req.body
 
-  if (!email) {
-    return res.status(400).json({ error: 'Email is required' })
+  validateBody(req.body, ['email'])
+
+  if (!isValidEmail(email)) {
+    throw new ValidationError('Invalid email address format')
+  }
+
+  const { apiKey, formId, apiUrl } = env.newsletter.convertkit
+
+  if (!apiKey || !formId) {
+    throw new ExternalServiceError('ConvertKit', new Error('API key or Form ID not configured'))
   }
 
   try {
-    const FORM_ID = process.env.CONVERTKIT_FORM_ID
-    const API_KEY = process.env.CONVERTKIT_API_KEY
-    const API_URL = process.env.CONVERTKIT_API_URL
-
-    // Send request to ConvertKit
-    const data = { email, api_key: API_KEY }
-
-    const response = await fetch(`${API_URL}forms/${FORM_ID}/subscribe`, {
-      body: JSON.stringify(data),
+    const response = await fetch(`${apiUrl}forms/${formId}/subscribe`, {
+      body: JSON.stringify({ email, api_key: apiKey }),
       headers: {
         'Content-Type': 'application/json',
       },
       method: 'POST',
     })
 
-    if (response.status >= 400) {
-      return res.status(400).json({
-        error: `There was an error subscribing to the list.`,
-      })
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`ConvertKit API error: ${response.status} - ${errorText}`)
     }
 
-    return res.status(201).json({ error: '' })
+    logger.success('ConvertKit subscription successful', {
+      email: email.slice(0, 3) + '***',
+    })
+
+    return {
+      statusCode: 201,
+      data: { subscribed: true },
+      message: 'Successfully subscribed to newsletter',
+    }
   } catch (error) {
-    return res.status(500).json({ error: error.message || error.toString() })
+    logger.error('ConvertKit API error', error, {
+      email: email.slice(0, 3) + '***',
+    })
+    throw new ExternalServiceError('ConvertKit', error)
   }
 }
+
+export default apiHandler(convertkitHandler, { methods: ['POST'] })

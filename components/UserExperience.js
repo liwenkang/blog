@@ -176,7 +176,9 @@ export const CopyCode = () => {
               button.classList.add('bg-gray-700', 'hover:bg-gray-600')
             }, 2000)
           } catch (err) {
-            console.error('Failed to copy text: ', err)
+            import('@/lib/core/logger').then(({ logger }) => {
+              logger.error('Failed to copy text', err)
+            })
           }
         })
 

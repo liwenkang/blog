@@ -17,13 +17,18 @@ import ErrorBoundary from '@/components/ErrorBoundary'
 import PerformanceMonitor from '@/components/PerformanceMonitor'
 import { WebVitalsTracker, RoutePerformanceTracker } from '@/components/PerformanceTracker'
 import { reportWebVitals } from '@/lib/web-vitals'
+import { logger } from '@/lib/core/logger'
+import { getEnv } from '@/lib/config/env'
 
-// 开发环境下导入环境验证
+// 开发环境下验证环境变量
 if (process.env.NODE_ENV === 'development') {
-  import('@/lib/env-validation').then(({ validateAllEnvVars }) => {
-    console.log('🔧 应用启动：验证环境变量...')
-    validateAllEnvVars()
-  })
+  try {
+    logger.info('🔧 应用启动：验证环境变量...')
+    getEnv(false) // 非严格模式，允许部分配置缺失
+    logger.success('环境变量加载完成')
+  } catch (error) {
+    logger.warn('环境变量验证失败，部分功能可能不可用', { error: error.message })
+  }
 }
 
 const isDevelopment = process.env.NODE_ENV === 'development'

@@ -89,7 +89,10 @@ const Search = ({ onClose }) => {
         setSearchData(data)
         setIsLoading(false)
       } catch (error) {
-        console.error('加载搜索数据失败:', error)
+        // 动态导入 logger 避免增加初始包大小
+        import('@/lib/core/logger').then(({ logger }) => {
+          logger.error('加载搜索数据失败', error)
+        })
         setIsLoading(false)
       }
     }
@@ -120,7 +123,9 @@ const Search = ({ onClose }) => {
           announceToScreenReader('未找到相关内容')
         }
       } catch (error) {
-        console.error('搜索执行失败:', error)
+        import('@/lib/core/logger').then(({ logger }) => {
+          logger.error('搜索执行失败', error)
+        })
         setSearchResults([])
       }
     },

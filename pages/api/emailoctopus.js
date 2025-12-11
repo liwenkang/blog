@@ -1,33 +1,52 @@
-// eslint-disable-next-line import/no-anonymous-default-export
-export default async (req, res) => {
+import { apiHandler, validateBody, isValidEmail } from '@/lib/core/api-handler'
+import { ValidationError, ExternalServiceError } from '@/lib/core/api-errors'
+import { env } from '@/lib/config/env'
+import { logger } from '@/lib/core/logger'
+
+const emailoctopusHandler = async (req, res) => {
   const { email } = req.body
-  if (!email) {
-    return res.status(400).json({ error: 'Email is required' })
+
+  validateBody(req.body, ['email'])
+
+  if (!isValidEmail(email)) {
+    throw new ValidationError('Invalid email address format')
+  }
+
+  const { apiKey, listId, apiUrl } = env.newsletter.emailoctopus
+
+  if (!apiKey || !listId) {
+    throw new ExternalServiceError('EmailOctopus', new Error('API key or List ID not configured'))
   }
 
   try {
-    const API_URL = process.env.EMAILOCTOPUS_API_URL
-    const API_KEY = process.env.EMAILOCTOPUS_API_KEY
-    const LIST_ID = process.env.EMAILOCTOPUS_LIST_ID
-
-    const data = { email_address: email, api_key: API_KEY }
-
-    const API_ROUTE = `${API_URL}lists/${LIST_ID}/contacts`
-
-    const response = await fetch(API_ROUTE, {
-      body: JSON.stringify(data),
+    const response = await fetch(`${apiUrl}lists/${listId}/contacts`, {
+      body: JSON.stringify({ email_address: email, api_key: apiKey }),
       headers: {
         'Content-Type': 'application/json',
       },
       method: 'POST',
     })
 
-    if (response.status >= 400) {
-      return res.status(500).json({ error: `There was an error subscribing to the list.` })
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`EmailOctopus API error: ${response.status} - ${errorText}`)
     }
 
-    return res.status(201).json({ error: '' })
+    logger.success('EmailOctopus subscription successful', {
+      email: email.slice(0, 3) + '***',
+    })
+
+    return {
+      statusCode: 201,
+      data: { subscribed: true },
+      message: 'Successfully subscribed to newsletter',
+    }
   } catch (error) {
-    return res.status(500).json({ error: error.message || error.toString() })
+    logger.error('EmailOctopus API error', error, {
+      email: email.slice(0, 3) + '***',
+    })
+    throw new ExternalServiceError('EmailOctopus', error)
   }
 }
+
+export default apiHandler(emailoctopusHandler, { methods: ['POST'] })

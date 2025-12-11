@@ -1,35 +1,58 @@
-/* eslint-disable import/no-anonymous-default-export */
-export default async (req, res) => {
+import { apiHandler, validateBody, isValidEmail } from '@/lib/core/api-handler'
+import { ValidationError, ExternalServiceError } from '@/lib/core/api-errors'
+import { env } from '@/lib/config/env'
+import { logger } from '@/lib/core/logger'
+
+const klaviyoHandler = async (req, res) => {
   const { email } = req.body
-  if (!email) {
-    return res.status(400).json({ error: 'Email is required' })
+
+  validateBody(req.body, ['email'])
+
+  if (!isValidEmail(email)) {
+    throw new ValidationError('Invalid email address format')
+  }
+
+  const { apiKey, listId } = env.newsletter.klaviyo
+
+  if (!apiKey || !listId) {
+    throw new ExternalServiceError('Klaviyo', new Error('API key or List ID not configured'))
   }
 
   try {
-    const API_KEY = process.env.KLAVIYO_API_KEY
-    const LIST_ID = process.env.KLAVIYO_LIST_ID
     const response = await fetch(
-      `https://a.klaviyo.com/api/v2/list/${LIST_ID}/subscribe?api_key=${API_KEY}`,
+      `https://a.klaviyo.com/api/v2/list/${listId}/subscribe?api_key=${apiKey}`,
       {
         method: 'POST',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        // You can add additional params here i.e. SMS, etc.
-        // https://developers.klaviyo.com/en/reference/subscribe
         body: JSON.stringify({
-          profiles: [{ email: email }],
+          profiles: [{ email }],
         }),
       }
     )
-    if (response.status >= 400) {
-      return res.status(400).json({
-        error: `There was an error subscribing to the list.`,
-      })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`Klaviyo API error: ${response.status} - ${errorText}`)
     }
-    return res.status(201).json({ error: '' })
+
+    logger.success('Klaviyo subscription successful', {
+      email: email.slice(0, 3) + '***',
+    })
+
+    return {
+      statusCode: 201,
+      data: { subscribed: true },
+      message: 'Successfully subscribed to newsletter',
+    }
   } catch (error) {
-    return res.status(500).json({ error: error.message || error.toString() })
+    logger.error('Klaviyo API error', error, {
+      email: email.slice(0, 3) + '***',
+    })
+    throw new ExternalServiceError('Klaviyo', error)
   }
 }
+
+export default apiHandler(klaviyoHandler, { methods: ['POST'] })

@@ -27,7 +27,9 @@ export const PerformanceTracker = ({
 
         // Log to console in development
         if (process.env.NODE_ENV === 'development') {
-          console.log(`Performance [${trackId}]:`, newMetrics)
+          import('@/lib/core/logger').then(({ logger }) => {
+            logger.perf(trackId, renderTime, { trackId })
+          })
         }
 
         // Call custom callback if provided

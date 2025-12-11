@@ -1,30 +1,53 @@
-// eslint-disable-next-line import/no-anonymous-default-export
-export default async (req, res) => {
+import { apiHandler, validateBody, isValidEmail } from '@/lib/core/api-handler'
+import { ValidationError, ExternalServiceError } from '@/lib/core/api-errors'
+import { env } from '@/lib/config/env'
+import { logger } from '@/lib/core/logger'
+
+const buttondownHandler = async (req, res) => {
   const { email } = req.body
-  if (!email) {
-    return res.status(400).json({ error: 'Email is required' })
+
+  validateBody(req.body, ['email'])
+
+  if (!isValidEmail(email)) {
+    throw new ValidationError('Invalid email address format')
+  }
+
+  const { apiKey, apiUrl } = env.newsletter.buttondown
+
+  if (!apiKey) {
+    throw new ExternalServiceError('Buttondown', new Error('API key not configured'))
   }
 
   try {
-    const API_KEY = process.env.BUTTONDOWN_API_KEY
-    const buttondownRoute = `${process.env.BUTTONDOWN_API_URL}subscribers`
-    const response = await fetch(buttondownRoute, {
-      body: JSON.stringify({
-        email,
-      }),
+    const response = await fetch(`${apiUrl}subscribers`, {
+      body: JSON.stringify({ email }),
       headers: {
-        Authorization: `Token ${API_KEY}`,
+        Authorization: `Token ${apiKey}`,
         'Content-Type': 'application/json',
       },
       method: 'POST',
     })
 
-    if (response.status >= 400) {
-      return res.status(500).json({ error: `There was an error subscribing to the list.` })
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`Buttondown API error: ${response.status} - ${errorText}`)
     }
 
-    return res.status(201).json({ error: '' })
+    logger.success('Buttondown subscription successful', {
+      email: email.slice(0, 3) + '***',
+    })
+
+    return {
+      statusCode: 201,
+      data: { subscribed: true },
+      message: 'Successfully subscribed to newsletter',
+    }
   } catch (error) {
-    return res.status(500).json({ error: error.message || error.toString() })
+    logger.error('Buttondown API error', error, {
+      email: email.slice(0, 3) + '***',
+    })
+    throw new ExternalServiceError('Buttondown', error)
   }
 }
+
+export default apiHandler(buttondownHandler, { methods: ['POST'] })

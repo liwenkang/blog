@@ -3,57 +3,102 @@
  * 用于开发和调试时验证环境变量配置
  */
 
-import { getEnvValidationStatus } from '@/lib/env-validation'
+import { apiHandler } from '@/lib/core/api-handler'
+import { UnauthorizedError } from '@/lib/core/api-errors'
+import { env, getEnv, getValidationError, hasEnv } from '@/lib/config/env'
+import { logger } from '@/lib/core/logger'
 
-export default async function handler(req, res) {
+const envStatusHandler = async (req, res) => {
   // 只允许在开发环境或通过特定密钥访问
-  const isDev = process.env.NODE_ENV === 'development'
+  const isDev = env.isDevelopment
   const hasDebugKey = req.headers['x-debug-key'] === process.env.DEBUG_API_KEY
 
   if (!isDev && !hasDebugKey) {
-    return res.status(403).json({
-      error: 'Access denied. This endpoint is only available in development mode.',
-    })
+    throw new UnauthorizedError(
+      'Access denied. This endpoint is only available in development mode.'
+    )
   }
 
-  try {
-    const status = getEnvValidationStatus()
+  // 获取环境变量
+  getEnv()
+  const validationError = getValidationError()
 
-    // 返回详细的环境状态（开发模式）或简化状态（生产模式）
-    const responseData = isDev
-      ? {
-          timestamp: new Date().toISOString(),
-          environment: process.env.NODE_ENV,
-          ...status,
-          rawEnvVars: {
-            MAILCHIMP_API_KEY: process.env.MAILCHIMP_API_KEY ? '***configured***' : 'missing',
-            MAILCHIMP_API_SERVER: process.env.MAILCHIMP_API_SERVER || 'missing',
-            MAILCHIMP_AUDIENCE_ID: process.env.MAILCHIMP_AUDIENCE_ID
-              ? '***configured***'
-              : 'missing',
-            NEXT_PUBLIC_GISCUS_REPO: process.env.NEXT_PUBLIC_GISCUS_REPO || 'missing',
-          },
-          health: {
-            newsletter: status.newsletter.isValid,
-            comments: status.comments.isValid,
-            overall: status.newsletter.isValid && status.comments.isValid,
-          },
-        }
-      : {
-          timestamp: status.timestamp,
-          health: {
-            newsletter: status.newsletter.isValid,
-            comments: status.comments.isValid,
-            overall: status.newsletter.isValid && status.comments.isValid,
-          },
-        }
+  // 检查 Newsletter 配置
+  const newsletterStatus = {
+    provider: env.newsletter.provider,
+    configured: false,
+    fields: {},
+  }
 
-    res.status(200).json(responseData)
-  } catch (error) {
-    console.error('Env status check error:', error)
-    res.status(500).json({
-      error: 'Failed to check environment status',
-      message: error.message,
-    })
+  switch (env.newsletter.provider) {
+    case 'mailchimp':
+      newsletterStatus.fields = {
+        apiKey: hasEnv('MAILCHIMP_API_KEY'),
+        server: hasEnv('MAILCHIMP_API_SERVER'),
+        audienceId: hasEnv('MAILCHIMP_AUDIENCE_ID'),
+      }
+      newsletterStatus.configured = Object.values(newsletterStatus.fields).every(Boolean)
+      break
+    case 'buttondown':
+      newsletterStatus.fields = {
+        apiKey: hasEnv('BUTTONDOWN_API_KEY'),
+      }
+      newsletterStatus.configured = hasEnv('BUTTONDOWN_API_KEY')
+      break
+    case 'convertkit':
+      newsletterStatus.fields = {
+        apiKey: hasEnv('CONVERTKIT_API_KEY'),
+        formId: hasEnv('CONVERTKIT_FORM_ID'),
+      }
+      newsletterStatus.configured = hasEnv('CONVERTKIT_API_KEY') && hasEnv('CONVERTKIT_FORM_ID')
+      break
+    // 其他 provider...
+  }
+
+  // 检查 Comment 配置
+  const commentStatus = {
+    provider: env.comment.provider,
+    configured: false,
+    fields: {},
+  }
+
+  switch (env.comment.provider) {
+    case 'giscus':
+      commentStatus.fields = {
+        repo: hasEnv('NEXT_PUBLIC_GISCUS_REPO'),
+        repositoryId: hasEnv('NEXT_PUBLIC_GISCUS_REPOSITORY_ID'),
+        category: hasEnv('NEXT_PUBLIC_GISCUS_CATEGORY'),
+        categoryId: hasEnv('NEXT_PUBLIC_GISCUS_CATEGORY_ID'),
+      }
+      commentStatus.configured = Object.values(commentStatus.fields).every(Boolean)
+      break
+    // 其他 provider...
+  }
+
+  const responseData = {
+    timestamp: new Date().toISOString(),
+    environment: env.isDevelopment ? 'development' : 'production',
+    validation: {
+      success: !validationError,
+      error: validationError?.message,
+    },
+    newsletter: newsletterStatus,
+    comment: commentStatus,
+    health: {
+      newsletter: newsletterStatus.configured,
+      comment: commentStatus.configured,
+      overall: newsletterStatus.configured && commentStatus.configured,
+    },
+  }
+
+  logger.info('Environment status checked', {
+    health: responseData.health,
+  })
+
+  return {
+    data: responseData,
+    message: 'Environment status retrieved successfully',
   }
 }
+
+export default apiHandler(envStatusHandler, { methods: ['GET'] })
