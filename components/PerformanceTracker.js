@@ -7,7 +7,6 @@ export const PerformanceTracker = ({
   onPerformanceMetrics = null,
 }) => {
   const startTimeRef = useRef(null)
-  const [metrics, setMetrics] = useState(null)
 
   useEffect(() => {
     startTimeRef.current = performance.now()

@@ -20,28 +20,6 @@ console.error = function (...args) {
 
 const blogDir = path.join(process.cwd(), 'data', 'blog')
 
-// 生成智能摘要的函数
-function generateSummary(title, content, tags) {
-  // 如果内容很短，直接截取
-  if (content.length < 150) {
-    return content.replace(/[#*`]/g, '').trim()
-  }
-
-  // 尝试找到第一段文字
-  const firstParagraph = content.match(/^([^#\n]+(?:\n[^#\n]+)*)/m)
-  if (firstParagraph) {
-    return (
-      firstParagraph[1]
-        .replace(/[#*`\[\]]/g, '')
-        .trim()
-        .substring(0, 150) + '...'
-    )
-  }
-
-  // 默认基于标题生成
-  return `关于 ${title} 的详细介绍和实践`
-}
-
 // 判断是否为草稿的智能逻辑
 function isDraft(title, tags, content) {
   // 如果标题包含明显的草稿标识

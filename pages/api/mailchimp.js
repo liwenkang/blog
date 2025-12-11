@@ -23,7 +23,7 @@ const configureMailchimp = () => {
 }
 
 // Mailchimp 订阅处理器
-const mailchimpHandler = async (req, res) => {
+const mailchimpHandler = async (req, _res) => {
   const { email } = req.body
 
   // 验证请求体

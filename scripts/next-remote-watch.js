@@ -111,7 +111,9 @@ app.prepare().then(() => {
     // log message if present
     const msg = req.body.message
     const color = req.body.color
-    msg && console.log(color ? chalk[color](msg) : msg)
+    if (msg) {
+      console.log(color ? chalk[color](msg) : msg)
+    }
 
     // reload the nextjs app
     app.server.hotReloader.send('building')
@@ -122,7 +124,9 @@ app.prepare().then(() => {
   expressApp.use('/__next_reload', reloadRoute)
 
   // handle all other routes with next.js
-  expressApp.all('*', (req, res) => handle(req, res, parse(req.url, true)))
+  expressApp.all('*', (req, res) => {
+    return handle(req, res, parse(req.url, true))
+  })
 
   // fire it up
   server.listen(port, (err) => {

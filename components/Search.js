@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import FlexSearch from 'flexsearch'
-import Link from './Link'
 import { announceToScreenReader } from '@/lib/focus-management'
 
 // 搜索结果项组件

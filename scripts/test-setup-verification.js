@@ -44,7 +44,7 @@ try {
     const exists = packageJson.scripts && packageJson.scripts[script]
     console.log(`  ${exists ? '✅' : '❌'} ${script}: ${exists || 'missing'}`)
   })
-} catch (error) {
+} catch {
   console.log('  ❌ Failed to read package.json')
 }
 
@@ -58,7 +58,7 @@ try {
   console.log(`  ${hasNextJest ? '✅' : '❌'} Uses Next.js Jest configuration`)
   console.log(`  ${hasTestEnvironment ? '✅' : '❌'} Has JSDOM test environment`)
   console.log(`  ${hasSetupFile ? '✅' : '❌'} Has setup file configured`)
-} catch (error) {
+} catch {
   console.log('  ❌ Failed to read jest.config.js')
 }
 

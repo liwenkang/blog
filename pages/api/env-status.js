@@ -8,7 +8,7 @@ import { UnauthorizedError } from '@/lib/core/api-errors'
 import { env, getEnv, getValidationError, hasEnv } from '@/lib/config/env'
 import { logger } from '@/lib/core/logger'
 
-const envStatusHandler = async (req, res) => {
+const envStatusHandler = async (req, _res) => {
   // 只允许在开发环境或通过特定密钥访问
   const isDev = env.isDevelopment
   const hasDebugKey = req.headers['x-debug-key'] === process.env.DEBUG_API_KEY

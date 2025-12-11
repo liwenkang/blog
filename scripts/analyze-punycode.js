@@ -31,7 +31,7 @@ try {
   } else {
     console.log('  ❌ 无直接 punycode 依赖')
   }
-} catch (error) {
+} catch {
   console.log('❌ 无法读取 package.json')
 }
 
@@ -48,7 +48,7 @@ try {
     console.log(`  📦 punycode@${punycodeDeps.version} (${punycodeDeps.from})`)
     console.log(`  📋 描述: ${punycodeDeps.description}`)
   }
-} catch (error) {
+} catch {
   console.log('❌ 无法获取 npm 依赖信息')
 }
 
@@ -57,7 +57,7 @@ console.log('\n🔍 分析哪些包依赖 punycode:')
 try {
   const whyResult = execSync('npm why punycode', { encoding: 'utf8' })
   console.log(whyResult)
-} catch (error) {
+} catch {
   console.log('❌ 无法运行 npm why')
 }
 
@@ -88,7 +88,7 @@ keyPackages.forEach((pkg) => {
       } else {
         console.log(`  ❌ ${pkg}: 无 punycode 依赖`)
       }
-    } catch (error) {
+    } catch {
       console.log(`  ⚠️ ${pkg}: 无法解析 package.json`)
     }
   } else {
@@ -127,7 +127,7 @@ knownIssues.forEach((issue) => {
       const pkgJson = JSON.parse(fs.readFileSync(uriJsPath, 'utf8'))
       console.log(`  📋 版本: uri-js@${pkgJson.version}`)
       console.log(`  🔗 punycode 依赖: ${pkgJson.dependencies?.punycode || 'N/A'}`)
-    } catch (error) {
+    } catch {
       console.log(`  ⚠️ 无法读取 uri-js 包信息`)
     }
   }

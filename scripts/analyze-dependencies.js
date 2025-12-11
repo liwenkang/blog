@@ -2,7 +2,6 @@
 
 const fs = require('fs')
 const path = require('path')
-const { execSync } = require('child_process')
 const { logger } = require('./utils/script-logger')
 
 // unify console outputs through script logger
@@ -35,7 +34,7 @@ try {
   console.log(`  📊 总依赖数: ${Object.keys(allDeps).length}`)
   console.log(`  🔧 生产依赖: ${Object.keys(packageJson.dependencies || {}).length}`)
   console.log(`  🛠️ 开发依赖: ${Object.keys(packageJson.devDependencies || {}).length}\n`)
-} catch (error) {
+} catch {
   console.log('❌ 无法读取 package.json')
   process.exit(1)
 }
@@ -99,7 +98,7 @@ function searchInFile(filePath) {
         }
       }
     })
-  } catch (error) {
+  } catch {
     // 忽略读取错误
   }
 }
@@ -168,7 +167,7 @@ configFiles.forEach((configFile) => {
           import: 'TypeScript configuration',
         })
       }
-    } catch (error) {
+    } catch {
       // 忽略读取错误
     }
   }

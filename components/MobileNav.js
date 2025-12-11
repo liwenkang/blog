@@ -142,7 +142,7 @@ const MobileNav = () => {
           aria-label="Main navigation"
         >
           <ul className="space-y-4">
-            {headerNavLinks.map((link, index) => (
+            {headerNavLinks.map((link) => (
               <li key={link.title}>
                 <Link
                   href={link.href}

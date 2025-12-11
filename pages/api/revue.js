@@ -3,7 +3,7 @@ import { ValidationError, ExternalServiceError } from '@/lib/core/api-errors'
 import { env } from '@/lib/config/env'
 import { logger } from '@/lib/core/logger'
 
-const revueHandler = async (req, res) => {
+const revueHandler = async (req, _res) => {
   const { email } = req.body
 
   validateBody(req.body, ['email'])

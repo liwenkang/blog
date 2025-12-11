@@ -3,7 +3,7 @@ import { ValidationError, ExternalServiceError } from '@/lib/core/api-errors'
 import { env } from '@/lib/config/env'
 import { logger } from '@/lib/core/logger'
 
-const klaviyoHandler = async (req, res) => {
+const klaviyoHandler = async (req, _res) => {
   const { email } = req.body
 
   validateBody(req.body, ['email'])

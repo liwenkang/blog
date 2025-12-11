@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { useTheme } from 'next-themes'
 
 // Reading progress indicator
 export const ReadingProgress = ({ target }) => {
@@ -85,7 +84,7 @@ export const BackToTop = ({ threshold = 300 }) => {
 }
 
 // Table of contents auto-highlight
-export const TOCAutoHighlight = ({ headings, activeHeading, setActiveHeading }) => {
+export const TOCAutoHighlight = ({ headings, _activeHeading, setActiveHeading }) => {
   const headingRefs = useRef([])
 
   useEffect(() => {

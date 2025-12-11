@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const fs = require('fs')
-const path = require('path')
 const { logger } = require('./utils/script-logger')
 
 // unify console outputs through script logger
@@ -55,7 +54,7 @@ if (configExists) {
       const exists = packageJson.devDependencies && packageJson.devDependencies[dep]
       console.log(`  ${exists ? '✅' : '❌'} ${dep}: ${exists || '缺失'}`)
     })
-  } catch (error) {
+  } catch {
     console.log('\n❌ 无法读取 package.json')
   }
 
