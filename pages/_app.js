@@ -14,7 +14,7 @@ import LayoutWrapper from '@/components/LayoutWrapper'
 import SkipToContent from '@/components/SkipToContent'
 import { ClientReload } from '@/components/ClientReload'
 import ErrorBoundary from '@/components/ErrorBoundary'
-import PerformanceMonitor from '@/components/PerformanceMonitor'
+import PerformanceMonitorV2 from '@/components/PerformanceMonitorV2'
 import { WebVitalsTracker, RoutePerformanceTracker } from '@/components/PerformanceTracker'
 import { reportWebVitals } from '@/lib/web-vitals'
 import { logger } from '@/lib/core/logger'
@@ -50,7 +50,7 @@ export default function App({ Component, pageProps }) {
       <SkipToContent />
       {isDevelopment && isSocket && <ClientReload />}
       <Analytics />
-      <PerformanceMonitor />
+      <PerformanceMonitorV2 />
       <WebVitalsTracker />
       <RoutePerformanceTracker />
       <ErrorBoundary>
