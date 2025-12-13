@@ -6,7 +6,9 @@ const DEFAULT_LAYOUT = 'AuthorLayout'
 
 export async function getStaticProps() {
   const authorDetails = await getFileBySlug('authors', 'default')
-  return { props: { authorDetails } }
+  // 清理 undefined 字段以避免序列化错误
+  const cleanedAuthorDetails = JSON.parse(JSON.stringify(authorDetails))
+  return { props: { authorDetails: cleanedAuthorDetails } }
 }
 
 export default function About({ authorDetails }: InferGetStaticPropsType<typeof getStaticProps>) {
