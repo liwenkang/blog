@@ -1,18 +1,40 @@
-const fs = require('fs')
-const path = require('path')
-const matter = require('gray-matter')
-const readingTime = require('reading-time')
-const { logger } = require('./utils/script-logger')
+#!/usr/bin/env ts-node
+
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
+import readingTime from 'reading-time'
+import { logger } from './utils/script-logger.js'
 
 // 搜索索引数据存放路径
 const SEARCH_INDEX_PATH = path.join(process.cwd(), 'public', 'search.json')
 const CONTENT_DIR = path.join(process.cwd(), 'data', 'blog')
 
+interface SearchIndexItem {
+  id: string
+  title: string
+  summary: string
+  content: string
+  tags: string[]
+  date: string
+  readingTime: string
+  url: string
+  searchText: string
+}
+
+interface Frontmatter {
+  title?: string
+  summary?: string
+  tags?: string[]
+  date?: string
+  draft?: boolean
+}
+
 /**
  * 从markdown内容中提取纯文本
  * 移除markdown语法，保留纯文本内容用于搜索
  */
-function extractTextFromMarkdown(content) {
+function extractTextFromMarkdown(content: string): string {
   return (
     content
       // 移除代码块
@@ -42,7 +64,7 @@ function extractTextFromMarkdown(content) {
 /**
  * 清理文本，移除特殊字符但保留中英文和空格
  */
-function cleanText(text) {
+function cleanText(text: string): string {
   return text
     .replace(/[^\w\s\u4e00-\u9fff]/g, ' ') // 保留中英文、数字、空格
     .replace(/\s+/g, ' ') // 合并多个空格
@@ -52,7 +74,7 @@ function cleanText(text) {
 /**
  * 生成搜索索引
  */
-async function generateSearchIndex() {
+async function generateSearchIndex(): Promise<void> {
   try {
     logger.info('开始生成搜索索引...')
 
@@ -68,13 +90,16 @@ async function generateSearchIndex() {
       )
       .map((dirent) => dirent.name)
 
-    const searchIndex = []
+    const searchIndex: SearchIndexItem[] = []
 
     for (const file of files) {
       try {
         const filePath = path.join(CONTENT_DIR, file)
         const source = fs.readFileSync(filePath, 'utf8')
-        const { data: frontmatter, content } = matter(source)
+        const { data: frontmatter, content } = matter(source) as {
+          data: Frontmatter
+          content: string
+        }
 
         // 跳过草稿
         if (frontmatter.draft === true) {
@@ -102,7 +127,7 @@ async function generateSearchIndex() {
 
         logger.info('已处理', { file })
       } catch (error) {
-        logger.error('处理文件时出错', error, { file })
+        logger.error('处理文件时出错', error as Error, { file })
       }
     }
 
@@ -118,14 +143,14 @@ async function generateSearchIndex() {
     logger.success('搜索索引生成成功', { count: searchIndex.length })
     logger.info('索引文件路径', { path: SEARCH_INDEX_PATH })
   } catch (error) {
-    logger.error('生成搜索索引时出错', error)
+    logger.error('生成搜索索引时出错', error as Error)
     process.exit(1)
   }
 }
 
 // 如果直接运行此脚本
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   generateSearchIndex()
 }
 
-module.exports = { generateSearchIndex }
+export { generateSearchIndex }

@@ -1,3 +1,5 @@
+#!/usr/bin/env ts-node
+
 /**
  * 测试新的日志、错误处理和环境变量系统
  */
@@ -5,7 +7,7 @@
 // 测试 Logger
 console.log('\n========== 测试 Logger ==========\n')
 
-const { logger } = require('../lib/core/logger')
+import { logger } from '../lib/core/logger.js'
 
 logger.debug('这是一条 DEBUG 日志', { extra: 'data' })
 logger.info('这是一条 INFO 日志', { extra: 'data' })
@@ -17,7 +19,7 @@ logger.perf('TestMetric', 123.45, { component: 'Test' })
 // 测试 API Errors
 console.log('\n========== 测试 API Errors ==========\n')
 
-const {
+import {
   ApiError,
   ValidationError,
   NotFoundError,
@@ -25,8 +27,7 @@ const {
   UnauthorizedError,
   RateLimitError,
   ExternalServiceError,
-  ConfigurationError,
-} = require('../lib/core/api-errors')
+} from '../lib/core/api-errors.js'
 
 const validationError = new ValidationError('Invalid email', { field: 'email' })
 console.log('ValidationError:', {
@@ -47,7 +48,7 @@ console.log('ExternalServiceError:', {
 // 测试 API Response
 console.log('\n========== 测试 API Response ==========\n')
 
-const { ApiResponse } = require('../lib/core/api-response')
+import { ApiResponse } from '../lib/core/api-response.js'
 
 const successResponse = ApiResponse.success({ user: 'test' }, 'User created')
 console.log('Success Response:', JSON.stringify(successResponse, null, 2))
@@ -58,7 +59,7 @@ console.log('Error Response:', JSON.stringify(errorResponse, null, 2))
 // 测试环境变量
 console.log('\n========== 测试环境变量系统 ==========\n')
 
-const { env, getEnv, hasEnv, getEnvVar } = require('../lib/config/env')
+import { env, getEnv, hasEnv, getEnvVar } from '../lib/config/env.js'
 
 console.log('Environment:', {
   isDevelopment: env.isDevelopment,
@@ -81,7 +82,7 @@ try {
   const validatedEnv = getEnv(false) // 非严格模式
   console.log('✅ 环境变量验证通过（非严格模式）')
 } catch (error) {
-  console.log('❌ 环境变量验证失败:', error.message)
+  console.log('❌ 环境变量验证失败:', (error as Error).message)
 }
 
 console.log('\n========== 测试完成 ==========\n')

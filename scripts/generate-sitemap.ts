@@ -1,9 +1,25 @@
-const fs = require('fs')
-const { globby } = require('globby')
-const matter = require('gray-matter')
-const prettier = require('prettier')
-const siteMetadata = require('../data/siteMetadata.ts').default
-const { logger } = require('./utils/script-logger')
+#!/usr/bin/env ts-node
+
+import fs from 'fs'
+import { globby } from 'globby'
+import matter from 'gray-matter'
+import prettier from 'prettier'
+import { logger } from './utils/script-logger.js'
+
+// 读取 siteMetadata (避免 ESM 导入问题)
+const getSiteUrl = (): string => {
+  const metadataPath = './data/siteMetadata.ts'
+  const content = fs.readFileSync(metadataPath, 'utf8')
+  const match = content.match(/siteUrl:\s*['"]([^'"]+)['"]/)
+  return match ? match[1] : 'https://liwenkang.space'
+}
+
+const siteUrl = getSiteUrl()
+
+interface Frontmatter {
+  draft?: boolean
+  canonicalUrl?: string
+}
 
 ;(async () => {
   const prettierConfig = await prettier.resolveConfig('./.prettierrc.js')
@@ -27,7 +43,7 @@ const { logger } = require('./utils/script-logger')
                 // Exclude drafts from the sitemap
                 if (page.search('.md') >= 1 && fs.existsSync(page)) {
                   const source = fs.readFileSync(page, 'utf8')
-                  const fm = matter(source)
+                  const fm = matter(source) as { data: Frontmatter }
                   if (fm.data.draft) {
                     return
                   }
@@ -51,7 +67,7 @@ const { logger } = require('./utils/script-logger')
                 }
                 return `
                         <url>
-                            <loc>${siteMetadata.siteUrl}${route}</loc>
+                            <loc>${siteUrl}${route}</loc>
                         </url>
                     `
               })

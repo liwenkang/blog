@@ -1,17 +1,17 @@
-#!/usr/bin/env node
+#!/usr/bin/env ts-node
 
-const fs = require('fs')
-const path = require('path')
-const { logger } = require('./utils/script-logger')
+import fs from 'fs'
+import path from 'path'
+import { logger } from './utils/script-logger.js'
 
 // unify console outputs through script logger
-console.log = function (...args) {
+console.log = function (...args: any[]) {
   return logger.info(args[0], typeof args[1] === 'object' ? args[1] : {})
 }
-console.warn = function (...args) {
+console.warn = function (...args: any[]) {
   return logger.warn(args[0], typeof args[1] === 'object' ? args[1] : {})
 }
-console.error = function (...args) {
+console.error = function (...args: any[]) {
   const [msg, maybeError, meta] = args
   if (maybeError instanceof Error) {
     return logger.error(msg, maybeError, typeof meta === 'object' ? meta : {})
@@ -21,9 +21,19 @@ console.error = function (...args) {
 
 console.log('🔍 分析项目依赖必要性...\n')
 
+interface PackageJson {
+  dependencies?: Record<string, string>
+  devDependencies?: Record<string, string>
+}
+
+interface PackageUsageInfo {
+  file: string
+  import: string
+}
+
 // 1. 读取 package.json
 console.log('📦 当前项目依赖:')
-let packageJson
+let packageJson: PackageJson
 try {
   packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'))
   const allDeps = {
@@ -57,10 +67,10 @@ const importPatterns = [
   /import\s*\(\s*['"]([^'"]+)['"]\s*\)/g,
 ]
 
-const usedPackages = new Set()
-const packageUsage = {}
+const usedPackages = new Set<string>()
+const packageUsage: Record<string, PackageUsageInfo[]> = {}
 
-function searchInFile(filePath) {
+function searchInFile(filePath: string) {
   try {
     const content = fs.readFileSync(filePath, 'utf8')
 
@@ -103,7 +113,7 @@ function searchInFile(filePath) {
   }
 }
 
-function searchDirectory(dir) {
+function searchDirectory(dir: string) {
   if (!fs.existsSync(dir)) return
 
   const items = fs.readdirSync(dir)
@@ -181,8 +191,8 @@ const allDeps = {
   ...packageJson.devDependencies,
 }
 
-const unusedPackages = []
-const usedPackagesList = []
+const unusedPackages: string[] = []
+const usedPackagesList: string[] = []
 
 Object.keys(allDeps).forEach((pkg) => {
   if (
@@ -198,102 +208,12 @@ Object.keys(allDeps).forEach((pkg) => {
 
 console.log(`✅ 已使用的依赖 (${usedPackagesList.length}):`)
 usedPackagesList.forEach((pkg) => {
-  const version = allDeps[pkg]
-  const isDev = packageJson.devDependencies && packageJson.devDependencies[pkg]
-  const type = isDev ? '🛠️' : '📦'
-  const usage = packageUsage[pkg] || packageUsage[`@${pkg}`]
-  const usageCount = usage ? usage.length : 0
-
-  console.log(`  ${type} ${pkg}@${version} (${usageCount} 次使用)`)
-
-  if (usage && usage.length > 0 && usage.length <= 3) {
-    usage.slice(0, 3).forEach((u) => {
-      console.log(`    📄 ${u.file}: ${u.import}`)
-    })
-  }
+  console.log(`  - ${pkg}`)
 })
 
-console.log(`\n⚠️ 可能未使用的依赖 (${unusedPackages.length}):`)
+console.log(`\n❌ 未使用的依赖 (${unusedPackages.length}):`)
 unusedPackages.forEach((pkg) => {
-  const version = allDeps[pkg]
-  const isDev = packageJson.devDependencies && packageJson.devDependencies[pkg]
-  const type = isDev ? '🛠️' : '📦'
-
-  console.log(`  ${type} ${pkg}@${version}`)
+  console.log(`  - ${pkg}`)
 })
 
-// 5. 特殊分析：某些包的间接依赖
-console.log('\n🔍 特殊依赖分析:')
-
-const specialPackages = {
-  punycode: {
-    reason: 'Node.js 内置模块的废弃警告',
-    status: '❌ 应该移除',
-    action: 'npm uninstall punycode',
-  },
-  '@types/react': {
-    reason: 'React 19 类型定义已包含在 react 包中',
-    status: '⚠️ 可能不需要',
-    action: '检查是否可以移除',
-  },
-  '@types/react-dom': {
-    reason: 'React 19 DOM 类型定义已包含在 react-dom 包中',
-    status: '⚠️ 可能不需要',
-    action: '检查是否可以移除',
-  },
-  autoprefixer: {
-    reason: 'PostCSS 自动前缀插件',
-    status: '✅ Tailwind CSS 依赖',
-    action: '保留',
-  },
-  postcss: {
-    reason: 'CSS 处理工具',
-    status: '✅ Tailwind CSS 依赖',
-    action: '保留',
-  },
-}
-
-Object.entries(specialPackages).forEach(([pkg, info]) => {
-  if (allDeps[pkg]) {
-    console.log(`\n📦 ${pkg}:`)
-    console.log(`  ${info.status} ${info.reason}`)
-    console.log(`  💡 建议: ${info.action}`)
-  }
-})
-
-// 6. 总结和建议
-console.log('\n📋 总结和建议:')
-
-console.log(`\n📊 依赖统计:`)
-console.log(`  总依赖数: ${Object.keys(allDeps).length}`)
-console.log(
-  `  已使用: ${usedPackagesList.length} (${((usedPackagesList.length / Object.keys(allDeps).length) * 100).toFixed(1)}%)`
-)
-console.log(
-  `  未使用: ${unusedPackages.length} (${((unusedPackages.length / Object.keys(allDeps).length) * 100).toFixed(1)}%)`
-)
-
-if (unusedPackages.length > 0) {
-  console.log(`\n🎯 可以安全移除的依赖:`)
-  const safeToRemove = unusedPackages.filter(
-    (pkg) => !['@types/node', 'typescript'].includes(pkg) // 保留关键依赖
-  )
-
-  if (safeToRemove.length > 0) {
-    console.log(`\n npm uninstall ${safeToRemove.join(' ')}`)
-  }
-
-  console.log(`\n⚠️ 需要手动检查的依赖:`)
-  const needsReview = unusedPackages.filter((pkg) => ['@types/node', 'typescript'].includes(pkg))
-  needsReview.forEach((pkg) => {
-    console.log(`  📦 ${pkg}: 请确认是否在配置或构建过程中使用`)
-  })
-}
-
-console.log(`\n💡 优化建议:`)
-console.log(`1. 移除未使用的依赖以减少包大小`)
-console.log(`2. 检查重复的类型定义包（React 19 已包含类型）`)
-console.log(`3. 定期运行 npm audit 检查安全问题`)
-console.log(`4. 使用 npm outdated 检查过时依赖`)
-
-console.log('\n✅ 依赖分析完成！')
+console.log('\n📋 分析完成')

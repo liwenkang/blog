@@ -1,17 +1,19 @@
-const fs = require('fs')
-const path = require('path')
-const inquirer = require('inquirer')
-const dedent = require('dedent')
-const { logger } = require('./utils/script-logger')
+#!/usr/bin/env ts-node
+
+import fs from 'fs'
+import path from 'path'
+import inquirer from 'inquirer'
+import dedent from 'dedent'
+import { logger } from './utils/script-logger.js'
 
 // unify console outputs through script logger
-console.log = function (...args) {
+console.log = function (...args: any[]) {
   return logger.info(args[0], typeof args[1] === 'object' ? args[1] : {})
 }
-console.warn = function (...args) {
+console.warn = function (...args: any[]) {
   return logger.warn(args[0], typeof args[1] === 'object' ? args[1] : {})
 }
-console.error = function (...args) {
+console.error = function (...args: any[]) {
   const [msg, maybeError, meta] = args
   if (maybeError instanceof Error) {
     return logger.error(msg, maybeError, typeof meta === 'object' ? meta : {})
@@ -21,13 +23,13 @@ console.error = function (...args) {
 
 const root = process.cwd()
 
-const getAuthors = () => {
+const getAuthors = (): string[] => {
   const authorPath = path.join(root, 'data', 'authors')
   const authorList = fs.readdirSync(authorPath).map((filename) => path.parse(filename).name)
   return authorList
 }
 
-const getLayouts = () => {
+const getLayouts = (): string[] => {
   const layoutPath = path.join(root, 'layouts')
   const layoutList = fs
     .readdirSync(layoutPath)
@@ -36,7 +38,18 @@ const getLayouts = () => {
   return layoutList
 }
 
-const genFrontMatter = (answers) => {
+interface Answers {
+  title: string
+  extension: string
+  authors: string[]
+  summary: string
+  draft: string
+  tags: string
+  layout: string
+  canonicalUrl: string
+}
+
+const genFrontMatter = (answers: Answers): string => {
   // 使用当前时间生成文章日期
   const now = new Date()
   const date = [
@@ -70,7 +83,7 @@ const genFrontMatter = (answers) => {
 }
 
 inquirer
-  .prompt([
+  .prompt<Answers>([
     {
       name: 'title',
       message: 'Enter post title:',
@@ -134,7 +147,7 @@ inquirer
       }
     })
   })
-  .catch((error) => {
+  .catch((error: any) => {
     if (error.isTtyError) {
       console.log("Prompt couldn't be rendered in the current environment")
     } else {

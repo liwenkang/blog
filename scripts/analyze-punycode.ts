@@ -1,18 +1,18 @@
-#!/usr/bin/env node
+#!/usr/bin/env ts-node
 
-const fs = require('fs')
-const path = require('path')
-const { execSync } = require('child_process')
-const { logger } = require('./utils/script-logger')
+import fs from 'fs'
+import path from 'path'
+import { execSync } from 'child_process'
+import { logger } from './utils/script-logger.js'
 
 // unify console outputs through script logger
-console.log = function (...args) {
+console.log = function (...args: any[]) {
   return logger.info(args[0], typeof args[1] === 'object' ? args[1] : {})
 }
-console.warn = function (...args) {
+console.warn = function (...args: any[]) {
   return logger.warn(args[0], typeof args[1] === 'object' ? args[1] : {})
 }
-console.error = function (...args) {
+console.error = function (...args: any[]) {
   const [msg, maybeError, meta] = args
   if (maybeError instanceof Error) {
     return logger.error(msg, maybeError, typeof meta === 'object' ? meta : {})
@@ -22,10 +22,17 @@ console.error = function (...args) {
 
 console.log('🔍 分析 punycode 废弃警告来源...\n')
 
+interface PackageJson {
+  dependencies?: Record<string, string>
+  devDependencies?: Record<string, string>
+  peerDependencies?: Record<string, string>
+  description?: string
+}
+
 // 1. 检查直接的 punycode 依赖
 console.log('📦 直接 punycode 依赖:')
 try {
-  const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'))
+  const packageJson: PackageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'))
   if (packageJson.dependencies && packageJson.dependencies.punycode) {
     console.log(`  ✅ 直接依赖: punycode@${packageJson.dependencies.punycode}`)
   } else {
@@ -75,7 +82,7 @@ keyPackages.forEach((pkg) => {
   const pkgPath = path.join('node_modules', pkg, 'package.json')
   if (fs.existsSync(pkgPath)) {
     try {
-      const pkgJson = JSON.parse(fs.readFileSync(pkgPath, 'utf8'))
+      const pkgJson: PackageJson = JSON.parse(fs.readFileSync(pkgPath, 'utf8'))
       const deps = pkgJson.dependencies || {}
       const devDeps = pkgJson.devDependencies || {}
       const peerDeps = pkgJson.peerDependencies || {}
@@ -124,8 +131,8 @@ knownIssues.forEach((issue) => {
   const uriJsPath = path.join('node_modules', issue.name, 'node_modules', 'uri-js', 'package.json')
   if (fs.existsSync(uriJsPath)) {
     try {
-      const pkgJson = JSON.parse(fs.readFileSync(uriJsPath, 'utf8'))
-      console.log(`  📋 版本: uri-js@${pkgJson.version}`)
+      const pkgJson: PackageJson = JSON.parse(fs.readFileSync(uriJsPath, 'utf8'))
+      console.log(`  📋 版本: uri-js@${pkgJson.description}`)
       console.log(`  🔗 punycode 依赖: ${pkgJson.dependencies?.punycode || 'N/A'}`)
     } catch {
       console.log(`  ⚠️ 无法读取 uri-js 包信息`)

@@ -1,16 +1,18 @@
-const fs = require('fs')
-const path = require('path')
-const matter = require('gray-matter')
-const { logger } = require('./utils/script-logger')
+#!/usr/bin/env ts-node
+
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
+import { logger } from './utils/script-logger.js'
 
 // unify console outputs through script logger
-console.log = function (...args) {
+console.log = function (...args: any[]) {
   return logger.info(args[0], typeof args[1] === 'object' ? args[1] : {})
 }
-console.warn = function (...args) {
+console.warn = function (...args: any[]) {
   return logger.warn(args[0], typeof args[1] === 'object' ? args[1] : {})
 }
-console.error = function (...args) {
+console.error = function (...args: any[]) {
   const [msg, maybeError, meta] = args
   if (maybeError instanceof Error) {
     return logger.error(msg, maybeError, typeof meta === 'object' ? meta : {})
@@ -20,8 +22,15 @@ console.error = function (...args) {
 
 const blogDir = path.join(process.cwd(), 'data', 'blog')
 
+interface Frontmatter {
+  title?: string
+  tags?: string | string[]
+  draft?: boolean
+  summary?: string
+}
+
 // 判断是否为草稿的智能逻辑
-function isDraft(title, tags, content) {
+function isDraft(title: string = '', tags: string | string[] = [], content: string): boolean {
   // 如果标题包含明显的草稿标识
   if (title.includes('TODO') || title.includes('草稿') || title.includes('WIP')) {
     return true
@@ -41,17 +50,20 @@ function isDraft(title, tags, content) {
   return false
 }
 
-function fixFile(filePath) {
+function fixFile(filePath: string): boolean {
   const content = fs.readFileSync(filePath, 'utf8')
-  const { data, content: markdownContent } = matter(content)
+  const { data, content: markdownContent } = matter(content) as {
+    data: Frontmatter
+    content: string
+  }
   const fileName = path.basename(filePath)
 
   let modified = false
-  const changes = []
+  const changes: string[] = []
 
   // 修复 draft 字段
   if (data.draft === undefined) {
-    data.draft = isDraft(data.title, data.tags, markdownContent)
+    data.draft = isDraft(data.title, data.tags || [], markdownContent)
     changes.push(`draft: ${data.draft}`)
     modified = true
   }
