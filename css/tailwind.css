@@ -1,20 +1,44 @@
 @import 'tailwindcss';
 
-@config '../tailwind.config.js';
-
+/* Define content sources */
 @source '../pages/**/*.{js,jsx,ts,tsx}';
 @source '../components/**/*.{js,jsx,ts,tsx}';
 @source '../layouts/**/*.{js,jsx,ts,tsx}';
 @source '../lib/**/*.{js,jsx,ts,tsx}';
 @source '../data/**/*.mdx';
 
+/* Define theme customizations */
+@theme {
+  /* Primary color (Teal) */
+  --color-primary-50: #f0fdfa;
+  --color-primary-100: #ccfbf1;
+  --color-primary-200: #99f6e4;
+  --color-primary-300: #5eead4;
+  --color-primary-400: #2dd4bf;
+  --color-primary-500: #14b8a6;
+  --color-primary-600: #0d9488;
+  --color-primary-700: #0f766e;
+  --color-primary-800: #115e59;
+  --color-primary-900: #134e4a;
+  --color-primary-950: #042f2e;
+
+  /* Custom font family */
+  --font-sans: 'InterVariable', ui-sans-serif, system-ui, sans-serif;
+
+  /* Custom line heights */
+  --line-height-11: 2.75rem;
+  --line-height-12: 3rem;
+  --line-height-13: 3.25rem;
+  --line-height-14: 3.5rem;
+
+  /* Custom spacing */
+  --spacing-9\/16: 56.25%;
+}
+
 /*
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still
   looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
 */
 @layer base {
   *,
@@ -23,6 +47,147 @@
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+/* Typography styles - Manual implementation for v4 */
+@layer components {
+  .prose {
+    @apply text-base leading-7 text-gray-700 dark:text-gray-300;
+    @apply max-w-none;
+  }
+
+  .prose a {
+    @apply text-primary-500 no-underline;
+    @apply transition-colors duration-200;
+  }
+
+  .prose a:hover {
+    @apply text-primary-600 dark:text-primary-400;
+  }
+
+  .prose a code {
+    @apply text-primary-400;
+  }
+
+  .prose strong {
+    @apply font-semibold text-gray-600 dark:text-gray-100;
+  }
+
+  .prose h1 {
+    @apply text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100;
+    @apply mt-0 mb-4;
+  }
+
+  .prose h2 {
+    @apply text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100;
+    @apply mt-8 mb-4;
+  }
+
+  .prose h3 {
+    @apply text-2xl font-semibold text-gray-900 dark:text-gray-100;
+    @apply mt-6 mb-3;
+  }
+
+  .prose h4,
+  .prose h5,
+  .prose h6 {
+    @apply text-xl font-semibold text-gray-900 dark:text-gray-100;
+    @apply mt-4 mb-2;
+  }
+
+  .prose p {
+    @apply my-4;
+  }
+
+  .prose code {
+    @apply text-pink-500 bg-gray-100 dark:bg-gray-800;
+    @apply px-1 py-0.5 rounded text-sm font-normal;
+  }
+
+  .prose code::before,
+  .prose code::after {
+    content: none;
+  }
+
+  .prose pre {
+    @apply bg-gray-800 text-gray-100;
+    @apply p-4 rounded-lg overflow-x-auto my-4;
+  }
+
+  .prose pre code {
+    @apply bg-transparent text-inherit p-0;
+  }
+
+  .prose blockquote {
+    @apply border-l-4 border-gray-200 dark:border-gray-700;
+    @apply pl-4 italic text-gray-900 dark:text-gray-100 my-4;
+  }
+
+  .prose hr {
+    @apply border-gray-200 dark:border-gray-700 my-8;
+  }
+
+  .prose ol,
+  .prose ul {
+    @apply my-4 pl-6;
+  }
+
+  .prose ol {
+    @apply list-decimal;
+  }
+
+  .prose ul {
+    @apply list-disc;
+  }
+
+  .prose li {
+    @apply my-2;
+  }
+
+  .prose ol > li::marker {
+    @apply font-semibold text-gray-500 dark:text-gray-400;
+  }
+
+  .prose ul > li::marker {
+    @apply text-gray-500 dark:text-gray-400;
+  }
+
+  .prose table {
+    @apply w-full my-4 text-left;
+  }
+
+  .prose thead {
+    @apply border-b-2 border-gray-200 dark:border-gray-700;
+  }
+
+  .prose thead th {
+    @apply font-semibold text-gray-900 dark:text-gray-100 py-2 px-4;
+  }
+
+  .prose tbody tr {
+    @apply border-b border-gray-200 dark:border-gray-700;
+  }
+
+  .prose tbody td {
+    @apply py-2 px-4;
+  }
+
+  .prose img {
+    @apply my-4 rounded-lg;
+  }
+
+  .prose figure {
+    @apply my-4;
+  }
+
+  .prose figcaption {
+    @apply text-sm text-gray-600 dark:text-gray-400 text-center mt-2;
+  }
+
+  .prose details {
+    @apply bg-gray-100 dark:bg-gray-800;
+    @apply px-1 py-0.5 rounded;
   }
 }
 
@@ -68,6 +233,34 @@ input:-webkit-autofill:focus {
   * {
     @apply selection:bg-primary-100 dark:selection:bg-primary-900;
     @apply selection:text-primary-900 dark:selection:text-primary-100;
+  }
+}
+
+/* Form controls - v4 built-in support with custom styling */
+@layer components {
+  input[type='email'],
+  input[type='text'],
+  input[type='password'],
+  input[type='search'],
+  input[type='url'],
+  input[type='tel'],
+  input[type='number'],
+  input[type='date'],
+  textarea,
+  select {
+    @apply block w-full rounded-md border border-gray-300 dark:border-gray-600;
+    @apply bg-white dark:bg-gray-800;
+    @apply text-gray-900 dark:text-gray-100;
+    @apply placeholder-gray-500 dark:placeholder-gray-400;
+    @apply px-4 py-2;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    @apply transition-colors duration-200;
+  }
+
+  input[type='checkbox'],
+  input[type='radio'] {
+    @apply rounded border-gray-300 dark:border-gray-600;
+    @apply text-primary-600 focus:ring-primary-500;
   }
 }
 
