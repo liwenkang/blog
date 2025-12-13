@@ -46,7 +46,8 @@ export function apiHandler<T = any>(
 
       // 这里可以添加认证逻辑
       if (options.requireAuth) {
-        // TODO: 实现认证检查
+        // 认证功能将在集成身份验证服务（如 NextAuth）时实现
+        // 当前不要求认证
       }
 
       // 执行处理器
@@ -60,9 +61,9 @@ export function apiHandler<T = any>(
       // 发送成功响应
       const statusCode = (result as ApiHandlerResult)?.statusCode || 200
       const responseData =
-        (result as ApiHandlerResult)?.data !== undefined
-          ? (result as ApiHandlerResult).data
-          : result
+        (result as ApiHandlerResult)?.data === undefined
+          ? result
+          : (result as ApiHandlerResult).data
       const message = (result as ApiHandlerResult)?.message || 'Success'
 
       res.status(statusCode).json(ApiResponse.success(responseData, message))
@@ -105,7 +106,7 @@ export function apiHandler<T = any>(
  * @throws ApiError 如果验证失败
  */
 export function validateBody(body: any, requiredFields: string[]): void {
-  const missing = requiredFields.filter((field) => !body || !body[field])
+  const missing = requiredFields.filter((field) => !body?.[field])
 
   if (missing.length > 0) {
     throw new ApiError(`Missing required fields: ${missing.join(', ')}`, 400, 'VALIDATION_ERROR', {

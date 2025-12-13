@@ -12,9 +12,10 @@ declare global {
 
 const GAScript = () => {
   useEffect(() => {
-    // 确保只在客户端执行，避免 SSR/CSR 不一致
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('js', 'event', new Date())
+    // 确保只在客户端执行,避免 SSR/CSR 不一致
+    if (globalThis.window !== undefined && (globalThis as any).gtag) {
+      const gtag = (globalThis as any).gtag
+      gtag('js', 'event', new Date())
     }
   }, [])
 
@@ -53,5 +54,8 @@ export const logEvent = (action: string, category?: string, label?: string, valu
   if (label) params.event_label = label
   if (value !== undefined) params.value = value
 
-  window.gtag?.('event', action, params)
+  const gtag = (globalThis as any).gtag
+  if (gtag) {
+    gtag('event', action, params)
+  }
 }

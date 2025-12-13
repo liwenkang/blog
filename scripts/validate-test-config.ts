@@ -1,6 +1,6 @@
 #!/usr/bin/env ts-node
 
-import fs from 'fs'
+import fs from 'node:fs'
 import { logger } from './utils/script-logger.js'
 
 logger.info('🧪 验证测试配置...')
@@ -34,7 +34,7 @@ if (configExists) {
 
     const testScripts = ['test', 'test:watch', 'test:coverage']
     testScripts.forEach((script) => {
-      const exists = packageJson.scripts && packageJson.scripts[script]
+      const exists = packageJson.scripts?.[script]
       logger.info(`  ${exists ? '✅' : '❌'} ${script}: ${exists || '缺失'}`)
     })
 
@@ -50,7 +50,7 @@ if (configExists) {
     ]
 
     testDeps.forEach((dep) => {
-      const exists = packageJson.devDependencies && packageJson.devDependencies[dep]
+      const exists = packageJson.devDependencies?.[dep]
       logger.info(`  ${exists ? '✅' : '❌'} ${dep}: ${exists || '缺失'}`)
     })
   } catch {

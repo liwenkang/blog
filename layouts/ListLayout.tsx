@@ -14,10 +14,10 @@ interface PaginationInfo {
 }
 
 interface ListLayoutProps {
-  posts: FrontMatter[]
-  title: string
-  initialDisplayPosts?: FrontMatter[]
-  pagination?: PaginationInfo
+  readonly posts: FrontMatter[]
+  readonly title: string
+  readonly initialDisplayPosts?: FrontMatter[]
+  readonly pagination?: PaginationInfo
 }
 
 export default function ListLayout({

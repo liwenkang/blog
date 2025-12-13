@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs from 'node:fs'
 import PageTitle from '@/components/PageTitle'
 import generateRss from '@/lib/generate-rss'
 import { MDXLayoutRenderer } from '@/components/MDXComponents'
@@ -41,7 +41,7 @@ export const getStaticProps: GetStaticProps<{
   const authorDetails = await Promise.all(authorPromise)
 
   // 清理 undefined 字段以避免序列化错误
-  const cleanedAuthorDetails = authorDetails.map((author) => JSON.parse(JSON.stringify(author)))
+  const cleanedAuthorDetails = authorDetails.map((author) => structuredClone(author))
 
   // rss
   if (allPosts.length > 0) {
@@ -62,7 +62,13 @@ export default function Blog({
 
   return (
     <>
-      {frontMatter.draft !== true ? (
+      {frontMatter.draft === true ? (
+        <div className="mt-24 text-center">
+          <PageTitle>
+            Under Construction <span aria-label="roadwork sign">🚧</span>
+          </PageTitle>
+        </div>
+      ) : (
         <MDXLayoutRenderer
           layout={frontMatter.layout || DEFAULT_LAYOUT}
           toc={toc}
@@ -72,15 +78,6 @@ export default function Blog({
           prev={prev}
           next={next}
         />
-      ) : (
-        <div className="mt-24 text-center">
-          <PageTitle>
-            Under Construction{' '}
-            <span role="img" aria-label="roadwork sign">
-              🚧
-            </span>
-          </PageTitle>
-        </div>
       )}
     </>
   )

@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 import matter from 'gray-matter'
 import readingTime from 'reading-time'
 import { logger } from './utils/script-logger.js'
@@ -38,25 +38,25 @@ function extractTextFromMarkdown(content: string): string {
   return (
     content
       // 移除代码块
-      .replace(/```[\s\S]*?```/g, '')
+      .replaceAll(/```[\s\S]*?```/g, '')
       // 移除行内代码
-      .replace(/`[^`]*`/g, '')
+      .replaceAll(/`[^`]*`/g, '')
       // 移除标题标记
-      .replace(/^#+\s/gm, '')
+      .replaceAll(/^#+\s/gm, '')
       // 移除链接格式
-      .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+      .replaceAll(/\[([^\]]*)\]\([^)]*\)/g, '$1')
       // 移除图片标记
-      .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
+      .replaceAll(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
       // 移除强调标记
-      .replace(/\*\*([^*]*)\*\*/g, '$1')
-      .replace(/\*([^*]*)\*/g, '$1')
+      .replaceAll(/\*\*([^*]*)\*\*/g, '$1')
+      .replaceAll(/\*([^*]*)\*/g, '$1')
       // 移除列表标记
-      .replace(/^[\s]*[-*+]\s/gm, '')
-      .replace(/^[\s]*\d+\.\s/gm, '')
+      .replaceAll(/^\s*[-*+]\s/gm, '')
+      .replaceAll(/^\s*\d+\.\s/gm, '')
       // 移除引用标记
-      .replace(/^>\s/gm, '')
+      .replaceAll(/^>\s/gm, '')
       // 移除多余的空行
-      .replace(/\n\s*\n/g, '\n')
+      .replaceAll(/\n\s*\n/g, '\n')
       .trim()
   )
 }
@@ -66,8 +66,8 @@ function extractTextFromMarkdown(content: string): string {
  */
 function cleanText(text: string): string {
   return text
-    .replace(/[^\w\s\u4e00-\u9fff]/g, ' ') // 保留中英文、数字、空格
-    .replace(/\s+/g, ' ') // 合并多个空格
+    .replaceAll(/[^\w\s\u4e00-\u9fff]/g, ' ') // 保留中英文、数字、空格
+    .replaceAll(/\s+/g, ' ') // 合并多个空格
     .trim()
 }
 
@@ -148,9 +148,9 @@ async function generateSearchIndex(): Promise<void> {
   }
 }
 
-// 如果直接运行此脚本
+// 如果直接运行此脚本 - 使用 top-level await
 if (import.meta.url === `file://${process.argv[1]}`) {
-  generateSearchIndex()
+  await generateSearchIndex()
 }
 
 export { generateSearchIndex }

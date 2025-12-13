@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 // Import Sentry only on client side
 let Sentry: typeof import('@sentry/nextjs') | undefined
-if (typeof window !== 'undefined') {
+if (globalThis.window !== undefined) {
   Sentry = require('@sentry/nextjs')
 }
 
@@ -36,7 +36,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     })
 
     // You can also log error messages to an error reporting service here
-    if (typeof window !== 'undefined' && Sentry) {
+    if (globalThis.window !== undefined && Sentry) {
       Sentry.captureException(error, {
         contexts: {
           react: {
@@ -65,7 +65,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
             <div className="space-y-4">
               <button
-                onClick={() => window.location.reload()}
+                onClick={() => globalThis.location.reload()}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
               >
                 重新加载页面
@@ -86,10 +86,10 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                 </summary>
                 <pre className="mt-2 p-4 bg-red-50 dark:bg-red-900/20 rounded text-xs overflow-auto">
                   <code className="text-red-800 dark:text-red-400">
-                    {this.state.error && this.state.error.toString()}
+                    {this.state.error?.toString()}
                     <br />
                     <br />
-                    {this.state.errorInfo && this.state.errorInfo.componentStack}
+                    {this.state.errorInfo?.componentStack}
                   </code>
                 </pre>
               </details>

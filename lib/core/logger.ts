@@ -27,14 +27,14 @@ interface FormattedMessage {
 }
 
 export class Logger {
-  private level: number
-  private isDev: boolean
-  private isServer: boolean
+  private readonly level: number
+  private readonly isDev: boolean
+  private readonly isServer: boolean
 
   constructor() {
     this.level = this.getLogLevel()
     this.isDev = process.env.NODE_ENV === 'development'
-    this.isServer = typeof window === 'undefined'
+    this.isServer = globalThis.window === undefined
   }
 
   private getLogLevel(): number {
@@ -121,7 +121,7 @@ export class Logger {
       }
 
       // 生产环境发送到 Sentry
-      if (!this.isDev && typeof window !== 'undefined' && error) {
+      if (!this.isDev && globalThis.window !== undefined && error) {
         this.sendToSentry(error, meta)
       }
     }
@@ -129,27 +129,28 @@ export class Logger {
 
   private sendToSentry(error: Error, meta: LogMetadata = {}): void {
     // 动态导入 Sentry 避免影响构建
-    if (typeof window !== 'undefined') {
-      try {
-        import('@sentry/nextjs')
-          .then(({ captureException }) => {
-            captureException(error, {
-              extra: meta,
-              level: 'error',
-            })
+    if (globalThis.window !== undefined) {
+      import('@sentry/nextjs')
+        .then(({ captureException }) => {
+          captureException(error, {
+            extra: meta,
+            level: 'error',
           })
-          .catch(() => {
-            // Sentry 不可用时静默失败
-          })
-      } catch {
-        // 静默失败
-      }
+        })
+        .catch(() => {
+          // Sentry 不可用时静默失败
+        })
     }
   }
 
   // 用于 API 日志
   api(method: string, url: string, status: number, meta: LogMetadata = {}): void {
-    const statusEmoji = status >= 500 ? '🔴' : status >= 400 ? '🟡' : '🟢'
+    let statusEmoji = '🟢'
+    if (status >= 500) {
+      statusEmoji = '🔴'
+    } else if (status >= 400) {
+      statusEmoji = '🟡'
+    }
     const message = `${method} ${url} - ${status}`
 
     if (status >= 500) {

@@ -13,7 +13,7 @@ export async function getStaticProps() {
   return { props: { tags } }
 }
 
-export default function Tags({ tags }: InferGetStaticPropsType<typeof getStaticProps>) {
+export default function Tags({ tags }: Readonly<InferGetStaticPropsType<typeof getStaticProps>>) {
   const sortedTags = Object.keys(tags).sort((a, b) => tags[b] - tags[a])
   return (
     <>

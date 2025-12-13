@@ -57,7 +57,7 @@ describe('API Response', () => {
     })
 
     it('应该有默认错误消息', () => {
-      const error = new Error()
+      const error = new Error('Default error')
       const response = ApiResponse.error(error)
 
       expect(response.error.message).toBe('Internal Server Error')

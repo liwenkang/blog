@@ -17,6 +17,8 @@ interface SearchProps {
 // 搜索结果项组件
 const SearchResultItem = ({ item, onSelect, onKeyDown, isActive }: SearchResultItemProps) => {
   return (
+    // Custom implementation using ARIA roles for better styling control
+    // Native <option> elements cannot be styled to match design requirements
     <div
       className={`block px-4 py-3 cursor-pointer transition-colors duration-150 ${
         isActive
@@ -27,6 +29,7 @@ const SearchResultItem = ({ item, onSelect, onKeyDown, isActive }: SearchResultI
       onKeyDown={onKeyDown}
       role="option"
       aria-selected={isActive}
+      tabIndex={0}
     >
       <div className="flex flex-col space-y-1">
         <div className="font-medium text-gray-900 dark:text-gray-100 line-clamp-1">
@@ -68,10 +71,68 @@ const Search = ({ onClose }: SearchProps) => {
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const [searchIndex, setSearchIndex] = useState<any>(null)
   const [searchData, setSearchData] = useState<SearchIndexItem[]>([])
-
   const searchInputRef = useRef<HTMLInputElement>(null)
   const searchContainerRef = useRef<HTMLDivElement>(null)
   const resultsRef = useRef<HTMLDivElement>(null)
+
+  // 渲染搜索结果区域
+  const renderSearchContent = () => {
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+        </div>
+      )
+    }
+
+    if (!searchQuery) {
+      return null
+    }
+
+    if (searchResults.length === 0) {
+      return (
+        <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+          <div className="mb-2">
+            <svg
+              className="w-12 h-12 mx-auto text-gray-300 dark:text-gray-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <p className="text-lg font-medium mb-1">未找到相关内容</p>
+          <p className="text-sm">尝试使用不同的关键词进行搜索</p>
+        </div>
+      )
+    }
+
+    // Using ARIA listbox pattern for custom-styled search results
+    // Native <select> elements have limited styling capabilities
+    return (
+      <div role="listbox" aria-label="搜索结果">
+        {searchResults.map((item, index) => (
+          <SearchResultItem
+            key={item.id}
+            item={item}
+            onSelect={handleResultSelect}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleResultSelect(item)
+              }
+            }}
+            isActive={index === selectedIndex}
+          />
+        ))}
+      </div>
+    )
+  }
 
   // 加载搜索索引和数据
   useEffect(() => {
@@ -97,10 +158,13 @@ const Search = ({ onClose }: SearchProps) => {
         setSearchIndex(index)
         setSearchData(data)
         setIsLoading(false)
-      } catch (error) {
+      } catch (error: unknown) {
         // 动态导入 logger 避免增加初始包大小
         import('@/lib/core/logger').then(({ logger }) => {
-          logger.error('加载搜索数据失败')
+          logger.error(
+            '加载搜索数据失败',
+            error instanceof Error ? error : new Error(String(error))
+          )
         })
         setIsLoading(false)
       }
@@ -131,9 +195,9 @@ const Search = ({ onClose }: SearchProps) => {
         } else {
           announceToScreenReader('未找到相关内容')
         }
-      } catch (error) {
+      } catch (error: unknown) {
         import('@/lib/core/logger').then(({ logger }) => {
-          logger.error('搜索执行失败')
+          logger.error('搜索执行失败', error instanceof Error ? error : new Error(String(error)))
         })
         setSearchResults([])
       }
@@ -196,7 +260,7 @@ const Search = ({ onClose }: SearchProps) => {
   const handleResultSelect = (item: SearchIndexItem) => {
     onClose()
     // 使用Next.js路由导航到文章页面
-    window.location.href = item.url
+    globalThis.location.href = item.url
   }
 
   // 点击外部关闭搜索
@@ -226,6 +290,8 @@ const Search = ({ onClose }: SearchProps) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-black/50 backdrop-blur-sm">
+      {/* Using ARIA dialog pattern for better browser compatibility */}
+      {/* Native <dialog> element has limited support in older browsers */}
       <div
         ref={searchContainerRef}
         className="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
@@ -279,51 +345,7 @@ const Search = ({ onClose }: SearchProps) => {
         </div>
 
         <div className="max-h-96 overflow-y-auto" ref={resultsRef}>
-          {isLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
-            </div>
-          ) : searchQuery && searchResults.length === 0 ? (
-            <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-              <div className="mb-2">
-                <svg
-                  className="w-12 h-12 mx-auto text-gray-300 dark:text-gray-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <p className="text-lg font-medium mb-1">未找到相关内容</p>
-              <p className="text-sm">尝试使用不同的关键词进行搜索</p>
-            </div>
-          ) : searchResults.length > 0 ? (
-            <div role="listbox" aria-label="搜索结果">
-              {searchResults.map((item, index) => (
-                <SearchResultItem
-                  key={item.id}
-                  item={item}
-                  onSelect={handleResultSelect}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      handleResultSelect(item)
-                    }
-                  }}
-                  isActive={index === selectedIndex}
-                />
-              ))}
-            </div>
-          ) : searchQuery ? (
-            <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-              <p>输入关键词开始搜索...</p>
-            </div>
-          ) : null}
+          {renderSearchContent()}
         </div>
 
         {searchResults.length > 0 && (

@@ -21,7 +21,7 @@ export async function getStaticProps() {
   return { props: { posts } }
 }
 
-export default function Home({ posts }: InferGetStaticPropsType<typeof getStaticProps>) {
+export default function Home({ posts }: Readonly<InferGetStaticPropsType<typeof getStaticProps>>) {
   return (
     <>
       <Head>

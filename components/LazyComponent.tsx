@@ -17,13 +17,13 @@ export const withLazyLoading = <P extends object>(
   } as DynamicOptions<P>)
 
   // Preload the component if requested
-  if (preload && typeof window !== 'undefined') {
+  if (preload && globalThis.window !== undefined) {
     if (typeof importFunc === 'function') {
       importFunc()
     }
   }
 
-  return LazyComponent as ComponentType<P>
+  return LazyComponent
 }
 
 // Default loading component
@@ -75,7 +75,7 @@ export const LazyLoadComponent = ({
 
   // Use Intersection Observer for lazy loading
   useEffect(() => {
-    if (!elementRef || typeof window === 'undefined') return
+    if (!elementRef || globalThis.window === undefined) return
 
     const observer = new IntersectionObserver(
       ([entry]) => {

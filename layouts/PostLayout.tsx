@@ -43,7 +43,7 @@ export default function PostLayout({
   next,
   prev,
   children,
-}: PostLayoutProps) {
+}: Readonly<PostLayoutProps>) {
   const { slug, fileName, date, title, tags } = frontMatter
 
   // Breadcrumb data for blog posts

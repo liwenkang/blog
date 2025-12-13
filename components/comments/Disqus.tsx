@@ -19,10 +19,13 @@ declare global {
     DISQUS?: any
     disqus_config?: (this: DisqusConfig) => void
   }
+  var DISQUS: any
+  var disqus_config: ((this: DisqusConfig) => void) | undefined
+  var location: Location
 }
 
 const Disqus = ({ frontMatter }: DisqusProps) => {
-  const [enableLoadComments, setEnabledLoadComments] = useState(true)
+  const [enableLoadComments, setEnableLoadComments] = useState(true)
   const [mounted, setMounted] = useState(false)
 
   // 确保组件在客户端挂载后才渲染
@@ -33,13 +36,17 @@ const Disqus = ({ frontMatter }: DisqusProps) => {
   const COMMENTS_ID = 'disqus_thread'
 
   function LoadComments() {
-    setEnabledLoadComments(false)
+    setEnableLoadComments(false)
 
-    window.disqus_config = function () {
-      this.page.url = window.location.href
+    // Disqus API requires 'this' context - this is not a React component method
+    // The 'this' usage here is required by Disqus's configuration API
+    globalThis.disqus_config = function () {
+      // @ts-ignore - Disqus API requires 'this' context
+      this.page.url = globalThis.location.href
+      // @ts-ignore - Disqus API requires 'this' context
       this.page.identifier = frontMatter.slug || ''
     }
-    if (window.DISQUS === undefined) {
+    if (globalThis.DISQUS === undefined) {
       const script = document.createElement('script')
       script.src =
         'https://' + siteMetadata.comment.disqusConfig?.shortname + '.disqus.com/embed.js'
@@ -49,7 +56,7 @@ const Disqus = ({ frontMatter }: DisqusProps) => {
       script.async = true
       document.body.appendChild(script)
     } else {
-      window.DISQUS.reset({ reload: true })
+      globalThis.DISQUS.reset({ reload: true })
     }
   }
 

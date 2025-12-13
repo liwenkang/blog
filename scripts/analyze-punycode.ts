@@ -1,8 +1,8 @@
 #!/usr/bin/env ts-node
 
-import fs from 'fs'
-import path from 'path'
-import { execSync } from 'child_process'
+import fs from 'node:fs'
+import path from 'node:path'
+import { execSync } from 'node:child_process'
 import { logger } from './utils/script-logger.js'
 
 // unify console outputs through script logger
@@ -33,7 +33,7 @@ interface PackageJson {
 console.log('📦 直接 punycode 依赖:')
 try {
   const packageJson: PackageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'))
-  if (packageJson.dependencies && packageJson.dependencies.punycode) {
+  if (packageJson.dependencies?.punycode) {
     console.log(`  ✅ 直接依赖: punycode@${packageJson.dependencies.punycode}`)
   } else {
     console.log('  ❌ 无直接 punycode 依赖')
@@ -50,7 +50,7 @@ try {
   const result = execSync('npm ls punycode --json', { encoding: 'utf8' })
   const npmData = JSON.parse(result)
 
-  if (npmData.dependencies && npmData.dependencies.punycode) {
+  if (npmData.dependencies?.punycode) {
     const punycodeDeps = npmData.dependencies.punycode
     console.log(`  📦 punycode@${punycodeDeps.version} (${punycodeDeps.from})`)
     console.log(`  📋 描述: ${punycodeDeps.description}`)
@@ -68,6 +68,36 @@ try {
   console.log('❌ 无法运行 npm why')
 }
 
+// Helper function to check package for punycode dependencies
+function checkPackagePunycode(pkg: string): void {
+  const pkgPath = path.join('node_modules', pkg, 'package.json')
+
+  if (!fs.existsSync(pkgPath)) {
+    console.log(`  ⚠️ ${pkg}: 包不存在`)
+    return
+  }
+
+  try {
+    const pkgJson: PackageJson = JSON.parse(fs.readFileSync(pkgPath, 'utf8'))
+    const deps = pkgJson.dependencies || {}
+    const devDeps = pkgJson.devDependencies || {}
+    const peerDeps = pkgJson.peerDependencies || {}
+
+    const hasPunycode = deps.punycode || devDeps.punycode || peerDeps.punycode
+
+    if (hasPunycode) {
+      console.log(`  ✅ ${pkg}:`)
+      if (deps.punycode) console.log(`    - dependencies: punycode@${deps.punycode}`)
+      if (devDeps.punycode) console.log(`    - devDependencies: punycode@${devDeps.punycode}`)
+      if (peerDeps.punycode) console.log(`    - peerDependencies: punycode@${peerDeps.punycode}`)
+    } else {
+      console.log(`  ❌ ${pkg}: 无 punycode 依赖`)
+    }
+  } catch {
+    console.log(`  ⚠️ ${pkg}: 无法解析 package.json`)
+  }
+}
+
 // 4. 检查关键依赖包的 package.json
 console.log('\n📋 检查关键依赖包:')
 const keyPackages = [
@@ -78,30 +108,7 @@ const keyPackages = [
   'node_modules/uri-js',
 ]
 
-keyPackages.forEach((pkg) => {
-  const pkgPath = path.join('node_modules', pkg, 'package.json')
-  if (fs.existsSync(pkgPath)) {
-    try {
-      const pkgJson: PackageJson = JSON.parse(fs.readFileSync(pkgPath, 'utf8'))
-      const deps = pkgJson.dependencies || {}
-      const devDeps = pkgJson.devDependencies || {}
-      const peerDeps = pkgJson.peerDependencies || {}
-
-      if (deps.punycode || devDeps.punycode || peerDeps.punycode) {
-        console.log(`  ✅ ${pkg}:`)
-        if (deps.punycode) console.log(`    - dependencies: punycode@${deps.punycode}`)
-        if (devDeps.punycode) console.log(`    - devDependencies: punycode@${devDeps.punycode}`)
-        if (peerDeps.punycode) console.log(`    - peerDependencies: punycode@${peerDeps.punycode}`)
-      } else {
-        console.log(`  ❌ ${pkg}: 无 punycode 依赖`)
-      }
-    } catch {
-      console.log(`  ⚠️ ${pkg}: 无法解析 package.json`)
-    }
-  } else {
-    console.log(`  ⚠️ ${pkg}: 包不存在`)
-  }
-})
+keyPackages.forEach(checkPackagePunycode)
 
 // 5. 分析特定的已知问题包
 console.log('\n🎯 已知问题包分析:')

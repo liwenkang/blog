@@ -3,7 +3,7 @@ const formatDate = (date: string | Date | null | undefined): string => {
 
   // 使用固定的日期格式，避免 SSR/CSR 不一致
   const dateObj = new Date(date)
-  if (isNaN(dateObj.getTime())) {
+  if (Number.isNaN(dateObj.getTime())) {
     console.warn(`Invalid date format: ${date}`)
     return ''
   }
@@ -39,17 +39,17 @@ export const toISOString = (date: string | Date | null | undefined): string | nu
 
     // 其他格式使用Date对象处理
     const parsedDate = new Date(dateStr)
-    if (isNaN(parsedDate.getTime())) {
+    if (Number.isNaN(parsedDate.getTime())) {
       console.warn(`Invalid date format: ${dateStr}`)
       return null
     }
-    // 使用 toISOString() 确保 SSR/CSR 一致性
+    // 使用 toISOString() 确保SSR/CSR 一致性
     return parsedDate.toISOString()
   }
 
   // 如果是Date对象
   if (date instanceof Date) {
-    if (isNaN(date.getTime())) {
+    if (Number.isNaN(date.getTime())) {
       console.warn('Invalid Date object')
       return null
     }

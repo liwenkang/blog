@@ -20,7 +20,7 @@ interface PerformanceObserver {
  * 性能指标收集器
  */
 export class PerformanceCollector {
-  private metrics: Map<string, PerformanceMetric>
+  private readonly metrics: Map<string, PerformanceMetric>
   private observers: PerformanceObserver[]
 
   constructor() {
@@ -43,8 +43,8 @@ export class PerformanceCollector {
     logger.perf(name, value, metadata)
 
     // 发送到 Google Analytics（如果可用）
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      ;(window as any).gtag('event', 'performance_metric', {
+    if (globalThis.window !== undefined && (globalThis as any).gtag) {
+      ;(globalThis as any).gtag('event', 'performance_metric', {
         event_category: 'Performance',
         event_label: name,
         value: Math.round(value),
@@ -203,7 +203,7 @@ interface PageLoadMetrics {
 export function getPageLoadMetrics(): PageLoadMetrics | null {
   if (typeof performance === 'undefined') return null
 
-  const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
+  const navigation = performance.getEntriesByType('navigation')[0]
   if (!navigation) return null
 
   const metrics: PageLoadMetrics = {
@@ -273,7 +273,7 @@ function getFirstContentfulPaint(): number {
  * 监控 Web Vitals
  */
 export async function trackWebVitals(): Promise<void> {
-  if (typeof window === 'undefined') return
+  if (globalThis.window === undefined) return
 
   try {
     const { onCLS, onFCP, onINP, onLCP, onTTFB } = await import('web-vitals')
@@ -289,8 +289,8 @@ export async function trackWebVitals(): Promise<void> {
       })
 
       // 发送到 Google Analytics
-      if ((window as any).gtag) {
-        ;(window as any).gtag('event', metric.name, {
+      if ((globalThis as any).gtag) {
+        ;(globalThis as any).gtag('event', metric.name, {
           event_category: 'Web Vitals',
           event_label: metric.id,
           value,
@@ -344,7 +344,7 @@ export function getMemoryUsage(): MemoryUsage | null {
  * 监控 FPS
  */
 export function trackFPS(callback?: (fps: number) => void): () => void {
-  if (typeof window === 'undefined') return () => {}
+  if (globalThis.window === undefined) return () => {}
 
   let frameCount = 0
   let lastTime = performance.now()

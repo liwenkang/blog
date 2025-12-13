@@ -156,7 +156,7 @@ export const BlogPostingStructuredData = ({
       '@id': `${siteUrl}${post.slug}`,
     },
     keywords: post.tags?.join(', '),
-    wordCount: typeof post.readingTime === 'string' ? post.readingTime.match(/\d+/)?.[0] || 0 : 0,
+    wordCount: typeof post.readingTime === 'string' ? /\d+/.exec(post.readingTime)?.[0] || 0 : 0,
     inLanguage: 'zh-CN',
     isAccessibleForFree: true,
   }
@@ -299,7 +299,7 @@ export const ArticleStructuredData = ({
     },
     articleSection: article.category || 'Technology',
     wordCount:
-      typeof article.readingTime === 'string' ? article.readingTime.match(/\d+/)?.[0] || 0 : 0,
+      typeof article.readingTime === 'string' ? /\d+/.exec(article.readingTime)?.[0] || 0 : 0,
     inLanguage: 'zh-CN',
   }
 

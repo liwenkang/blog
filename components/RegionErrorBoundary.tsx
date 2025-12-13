@@ -11,7 +11,7 @@ interface RegionErrorBoundaryProps {
 export default function RegionErrorBoundary({
   children,
   label = '模块',
-}: RegionErrorBoundaryProps) {
+}: Readonly<RegionErrorBoundaryProps>) {
   return (
     <ErrorBoundary>
       <div aria-live="polite" aria-label={`${label}区域`}>

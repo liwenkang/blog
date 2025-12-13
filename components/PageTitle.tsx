@@ -1,7 +1,7 @@
-import { ReactNode } from 'react'
+import React from 'react'
 
 interface PageTitleProps {
-  children: ReactNode
+  readonly children: React.ReactNode
 }
 
 export default function PageTitle({ children }: PageTitleProps) {

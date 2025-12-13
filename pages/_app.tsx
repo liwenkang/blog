@@ -38,7 +38,7 @@ const isSocket = process.env.SOCKET
 export default function App({ Component, pageProps }: AppProps) {
   // Report web vitals
   React.useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (globalThis.window !== undefined) {
       reportWebVitals()
     }
   }, [])

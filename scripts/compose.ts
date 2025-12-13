@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 import inquirer from 'inquirer'
 import dedent from 'dedent'
 import { logger } from './utils/script-logger.js'
@@ -66,7 +66,7 @@ const genFrontMatter = (answers: Answers): string => {
   title: ${answers.title ? answers.title : 'Untitled'}
   date: '${date}'
   tags: [${answers.tags ? tags : ''}]
-  draft: ${answers.draft === 'yes' ? true : false}
+  draft: ${answers.draft === 'yes'}
   summary: ${answers.summary ? answers.summary : ' '}
   images: []
   layout: ${answers.layout}
@@ -82,8 +82,9 @@ const genFrontMatter = (answers: Answers): string => {
   return frontMatter
 }
 
-inquirer
-  .prompt<Answers>([
+// Main execution
+try {
+  const answers = await inquirer.prompt<Answers>([
     {
       name: 'title',
       message: 'Enter post title:',
@@ -129,28 +130,24 @@ inquirer
       type: 'input',
     },
   ])
-  .then((answers) => {
-    // Remove special characters and replace space with -
-    const fileName = answers.title
-      .toLowerCase()
-      .replace(/[^a-zA-Z0-9 ]/g, '')
-      .replace(/ /g, '-')
-      .replace(/-+/g, '-')
-    const frontMatter = genFrontMatter(answers)
-    if (!fs.existsSync('data/blog')) fs.mkdirSync('data/blog', { recursive: true })
-    const filePath = `data/blog/${fileName ? fileName : 'untitled'}.${answers.extension ? answers.extension : 'md'}`
-    fs.writeFile(filePath, frontMatter, { flag: 'wx' }, (err) => {
-      if (err) {
-        throw err
-      } else {
-        console.log(`Blog post generated successfully at ${filePath}`)
-      }
-    })
-  })
-  .catch((error: any) => {
-    if (error.isTtyError) {
-      console.log("Prompt couldn't be rendered in the current environment")
-    } else {
-      console.log('Something went wrong, sorry!')
-    }
-  })
+
+  // Remove special characters and replace space with -
+  const fileName = answers.title
+    .toLowerCase()
+    .replaceAll(/[^a-zA-Z0-9 ]/g, '')
+    .replaceAll(' ', '-')
+    .replaceAll(/-+/g, '-')
+  const frontMatter = genFrontMatter(answers)
+  if (!fs.existsSync('data/blog')) fs.mkdirSync('data/blog', { recursive: true })
+  const filePath = `data/blog/${fileName || 'untitled'}.${answers.extension || 'md'}`
+  fs.writeFileSync(filePath, frontMatter, { flag: 'wx' })
+  console.log(`Blog post generated successfully at ${filePath}`)
+} catch (error: any) {
+  if (error.isTtyError) {
+    console.log("Prompt couldn't be rendered in the current environment")
+  } else if (error.code === 'EEXIST') {
+    console.error('File already exists!')
+  } else {
+    console.error('Something went wrong:', error.message)
+  }
+}

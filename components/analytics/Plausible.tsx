@@ -29,5 +29,5 @@ export default PlausibleScript
 
 // https://plausible.io/docs/custom-event-goals
 export const logEvent = (eventName: string, ...rest: any[]) => {
-  return window.plausible?.(eventName, ...rest)
+  return (globalThis as any).plausible?.(eventName, ...rest)
 }

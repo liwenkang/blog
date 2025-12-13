@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes'
 import siteMetadata from '@/data/siteMetadata'
 
 const Giscus = () => {
-  const [enableLoadComments, setEnabledLoadComments] = useState(true)
+  const [enableLoadComments, setEnableLoadComments] = useState(true)
   const [mounted, setMounted] = useState(false)
   const { theme, resolvedTheme } = useTheme()
 
@@ -13,17 +13,22 @@ const Giscus = () => {
     setMounted(true)
   }, [])
 
-  const commentsTheme =
-    siteMetadata.comment.giscusConfig?.themeURL === ''
-      ? theme === 'dark' || resolvedTheme === 'dark'
-        ? siteMetadata.comment.giscusConfig?.darkTheme
-        : siteMetadata.comment.giscusConfig?.theme
-      : siteMetadata.comment.giscusConfig?.themeURL
+  const getCommentsTheme = () => {
+    if (siteMetadata.comment.giscusConfig?.themeURL !== '') {
+      return siteMetadata.comment.giscusConfig?.themeURL
+    }
+    const isDark = theme === 'dark' || resolvedTheme === 'dark'
+    return isDark
+      ? siteMetadata.comment.giscusConfig?.darkTheme
+      : siteMetadata.comment.giscusConfig?.theme
+  }
+
+  const commentsTheme = getCommentsTheme()
 
   const COMMENTS_ID = 'comments-container'
 
   const LoadComments = useCallback(() => {
-    setEnabledLoadComments(false)
+    setEnableLoadComments(false)
 
     const {
       repo = '',
@@ -39,18 +44,18 @@ const Giscus = () => {
 
     const script = document.createElement('script')
     script.src = 'https://giscus.app/client.js'
-    script.setAttribute('data-repo', repo)
-    script.setAttribute('data-repo-id', repositoryId)
-    script.setAttribute('data-category', category)
-    script.setAttribute('data-category-id', categoryId)
-    script.setAttribute('data-mapping', mapping)
-    script.setAttribute('data-reactions-enabled', reactions)
-    script.setAttribute('data-emit-metadata', metadata)
-    script.setAttribute('data-input-position', inputPosition)
-    script.setAttribute('data-lang', lang)
-    script.setAttribute('data-theme', commentsTheme || 'light')
+    script.dataset.repo = repo
+    script.dataset.repoId = repositoryId
+    script.dataset.category = category
+    script.dataset.categoryId = categoryId
+    script.dataset.mapping = mapping
+    script.dataset.reactionsEnabled = reactions
+    script.dataset.emitMetadata = metadata
+    script.dataset.inputPosition = inputPosition
+    script.dataset.lang = lang
+    script.dataset.theme = commentsTheme || 'light'
+    script.dataset.loading = 'lazy'
     script.setAttribute('crossorigin', 'anonymous')
-    script.setAttribute('data-loading', 'lazy')
     script.async = true
 
     const comments = document.getElementById(COMMENTS_ID)

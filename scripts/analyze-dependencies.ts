@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 import { logger } from './utils/script-logger.js'
 
 // unify console outputs through script logger
@@ -54,7 +54,7 @@ console.log('🔍 检查代码中的实际使用情况...')
 
 const directoriesToSearch = ['pages', 'components', 'lib', 'styles', 'scripts', '.']
 
-const extensionsToCheck = ['.js', '.jsx', '.ts', '.tsx', '.mdx']
+const extensionsToCheck = new Set(['.js', '.jsx', '.ts', '.tsx', '.mdx'])
 
 const importPatterns = [
   // CommonJS patterns
@@ -126,7 +126,7 @@ function searchDirectory(dir: string) {
       searchDirectory(fullPath)
     } else if (stat.isFile()) {
       const ext = path.extname(item)
-      if (extensionsToCheck.includes(ext)) {
+      if (extensionsToCheck.has(ext)) {
         searchInFile(fullPath)
       }
     }

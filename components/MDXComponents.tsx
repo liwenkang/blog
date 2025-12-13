@@ -30,7 +30,7 @@ export const MDXComponents = {
   a: CustomLink,
   pre: Pre,
   BlogNewsletterForm: BlogNewsletterForm,
-  wrapper: ({ components, layout, ...rest }: any) => {
+  wrapper: ({ components: _components, layout, ...rest }: any) => {
     const Layout = layouts[layout]
     return Layout ? <Layout {...rest} /> : null
   },
@@ -46,7 +46,7 @@ export const MDXLayoutRenderer = ({
   layout,
   mdxSource,
   ...rest
-}: MDXLayoutRendererProps): ReactElement => {
+}: Readonly<MDXLayoutRendererProps>): ReactElement => {
   const MDXLayout = useMemo(() => getMDXComponent(mdxSource), [mdxSource])
 
   return <MDXLayout layout={layout} components={MDXComponents} {...rest} />

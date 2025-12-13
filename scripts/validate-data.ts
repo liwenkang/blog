@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 import matter from 'gray-matter'
 import { logger } from './utils/script-logger.js'
 
@@ -65,7 +65,7 @@ function validateFile(filePath: string): ValidationResult {
   }
 
   // 检查日期格式
-  if (data.date && isNaN(Date.parse(data.date))) {
+  if (data.date && Number.isNaN(Date.parse(data.date))) {
     errors.push('date 字段格式无效')
   }
 
