@@ -39,11 +39,16 @@ export interface PostItem {
 }
 
 export interface SearchIndexItem {
+  id: string
   slug: string
   title: string
   summary?: string
   tags?: string[]
   content?: string
+  date: string
+  readingTime: string
+  url: string
+  searchText: string
 }
 
 export interface SiteMetadata {
