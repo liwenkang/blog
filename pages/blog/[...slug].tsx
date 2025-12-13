@@ -40,13 +40,16 @@ export const getStaticProps: GetStaticProps<{
   })
   const authorDetails = await Promise.all(authorPromise)
 
+  // 清理 undefined 字段以避免序列化错误
+  const cleanedAuthorDetails = authorDetails.map((author) => JSON.parse(JSON.stringify(author)))
+
   // rss
   if (allPosts.length > 0) {
     const rss = generateRss(allPosts)
     fs.writeFileSync('./public/feed.xml', rss)
   }
 
-  return { props: { post, authorDetails, prev, next } }
+  return { props: { post, authorDetails: cleanedAuthorDetails, prev, next } }
 }
 
 export default function Blog({
