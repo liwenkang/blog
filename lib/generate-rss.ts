@@ -1,18 +1,11 @@
 import { escape } from '@/lib/utils/htmlEscaper'
 import siteMetadata from '@/data/siteMetadata'
+import { FrontMatter } from '@/lib/mdx'
 
-interface Post {
-  slug: string
-  title: string
-  summary?: string
-  date: string
-  tags?: string[]
-}
-
-const generateRssItem = (post: Post): string => `
+const generateRssItem = (post: FrontMatter): string => `
   <item>
     <guid>${siteMetadata.siteUrl}/blog/${post.slug}</guid>
-    <title>${escape(post.title)}</title>
+    <title>${escape(post.title || '')}</title>
     <link>${siteMetadata.siteUrl}/blog/${post.slug}</link>
     ${post.summary ? `<description>${escape(post.summary)}</description>` : ''}
     <pubDate>${new Date(post.date).toUTCString()}</pubDate>
@@ -21,7 +14,7 @@ const generateRssItem = (post: Post): string => `
   </item>
 `
 
-const generateRss = (posts: Post[], page = 'feed.xml'): string => `
+const generateRss = (posts: FrontMatter[], page = 'feed.xml'): string => `
   <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
       <title>${escape(siteMetadata.title)}</title>

@@ -11,6 +11,7 @@ import {
   PersonStructuredData,
   OrganizationStructuredData,
 } from '@/components/StructuredData'
+import { InferGetStaticPropsType } from 'next'
 
 const MAX_DISPLAY = 5
 
@@ -20,7 +21,7 @@ export async function getStaticProps() {
   return { props: { posts } }
 }
 
-export default function Home({ posts }) {
+export default function Home({ posts }: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
     <>
       <Head>
@@ -78,7 +79,7 @@ export default function Home({ posts }) {
                             </Link>
                           </h2>
                           <div className="flex flex-wrap">
-                            {tags.map((tag) => (
+                            {(tags || []).map((tag) => (
                               <Tag key={tag} text={tag} />
                             ))}
                           </div>

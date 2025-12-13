@@ -7,6 +7,7 @@ import React from 'react'
 
 import { ThemeProvider } from 'next-themes'
 import Head from 'next/head'
+import { AppProps } from 'next/app'
 
 import siteMetadata from '@/data/siteMetadata'
 import Analytics from '@/components/analytics'
@@ -27,14 +28,14 @@ if (process.env.NODE_ENV === 'development') {
     getEnv(false) // 非严格模式，允许部分配置缺失
     logger.success('环境变量加载完成')
   } catch (error) {
-    logger.warn('环境变量验证失败，部分功能可能不可用', { error: error.message })
+    logger.warn('环境变量验证失败，部分功能可能不可用', { error: (error as Error).message })
   }
 }
 
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isSocket = process.env.SOCKET
 
-export default function App({ Component, pageProps }) {
+export default function App({ Component, pageProps }: AppProps) {
   // Report web vitals
   React.useEffect(() => {
     if (typeof window !== 'undefined') {

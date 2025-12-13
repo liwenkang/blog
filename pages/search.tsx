@@ -17,7 +17,7 @@ export default function SearchPage() {
         <div className="w-full max-w-2xl text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">搜索博客</h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
-            搜索 {siteMetadata.totalPages || '37'} 篇技术文章
+            搜索 {String('totalPages' in siteMetadata ? siteMetadata.totalPages : '37')} 篇技术文章
           </p>
           <div className="text-sm text-gray-500 dark:text-gray-500 space-y-1">
             <p>💡 提示：您也可以按 Ctrl+K（Mac：Cmd+K）在任意页面快速打开搜索</p>

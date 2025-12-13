@@ -6,14 +6,7 @@ import Pagination from '@/components/Pagination'
 import formatDate from '@/lib/utils/formatDate'
 import Head from 'next/head'
 import { CollectionPageStructuredData, BreadcrumbStructuredData } from '@/components/StructuredData'
-
-interface Post {
-  slug: string
-  date: string
-  title: string
-  summary: string
-  tags: string[]
-}
+import { FrontMatter } from '@/lib/mdx'
 
 interface PaginationInfo {
   currentPage: number
@@ -21,9 +14,9 @@ interface PaginationInfo {
 }
 
 interface ListLayoutProps {
-  posts: Post[]
+  posts: FrontMatter[]
   title: string
-  initialDisplayPosts?: Post[]
+  initialDisplayPosts?: FrontMatter[]
   pagination?: PaginationInfo
 }
 
@@ -35,7 +28,8 @@ export default function ListLayout({
 }: ListLayoutProps) {
   const [searchValue, setSearchValue] = useState('')
   const filteredBlogPosts = posts.filter((frontMatter) => {
-    const searchContent = frontMatter.title + frontMatter.summary + frontMatter.tags.join(' ')
+    const searchContent =
+      (frontMatter.title || '') + (frontMatter.summary || '') + (frontMatter.tags || []).join(' ')
     return searchContent.toLowerCase().includes(searchValue.toLowerCase())
   })
 
@@ -98,7 +92,7 @@ export default function ListLayout({
           {displayPosts.map((frontMatter) => {
             const { slug, date, title, summary, tags } = frontMatter
             return (
-              <li key={slug} className="py-4">
+              <li key={slug || ''} className="py-4">
                 <article className="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0">
                   <dl>
                     <dt className="sr-only">Published on</dt>
@@ -114,7 +108,7 @@ export default function ListLayout({
                         </Link>
                       </h3>
                       <div className="flex flex-wrap">
-                        {tags.map((tag) => (
+                        {(tags || []).map((tag) => (
                           <Tag key={tag} text={tag} />
                         ))}
                       </div>

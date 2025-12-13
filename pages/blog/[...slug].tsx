@@ -3,10 +3,11 @@ import PageTitle from '@/components/PageTitle'
 import generateRss from '@/lib/generate-rss'
 import { MDXLayoutRenderer } from '@/components/MDXComponents'
 import { formatSlug, getAllFilesFrontMatter, getFileBySlug, getFiles } from '@/lib/mdx'
+import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 
 const DEFAULT_LAYOUT = 'PostLayout'
 
-export async function getStaticPaths() {
+export const getStaticPaths: GetStaticPaths = async () => {
   const posts = getFiles('blog')
   return {
     paths: posts.map((p) => ({
@@ -18,15 +19,22 @@ export async function getStaticPaths() {
   }
 }
 
-export async function getStaticProps({ params }) {
+export const getStaticProps: GetStaticProps<{
+  post: any
+  authorDetails: any[]
+  prev: any
+  next: any
+}> = async ({ params }) => {
   const allPosts = await getAllFilesFrontMatter('blog')
-  const postIndex = allPosts.findIndex((post) => formatSlug(post.slug) === params.slug.join('/'))
+  const postIndex = allPosts.findIndex(
+    (post) => formatSlug(post.slug || '') === (params!.slug as string[]).join('/')
+  )
   const prev = allPosts[postIndex + 1] || null
   const next = allPosts[postIndex - 1] || null
-  const post = await getFileBySlug('blog', params.slug.join('/'))
+  const post = await getFileBySlug('blog', (params!.slug as string[]).join('/'))
   const authorList = post.frontMatter.authors || ['default']
-  const authorPromise = authorList.map(async (author) => {
-    const authorResults = await getFileBySlug('authors', [author])
+  const authorPromise = authorList.map(async (author: string) => {
+    const authorResults = await getFileBySlug('authors', author)
     return authorResults.frontMatter
   })
   const authorDetails = await Promise.all(authorPromise)
@@ -40,7 +48,12 @@ export async function getStaticProps({ params }) {
   return { props: { post, authorDetails, prev, next } }
 }
 
-export default function Blog({ post, authorDetails, prev, next }) {
+export default function Blog({
+  post,
+  authorDetails,
+  prev,
+  next,
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   const { mdxSource, toc, frontMatter } = post
 
   return (
