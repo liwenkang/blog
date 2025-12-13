@@ -2,7 +2,7 @@
  * 性能监控 React Hooks
  */
 
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback, DependencyList } from 'react'
 import {
   trackComponentRender,
   trackRouteChange,
@@ -10,14 +10,20 @@ import {
   measureAsync,
 } from '@/lib/core/performance'
 
+interface PerformanceTrackerOptions {
+  enabled?: boolean
+  metadata?: Record<string, any>
+}
+
 /**
  * 监控组件渲染性能
- * @param {string} componentName - 组件名称
- * @param {Object} options - 配置选项
  */
-export function usePerformanceTracker(componentName, options = {}) {
+export function usePerformanceTracker(
+  componentName: string,
+  options: PerformanceTrackerOptions = {}
+): void {
   const { enabled = process.env.NODE_ENV === 'development', metadata = {} } = options
-  const startTimeRef = useRef(null)
+  const startTimeRef = useRef<number | null>(null)
   const mountedRef = useRef(false)
 
   useEffect(() => {
@@ -59,7 +65,7 @@ export function usePerformanceTracker(componentName, options = {}) {
 /**
  * 监控路由变化性能
  */
-export function useRoutePerformance() {
+export function useRoutePerformance(): void {
   useEffect(() => {
     if (typeof window === 'undefined') return
 
@@ -69,7 +75,7 @@ export function useRoutePerformance() {
       routeStartTime = performance.now()
     }
 
-    const handleRouteChangeComplete = (url) => {
+    const handleRouteChangeComplete = (url: string) => {
       const duration = performance.now() - routeStartTime
       trackRouteChange(url, duration)
     }
@@ -87,20 +93,24 @@ export function useRoutePerformance() {
   }, [])
 }
 
+interface MeasureResult {
+  measure: <T>(fn: () => T) => T
+  measureAsync: <T>(fn: () => Promise<T>) => Promise<T>
+}
+
 /**
  * 测量函数执行时间的 Hook
- * @param {string} name - 测量名称
  */
-export function useMeasure(name) {
+export function useMeasure(name: string): MeasureResult {
   const measureFn = useCallback(
-    (fn) => {
+    <T>(fn: () => T): T => {
       return measure(name, fn)
     },
     [name]
   )
 
   const measureAsyncFn = useCallback(
-    async (fn) => {
+    async <T>(fn: () => Promise<T>): Promise<T> => {
       return await measureAsync(name, fn)
     },
     [name]
@@ -111,11 +121,12 @@ export function useMeasure(name) {
 
 /**
  * 监控数据获取性能
- * @param {string} key - 唯一标识
- * @param {Function} fetcher - 数据获取函数
- * @param {Array} deps - 依赖数组
  */
-export function useDataFetchPerformance(key, fetcher, deps = []) {
+export function useDataFetchPerformance(
+  key: string,
+  fetcher: (() => void | Promise<void>) | null,
+  deps: DependencyList = []
+): void {
   useEffect(() => {
     if (!fetcher) return
 
@@ -137,9 +148,8 @@ export function useDataFetchPerformance(key, fetcher, deps = []) {
 
 /**
  * 监控图片加载性能
- * @param {string} src - 图片地址
  */
-export function useImageLoadPerformance(src) {
+export function useImageLoadPerformance(src: string | null | undefined): void {
   useEffect(() => {
     if (!src || typeof window === 'undefined') return
 
@@ -171,7 +181,7 @@ export function useImageLoadPerformance(src) {
 /**
  * 监控长任务（Long Tasks）
  */
-export function useLongTaskDetector(threshold = 50) {
+export function useLongTaskDetector(threshold = 50): void {
   useEffect(() => {
     if (typeof window === 'undefined' || !('PerformanceObserver' in window)) return
 
@@ -197,7 +207,7 @@ export function useLongTaskDetector(threshold = 50) {
 /**
  * 页面可见性性能追踪
  */
-export function usePageVisibilityPerformance() {
+export function usePageVisibilityPerformance(): void {
   useEffect(() => {
     if (typeof document === 'undefined') return
 
@@ -225,18 +235,18 @@ export function usePageVisibilityPerformance() {
 /**
  * 滚动性能监控
  */
-export function useScrollPerformance(throttle = 100) {
+export function useScrollPerformance(throttle = 100): void {
   useEffect(() => {
     if (typeof window === 'undefined') return
 
     let scrollCount = 0
     let lastScrollTime = performance.now()
-    let timeoutId = null
+    let timeoutId: NodeJS.Timeout | null = null
 
     const handleScroll = () => {
       scrollCount++
 
-      clearTimeout(timeoutId)
+      if (timeoutId) clearTimeout(timeoutId)
       timeoutId = setTimeout(() => {
         const duration = performance.now() - lastScrollTime
         measure('scroll:session', () => duration)
@@ -251,7 +261,7 @@ export function useScrollPerformance(throttle = 100) {
 
     return () => {
       window.removeEventListener('scroll', handleScroll)
-      clearTimeout(timeoutId)
+      if (timeoutId) clearTimeout(timeoutId)
     }
   }, [throttle])
 }
