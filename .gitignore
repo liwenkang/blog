@@ -20,6 +20,12 @@ public/sitemap.xml
 # rss feed
 /public/feed.xml 
 
+# TypeScript
+*.tsbuildinfo
+
+# Auto-generated files
+/public/search.json
+
 # misc
 .DS_Store
 
