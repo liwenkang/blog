@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 
 import siteMetadata from '@/data/siteMetadata'
+import { PostFrontMatter } from '@/types'
 
 interface DisqusProps {
-  frontMatter: Record<string, any>
+  frontMatter: PostFrontMatter
 }
 
 interface DisqusConfig {
@@ -36,11 +37,12 @@ const Disqus = ({ frontMatter }: DisqusProps) => {
 
     window.disqus_config = function () {
       this.page.url = window.location.href
-      this.page.identifier = frontMatter.slug
+      this.page.identifier = frontMatter.slug || ''
     }
     if (window.DISQUS === undefined) {
       const script = document.createElement('script')
-      script.src = 'https://' + siteMetadata.comment.disqusConfig.shortname + '.disqus.com/embed.js'
+      script.src =
+        'https://' + siteMetadata.comment.disqusConfig?.shortname + '.disqus.com/embed.js'
       // 移除 data-timestamp 属性，避免 SSR/CSR 不一致问题
       // Disqus 通常不需要这个属性，或者可以使用固定的时间戳
       script.setAttribute('crossorigin', 'anonymous')

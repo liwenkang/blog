@@ -7,6 +7,7 @@ import siteMetadata from '@/data/siteMetadata'
 import formatDate from '@/lib/utils/formatDate'
 import Comments from '@/components/comments'
 import ScrollTopAndComment from '@/components/ScrollTopAndComment'
+import { Author, PostNavigation } from '@/types'
 
 interface PostSimpleFrontMatter {
   slug: string
@@ -19,9 +20,9 @@ interface PostSimpleFrontMatter {
 
 interface PostSimpleProps {
   frontMatter: PostSimpleFrontMatter
-  authorDetails: any[]
-  next?: { slug: string; title: string }
-  prev?: { slug: string; title: string }
+  authorDetails: Author[]
+  next?: PostNavigation
+  prev?: PostNavigation
   children: ReactNode
 }
 

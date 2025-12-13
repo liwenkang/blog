@@ -2,8 +2,9 @@ import fs from 'fs'
 import PageTitle from '@/components/PageTitle'
 import generateRss from '@/lib/generate-rss'
 import { MDXLayoutRenderer } from '@/components/MDXComponents'
-import { formatSlug, getAllFilesFrontMatter, getFileBySlug, getFiles } from '@/lib/mdx'
+import { formatSlug, getAllFilesFrontMatter, getFileBySlug, getFiles, MdxFileData } from '@/lib/mdx'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
+import { Author, PostNavigation } from '@/types'
 
 const DEFAULT_LAYOUT = 'PostLayout'
 
@@ -20,10 +21,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps<{
-  post: any
-  authorDetails: any[]
-  prev: any
-  next: any
+  post: MdxFileData
+  authorDetails: Author[]
+  prev: PostNavigation | null
+  next: PostNavigation | null
 }> = async ({ params }) => {
   const allPosts = await getAllFilesFrontMatter('blog')
   const postIndex = allPosts.findIndex(

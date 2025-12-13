@@ -8,6 +8,7 @@ import kebabCase from '@/lib/utils/kebabCase'
 import fs from 'fs'
 import path from 'path'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
+import { FrontMatter } from '@/lib/mdx'
 
 const root = process.cwd()
 
@@ -25,7 +26,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps<{
-  posts: any[]
+  posts: FrontMatter[]
   tag: string
 }> = async ({ params }) => {
   const allPosts = await getAllFilesFrontMatter('blog')

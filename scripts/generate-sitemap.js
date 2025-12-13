@@ -2,7 +2,7 @@ const fs = require('fs')
 const { globby } = require('globby')
 const matter = require('gray-matter')
 const prettier = require('prettier')
-const siteMetadata = require('../data/siteMetadata')
+const siteMetadata = require('../data/siteMetadata.ts').default
 const { logger } = require('./utils/script-logger')
 
 ;(async () => {

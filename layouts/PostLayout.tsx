@@ -13,14 +13,9 @@ import formatDate from '@/lib/utils/formatDate'
 import { BlogPostingStructuredData, BreadcrumbStructuredData } from '@/components/StructuredData'
 import Head from 'next/head'
 import UserExperienceWrapper from '@/components/UserExperienceWrapper'
+import { Author, PostNavigation } from '@/types'
 
 const editUrl = (fileName: string) => `${siteMetadata.siteRepo}/blob/master/data/blog/${fileName}`
-
-interface Author {
-  name: string
-  avatar?: string
-  twitter?: string
-}
 
 interface PostLayoutFrontMatter {
   slug: string
@@ -37,8 +32,8 @@ interface PostLayoutFrontMatter {
 interface PostLayoutProps {
   frontMatter: PostLayoutFrontMatter
   authorDetails: Author[]
-  next?: { slug: string; title: string }
-  prev?: { slug: string; title: string }
+  next?: PostNavigation
+  prev?: PostNavigation
   children: ReactNode
 }
 

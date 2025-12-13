@@ -1,4 +1,6 @@
-const headerNavLinks = [
+import type { NavLink } from '../types/navigation'
+
+const headerNavLinks: NavLink[] = [
   { href: '/blog', title: 'Blog' },
   { href: '/tags', title: 'Tags' },
   { href: '/search', title: 'Search' },

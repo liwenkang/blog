@@ -2,17 +2,7 @@ import { ReactNode } from 'react'
 import SocialIcon from '@/components/social-icons'
 import Image from '@/components/Image'
 import { PageSEO } from '@/components/SEO'
-
-interface AuthorFrontMatter {
-  name: string
-  avatar: string
-  occupation: string
-  company: string
-  email: string
-  twitter?: string
-  linkedin?: string
-  github?: string
-}
+import { AuthorFrontMatter } from '@/types'
 
 interface AuthorLayoutProps {
   children: ReactNode

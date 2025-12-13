@@ -1,8 +1,9 @@
 import siteMetadata from '@/data/siteMetadata'
 import dynamic from 'next/dynamic'
+import { PostFrontMatter } from '@/types'
 
 interface CommentsProps {
-  frontMatter: Record<string, any>
+  frontMatter: PostFrontMatter
 }
 
 const UtterancesComponent = dynamic(() => import('@/components/comments/Utterances'), {

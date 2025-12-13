@@ -14,11 +14,11 @@ const Giscus = () => {
   }, [])
 
   const commentsTheme =
-    siteMetadata.comment.giscusConfig.themeURL === ''
+    siteMetadata.comment.giscusConfig?.themeURL === ''
       ? theme === 'dark' || resolvedTheme === 'dark'
-        ? siteMetadata.comment.giscusConfig.darkTheme
-        : siteMetadata.comment.giscusConfig.theme
-      : siteMetadata.comment.giscusConfig.themeURL
+        ? siteMetadata.comment.giscusConfig?.darkTheme
+        : siteMetadata.comment.giscusConfig?.theme
+      : siteMetadata.comment.giscusConfig?.themeURL
 
   const COMMENTS_ID = 'comments-container'
 
@@ -48,7 +48,7 @@ const Giscus = () => {
     script.setAttribute('data-emit-metadata', metadata)
     script.setAttribute('data-input-position', inputPosition)
     script.setAttribute('data-lang', lang)
-    script.setAttribute('data-theme', commentsTheme)
+    script.setAttribute('data-theme', commentsTheme || 'light')
     script.setAttribute('crossorigin', 'anonymous')
     script.setAttribute('data-loading', 'lazy')
     script.async = true

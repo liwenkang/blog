@@ -1,4 +1,6 @@
-const siteMetadata = {
+import type { SiteMetadata } from '../types/siteMetadata'
+
+const siteMetadata: SiteMetadata = {
   title: 'Share Thoughts',
   author: 'Li WenKang',
   headerTitle: 'Share Thoughts',
@@ -79,4 +81,4 @@ const siteMetadata = {
   },
 }
 
-module.exports = siteMetadata
+export default siteMetadata
