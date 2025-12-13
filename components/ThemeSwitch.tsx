@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, KeyboardEvent } from 'react'
 import { useTheme } from 'next-themes'
 
 const ThemeSwitch = () => {
@@ -35,7 +35,7 @@ const ThemeSwitch = () => {
       type="button"
       className="ml-1 mr-1 h-8 w-8 rounded-sm p-1 sm:ml-4 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
       onClick={() => setTheme(theme === 'dark' || resolvedTheme === 'dark' ? 'light' : 'dark')}
-      onKeyDown={(e) => {
+      onKeyDown={(e: KeyboardEvent<HTMLButtonElement>) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
           setTheme(theme === 'dark' || resolvedTheme === 'dark' ? 'light' : 'dark')

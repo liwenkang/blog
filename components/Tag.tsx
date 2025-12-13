@@ -1,7 +1,11 @@
 import Link from 'next/link'
 import kebabCase from '@/lib/utils/kebabCase'
 
-const Tag = ({ text }) => {
+interface TagProps {
+  text: string
+}
+
+const Tag = ({ text }: TagProps) => {
   return (
     <Link
       href={`/tags/${kebabCase(text)}`}

@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, MouseEvent } from 'react'
 
 const SkipToContent = () => {
   const [isFocused, setIsFocused] = useState(false)
 
-  const handleSkip = (e) => {
+  const handleSkip = (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
     const mainContent = document.getElementById('main-content')
     if (mainContent) {
@@ -13,7 +13,7 @@ const SkipToContent = () => {
   }
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Tab') {
         setIsFocused(true)
       }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { ReactNode, useState, useEffect, KeyboardEvent as ReactKeyboardEvent } from 'react'
 import siteMetadata from '@/data/siteMetadata'
 import headerNavLinks from '@/data/headerNavLinks'
 import Logo from '@/data/logo.svg'
@@ -10,12 +10,16 @@ import ThemeSwitch from './ThemeSwitch'
 import Search from './Search'
 import { announceToScreenReader } from '@/lib/focus-management'
 
-const LayoutWrapper = ({ children }) => {
+interface LayoutWrapperProps {
+  children: ReactNode
+}
+
+const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
 
   // 全局键盘快捷键监听 (Ctrl/Cmd + K)
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       // 检查是否按下 Ctrl/Cmd + K
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault()
@@ -62,7 +66,7 @@ const LayoutWrapper = ({ children }) => {
           <nav className="flex items-center text-base leading-5" aria-label="Main navigation">
             <div className="hidden sm:block">
               <ol className="flex items-center space-x-8" role="list">
-                {headerNavLinks.map((link, index) => (
+                {headerNavLinks.map((link) => (
                   <li key={link.title} role="listitem">
                     <Link
                       href={link.href}
@@ -107,7 +111,7 @@ const LayoutWrapper = ({ children }) => {
             <MobileNav />
           </nav>
         </header>
-        <main id="main-content" className="mb-auto" tabIndex="-1" role="main">
+        <main id="main-content" className="mb-auto" tabIndex={-1} role="main">
           {children}
         </main>
         <Footer />

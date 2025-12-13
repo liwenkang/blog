@@ -7,7 +7,9 @@ import Twitter from './twitter.svg'
 
 // Icons taken from: https://simpleicons.org/
 
-const components = {
+type SocialIconKind = 'mail' | 'github' | 'facebook' | 'youtube' | 'linkedin' | 'twitter'
+
+const components: Record<SocialIconKind, any> = {
   mail: Mail,
   github: Github,
   facebook: Facebook,
@@ -16,14 +18,24 @@ const components = {
   twitter: Twitter,
 }
 
-const SocialIcon = ({ kind, href, size = 8, ariaLabel }) => {
-  if (!href || (kind === 'mail' && !/^mailto:\w+([.-]?\w+)@\w+([.-]?\w+)(.\w{2,3})+$/.test(href)))
+interface SocialIconProps {
+  kind: SocialIconKind
+  href: string
+  size?: number
+  ariaLabel?: string
+}
+
+const SocialIcon = ({ kind, href, size = 8, ariaLabel }: SocialIconProps) => {
+  if (
+    !href ||
+    (kind === 'mail' && !/^mailto:\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(href))
+  )
     return null
 
   const SocialSvg = components[kind]
 
   // Generate accessible label if not provided
-  const defaultLabels = {
+  const defaultLabels: Record<SocialIconKind, string> = {
     mail: 'Send email',
     github: 'Visit GitHub profile',
     facebook: 'Visit Facebook page',

@@ -6,12 +6,9 @@ export default function Footer() {
   return (
     <footer role="contentinfo" className="mt-16 flex flex-col items-center">
       <nav className="mb-3 flex space-x-4" aria-label="Social media links">
-        <SocialIcon kind="mail" href={`mailto:${siteMetadata.email}`} size="6" />
-        <SocialIcon kind="github" href={siteMetadata.github} size="6" />
-        <SocialIcon kind="facebook" href={siteMetadata.facebook} size="6" />
-        <SocialIcon kind="youtube" href={siteMetadata.youtube} size="6" />
-        <SocialIcon kind="linkedin" href={siteMetadata.linkedin} size="6" />
-        <SocialIcon kind="twitter" href={siteMetadata.twitter} size="6" />
+        <SocialIcon kind="mail" href={`mailto:${siteMetadata.email}`} size={6} />
+        <SocialIcon kind="github" href={siteMetadata.github} size={6} />
+        <SocialIcon kind="twitter" href={siteMetadata.twitter} size={6} />
       </nav>
 
       <div className="mb-2 text-sm text-gray-600 dark:text-gray-400" role="contentinfo">

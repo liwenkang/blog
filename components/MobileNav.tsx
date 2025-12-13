@@ -1,4 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  KeyboardEvent as ReactKeyboardEvent,
+} from 'react'
 import Link from './Link'
 import headerNavLinks from '@/data/headerNavLinks'
 import { trapFocus } from '@/lib/focus-management'
@@ -7,8 +13,8 @@ import { announceToScreenReader } from '@/lib/focus-management'
 const MobileNav = () => {
   const [navShow, setNavShow] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const navRef = useRef(null)
-  const closeButtonRef = useRef(null)
+  const navRef = useRef<HTMLDivElement>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     setMounted(true)
@@ -48,7 +54,7 @@ const MobileNav = () => {
 
   // Handle escape key to close menu
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && navShow) {
         onToggleNav()
       }
@@ -148,7 +154,7 @@ const MobileNav = () => {
                   href={link.href}
                   className="block text-xl font-medium tracking-wide text-gray-900 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md py-2 px-3"
                   onClick={onToggleNav}
-                  onKeyDown={(e) => {
+                  onKeyDown={(e: ReactKeyboardEvent<HTMLAnchorElement>) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       onToggleNav()
                     }

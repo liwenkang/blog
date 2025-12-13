@@ -1,6 +1,13 @@
 import Link from 'next/link'
+import { AnchorHTMLAttributes, PropsWithChildren } from 'react'
 
-const CustomLink = ({ href, ...rest }) => {
+type CustomLinkProps = PropsWithChildren<
+  AnchorHTMLAttributes<HTMLAnchorElement> & {
+    href: string
+  }
+>
+
+const CustomLink = ({ href, ...rest }: CustomLinkProps) => {
   const isInternalLink = href && href.startsWith('/')
   const isAnchorLink = href && href.startsWith('#')
 

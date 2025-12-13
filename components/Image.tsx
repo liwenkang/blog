@@ -1,6 +1,19 @@
-import NextImage from 'next/image'
+import NextImage, { ImageProps as NextImageProps } from 'next/image'
 import { useState } from 'react'
 import { useInView } from 'react-intersection-observer'
+
+interface ImageProps extends Omit<NextImageProps, 'src' | 'alt' | 'width' | 'height'> {
+  src: string
+  alt: string
+  width: number
+  height: number
+  className?: string
+  priority?: boolean
+  quality?: number
+  placeholder?: 'blur' | 'empty'
+  blurDataURL?: string
+  lazy?: boolean
+}
 
 const Image = ({
   src,
@@ -14,7 +27,7 @@ const Image = ({
   blurDataURL,
   lazy = true,
   ...rest
-}) => {
+}: ImageProps) => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(false)
 
