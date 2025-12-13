@@ -3,13 +3,31 @@
  * 用于检查必需的环境变量是否正确配置
  */
 
+type NewsletterProvider =
+  | 'mailchimp'
+  | 'buttondown'
+  | 'convertkit'
+  | 'klaviyo'
+  | 'revue'
+  | 'emailoctopus'
+type CommentProvider = 'giscus' | 'utterances' | 'disqus'
+
+interface ValidationResult {
+  provider: string
+  isValid: boolean
+  requiredVars: string[]
+}
+
+interface EnvValidationStatus {
+  newsletter: ValidationResult
+  comments: ValidationResult
+  timestamp: string
+}
+
 /**
  * 验证单个环境变量是否存在且非空
- * @param {string} key - 环境变量名
- * @param {string} context - 上下文描述（用于错误信息）
- * @returns {boolean} - 是否有效
  */
-export function validateEnvVar(key, context = '') {
+export function validateEnvVar(key: string, context = ''): boolean {
   const value = process.env[key]
 
   if (!value || value.trim() === '') {
@@ -37,14 +55,13 @@ export function validateEnvVar(key, context = '') {
 
 /**
  * 验证邮件订阅相关的环境变量
- * @returns {boolean} - 是否所有必需的变量都有效
  */
-export function validateNewsletterEnv() {
-  const provider = process.env.NEWSLETTER_PROVIDER || 'mailchimp'
+export function validateNewsletterEnv(): boolean {
+  const provider = (process.env.NEWSLETTER_PROVIDER || 'mailchimp') as NewsletterProvider
 
   console.log(`🔍 验证邮件订阅环境变量 (${provider})...`)
 
-  const validationMap = {
+  const validationMap: Record<NewsletterProvider, string[]> = {
     mailchimp: ['MAILCHIMP_API_KEY', 'MAILCHIMP_API_SERVER', 'MAILCHIMP_AUDIENCE_ID'],
     buttondown: ['BUTTONDOWN_API_KEY'],
     convertkit: ['CONVERTKIT_API_KEY', 'CONVERTKIT_FORM_ID'],
@@ -73,14 +90,13 @@ export function validateNewsletterEnv() {
 
 /**
  * 验证评论系统相关的环境变量
- * @returns {boolean} - 是否所有必需的变量都有效
  */
-export function validateCommentEnv() {
-  const provider = process.env.COMMENT_PROVIDER || 'giscus'
+export function validateCommentEnv(): boolean {
+  const provider = (process.env.COMMENT_PROVIDER || 'giscus') as CommentProvider
 
   console.log(`🔍 验证评论系统环境变量 (${provider})...`)
 
-  const validationMap = {
+  const validationMap: Record<CommentProvider, string[]> = {
     giscus: [
       'NEXT_PUBLIC_GISCUS_REPO',
       'NEXT_PUBLIC_GISCUS_REPOSITORY_ID',
@@ -111,9 +127,8 @@ export function validateCommentEnv() {
 
 /**
  * 验证分析工具相关的环境变量
- * @returns {boolean} - 是否所有必需的变量都有效
  */
-export function validateAnalyticsEnv() {
+export function validateAnalyticsEnv(): boolean {
   console.log('🔍 验证分析工具环境变量...')
 
   const analyticsVars = ['NEXT_PUBLIC_GA_ID', 'NEXT_PUBLIC_SENTRY_DSN']
@@ -134,9 +149,8 @@ export function validateAnalyticsEnv() {
 
 /**
  * 验证所有环境变量（在应用启动时调用）
- * @returns {boolean} - 是否所有必需的环境变量都有效
  */
-export function validateAllEnvVars() {
+export function validateAllEnvVars(): boolean {
   console.log('🚀 开始验证环境变量配置...')
 
   const results = [validateNewsletterEnv(), validateCommentEnv(), validateAnalyticsEnv()]
@@ -154,11 +168,10 @@ export function validateAllEnvVars() {
 
 /**
  * 获取环境变量验证结果（用于 API 响应）
- * @returns {Object} - 验证结果详情
  */
-export function getEnvValidationStatus() {
-  const provider = process.env.NEWSLETTER_PROVIDER || 'mailchimp'
-  const commentProvider = process.env.COMMENT_PROVIDER || 'giscus'
+export function getEnvValidationStatus(): EnvValidationStatus {
+  const provider = (process.env.NEWSLETTER_PROVIDER || 'mailchimp') as NewsletterProvider
+  const commentProvider = (process.env.COMMENT_PROVIDER || 'giscus') as CommentProvider
 
   return {
     newsletter: {
@@ -177,11 +190,8 @@ export function getEnvValidationStatus() {
 
 /**
  * 获取指定提供者所需的变量列表
- * @param {string} provider - 服务提供者
- * @param {string} type - 服务类型 ('newsletter' 或 'comments')
- * @returns {Array} - 所需变量列表
  */
-function getRequiredVarsForProvider(provider, type) {
+function getRequiredVarsForProvider(provider: string, type: 'newsletter' | 'comments'): string[] {
   const maps = {
     newsletter: {
       mailchimp: ['MAILCHIMP_API_KEY', 'MAILCHIMP_API_SERVER', 'MAILCHIMP_AUDIENCE_ID'],
@@ -203,7 +213,7 @@ function getRequiredVarsForProvider(provider, type) {
     },
   }
 
-  return maps[type]?.[provider] || []
+  return maps[type]?.[provider as keyof (typeof maps)[typeof type]] || []
 }
 
 // 开发环境下自动验证

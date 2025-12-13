@@ -1,4 +1,20 @@
-function sendToAnalytics(metric) {
+import type { Metric } from 'web-vitals'
+
+declare global {
+  interface Window {
+    gtag?: (command: string, eventName: string, eventParams: any) => void
+    Sentry?: {
+      addBreadcrumb: (breadcrumb: {
+        category: string
+        message: string
+        level: string
+        data: any
+      }) => void
+    }
+  }
+}
+
+function sendToAnalytics(metric: Metric): void {
   // Send to any analytics service
   if (typeof window !== 'undefined' && window.gtag) {
     window.gtag('event', metric.name, {
@@ -25,7 +41,7 @@ function sendToAnalytics(metric) {
   }
 }
 
-export function reportWebVitals() {
+export function reportWebVitals(): void {
   if (typeof window !== 'undefined') {
     import('web-vitals').then(({ onCLS, onINP, onFCP, onLCP, onTTFB }) => {
       onCLS(sendToAnalytics)
@@ -38,7 +54,7 @@ export function reportWebVitals() {
 }
 
 // Alternative named export for Vite/SPA usage
-export function reportWebVitalsVite(onPerfEntry) {
+export function reportWebVitalsVite(onPerfEntry?: (metric: Metric) => void): void {
   if (typeof window !== 'undefined' && onPerfEntry instanceof Function) {
     import('web-vitals').then(({ onCLS, onINP, onFCP, onLCP, onTTFB }) => {
       onCLS(onPerfEntry)

@@ -1,34 +1,32 @@
 /**
  * Focus Management utilities for accessibility
  */
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, RefObject } from 'react'
 
 /**
  * Trap focus within a container element
- * @param {HTMLElement} container - The container element
- * @returns {() => void} Cleanup function
  */
-export function trapFocus(container) {
+export function trapFocus(container: HTMLElement | null): () => void {
   if (!container) return () => {}
 
-  const focusableElements = container.querySelectorAll(
+  const focusableElements = container.querySelectorAll<HTMLElement>(
     'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
   )
 
   const firstElement = focusableElements[0]
   const lastElement = focusableElements[focusableElements.length - 1]
 
-  const handleTabKey = (e) => {
+  const handleTabKey = (e: KeyboardEvent) => {
     if (e.key !== 'Tab') return
 
     if (e.shiftKey) {
       if (document.activeElement === firstElement) {
-        lastElement.focus()
+        lastElement?.focus()
         e.preventDefault()
       }
     } else {
       if (document.activeElement === lastElement) {
-        firstElement.focus()
+        firstElement?.focus()
         e.preventDefault()
       }
     }
@@ -48,16 +46,14 @@ export function trapFocus(container) {
 
 /**
  * Manage focus for modals and dialogs
- * @param {boolean} isOpen - Whether the modal is open
- * @param {HTMLElement} modalRef - Reference to the modal element
  */
-export function useModalFocus(isOpen, modalRef) {
-  const previousFocusRef = useRef(null)
+export function useModalFocus(isOpen: boolean, modalRef: RefObject<HTMLElement>): void {
+  const previousFocusRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     if (isOpen && modalRef.current) {
       // Store the currently focused element
-      previousFocusRef.current = document.activeElement
+      previousFocusRef.current = document.activeElement as HTMLElement
 
       // Trap focus within the modal
       const cleanup = trapFocus(modalRef.current)
@@ -75,10 +71,11 @@ export function useModalFocus(isOpen, modalRef) {
 
 /**
  * Announce messages to screen readers
- * @param {string} message - The message to announce
- * @param {string} politeness - Politeness level ('polite' or 'assertive')
  */
-export function announceToScreenReader(message, politeness = 'polite') {
+export function announceToScreenReader(
+  message: string,
+  politeness: 'polite' | 'assertive' = 'polite'
+): void {
   // Create or get the live region element
   let liveRegion = document.getElementById('a11y-live-region')
 
@@ -101,9 +98,7 @@ export function announceToScreenReader(message, politeness = 'polite') {
 
 /**
  * Generate unique IDs for accessibility purposes
- * @param {string} prefix - Prefix for the ID
- * @returns {string} Unique ID
  */
-export function generateA11yId(prefix = 'a11y') {
+export function generateA11yId(prefix = 'a11y'): string {
   return `${prefix}-${Math.random().toString(36).substr(2, 9)}`
 }

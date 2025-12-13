@@ -60,6 +60,30 @@
       "type": "shell",
       "command": "npm run build",
       "group": "build"
+    },
+    {
+      "label": "验证P1完成",
+      "type": "shell",
+      "command": "npm run build",
+      "group": "build"
+    },
+    {
+      "label": "重新验证P1",
+      "type": "shell",
+      "command": "npm run build",
+      "group": "build"
+    },
+    {
+      "label": "再次验证P1",
+      "type": "shell",
+      "command": "npm run build",
+      "group": "build"
+    },
+    {
+      "label": "最终验证P1",
+      "type": "shell",
+      "command": "npm run build",
+      "group": "build"
     }
   ]
 }
