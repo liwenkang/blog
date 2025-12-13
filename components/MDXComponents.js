@@ -3,6 +3,7 @@ import { getMDXComponent } from 'mdx-bundler/client'
 import Image from './Image'
 import CustomLink from './Link'
 import TOCInline from './TOCInline'
+import RegionErrorBoundary from './RegionErrorBoundary'
 import Pre from './Pre'
 import { BlogNewsletterForm } from './NewsletterForm'
 
@@ -21,7 +22,11 @@ const layouts = {
 
 export const MDXComponents = {
   Image,
-  TOCInline,
+  TOCInline: (props) => (
+    <RegionErrorBoundary label="目录">
+      <TOCInline {...props} />
+    </RegionErrorBoundary>
+  ),
   a: CustomLink,
   pre: Pre,
   BlogNewsletterForm: BlogNewsletterForm,

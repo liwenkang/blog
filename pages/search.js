@@ -2,6 +2,7 @@ import { useState } from 'react'
 import siteMetadata from '@/data/siteMetadata'
 import { PageSEO } from '@/components/SEO'
 import Search from '@/components/Search'
+import RegionErrorBoundary from '@/components/RegionErrorBoundary'
 
 export default function SearchPage() {
   const [isSearchOpen, setIsSearchOpen] = useState(true)
@@ -37,7 +38,11 @@ export default function SearchPage() {
         )}
 
         {/* 搜索模态框 */}
-        {isSearchOpen && <Search onClose={() => setIsSearchOpen(false)} />}
+        {isSearchOpen && (
+          <RegionErrorBoundary label="搜索">
+            <Search onClose={() => setIsSearchOpen(false)} />
+          </RegionErrorBoundary>
+        )}
       </div>
     </>
   )

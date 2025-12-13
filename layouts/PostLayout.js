@@ -6,6 +6,7 @@ import Image from '@/components/Image'
 import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import Comments from '@/components/comments'
+import RegionErrorBoundary from '@/components/RegionErrorBoundary'
 import ScrollTopAndComment from '@/components/ScrollTopAndComment'
 import formatDate from '@/lib/utils/formatDate'
 import { BlogPostingStructuredData, BreadcrumbStructuredData } from '@/components/StructuredData'
@@ -111,7 +112,9 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
                 <div className="pt-6 pb-6 text-sm text-gray-700 dark:text-gray-300">
                   <Link href={editUrl(fileName)}>{'View on GitHub'}</Link>
                 </div>
-                <Comments frontMatter={frontMatter} />
+                <RegionErrorBoundary label="评论">
+                  <Comments frontMatter={frontMatter} />
+                </RegionErrorBoundary>
               </div>
               <footer>
                 <div className="divide-gray-200 text-sm font-medium leading-5 dark:divide-gray-700 xl:col-start-1 xl:row-start-2 xl:divide-y">
