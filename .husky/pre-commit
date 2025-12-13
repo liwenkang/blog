@@ -1,4 +1,15 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
+# 运行测试
+echo "Running tests before commit..."
+npm test
+
+# 如果测试失败，停止提交
+if [ $? -ne 0 ]; then
+  echo "❌ Tests failed. Commit aborted."
+  exit 1
+fi
+
+# 运行 lint-staged
 npx --no-install lint-staged
