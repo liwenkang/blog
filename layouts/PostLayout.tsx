@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import Link from '@/components/Link'
 import PageTitle from '@/components/PageTitle'
 import SectionContainer from '@/components/SectionContainer'
@@ -13,9 +14,41 @@ import { BlogPostingStructuredData, BreadcrumbStructuredData } from '@/component
 import Head from 'next/head'
 import UserExperienceWrapper from '@/components/UserExperienceWrapper'
 
-const editUrl = (fileName) => `${siteMetadata.siteRepo}/blob/master/data/blog/${fileName}`
+const editUrl = (fileName: string) => `${siteMetadata.siteRepo}/blob/master/data/blog/${fileName}`
 
-export default function PostLayout({ frontMatter, authorDetails, next, prev, children }) {
+interface Author {
+  name: string
+  avatar?: string
+  twitter?: string
+}
+
+interface PostLayoutFrontMatter {
+  slug: string
+  fileName: string
+  date: string
+  title: string
+  images?: string[]
+  tags?: string[]
+  summary?: string
+  excerpt?: string
+  [key: string]: any
+}
+
+interface PostLayoutProps {
+  frontMatter: PostLayoutFrontMatter
+  authorDetails: Author[]
+  next?: { slug: string; title: string }
+  prev?: { slug: string; title: string }
+  children: ReactNode
+}
+
+export default function PostLayout({
+  frontMatter,
+  authorDetails,
+  next,
+  prev,
+  children,
+}: PostLayoutProps) {
   const { slug, fileName, date, title, images, tags } = frontMatter
 
   // Breadcrumb data for blog posts
@@ -35,7 +68,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
             slug: `/blog/${slug}`,
             summary: frontMatter.summary || frontMatter.excerpt,
             image: frontMatter.images?.[0],
-            author: authorDetails?.name || siteMetadata.author,
+            author: authorDetails?.[0]?.name || siteMetadata.author,
           }}
           siteUrl={siteMetadata.siteUrl}
         />
@@ -47,6 +80,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
       <BlogSEO
         url={`${siteMetadata.siteUrl}/blog/${slug}`}
         authorDetails={authorDetails}
+        summary={frontMatter.summary || frontMatter.excerpt || ''}
         {...frontMatter}
       />
       <ScrollTopAndComment />
@@ -81,8 +115,8 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
                         {author.avatar && (
                           <Image
                             src={author.avatar}
-                            width="38"
-                            height="38"
+                            width={38}
+                            height={38}
                             alt="avatar"
                             className="h-10 w-10 rounded-full"
                           />

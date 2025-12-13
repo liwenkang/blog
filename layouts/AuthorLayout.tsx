@@ -1,8 +1,25 @@
+import { ReactNode } from 'react'
 import SocialIcon from '@/components/social-icons'
 import Image from '@/components/Image'
 import { PageSEO } from '@/components/SEO'
 
-export default function AuthorLayout({ children, frontMatter }) {
+interface AuthorFrontMatter {
+  name: string
+  avatar: string
+  occupation: string
+  company: string
+  email: string
+  twitter?: string
+  linkedin?: string
+  github?: string
+}
+
+interface AuthorLayoutProps {
+  children: ReactNode
+  frontMatter: AuthorFrontMatter
+}
+
+export default function AuthorLayout({ children, frontMatter }: AuthorLayoutProps) {
   const { name, avatar, occupation, company, email, twitter, linkedin, github } = frontMatter
 
   return (
@@ -19,8 +36,8 @@ export default function AuthorLayout({ children, frontMatter }) {
             <Image
               src={avatar}
               alt="avatar"
-              width="192"
-              height="192"
+              width={192}
+              height={192}
               className="h-48 w-48 rounded-full"
             />
             <h3 className="pt-4 pb-2 text-2xl font-bold leading-8 tracking-tight">{name}</h3>
@@ -28,9 +45,9 @@ export default function AuthorLayout({ children, frontMatter }) {
             <div className="text-gray-500 dark:text-gray-400">{company}</div>
             <div className="flex space-x-3 pt-6">
               <SocialIcon kind="mail" href={`mailto:${email}`} />
-              <SocialIcon kind="github" href={github} />
-              <SocialIcon kind="linkedin" href={linkedin} />
-              <SocialIcon kind="twitter" href={twitter} />
+              {github && <SocialIcon kind="github" href={github} />}
+              {linkedin && <SocialIcon kind="linkedin" href={linkedin} />}
+              {twitter && <SocialIcon kind="twitter" href={twitter} />}
             </div>
           </div>
           <div className="prose max-w-none pt-8 pb-8 dark:prose-dark xl:col-span-2">{children}</div>

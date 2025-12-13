@@ -7,7 +7,32 @@ import formatDate from '@/lib/utils/formatDate'
 import Head from 'next/head'
 import { CollectionPageStructuredData, BreadcrumbStructuredData } from '@/components/StructuredData'
 
-export default function ListLayout({ posts, title, initialDisplayPosts = [], pagination }) {
+interface Post {
+  slug: string
+  date: string
+  title: string
+  summary: string
+  tags: string[]
+}
+
+interface PaginationInfo {
+  currentPage: number
+  totalPages: number
+}
+
+interface ListLayoutProps {
+  posts: Post[]
+  title: string
+  initialDisplayPosts?: Post[]
+  pagination?: PaginationInfo
+}
+
+export default function ListLayout({
+  posts,
+  title,
+  initialDisplayPosts = [],
+  pagination,
+}: ListLayoutProps) {
   const [searchValue, setSearchValue] = useState('')
   const filteredBlogPosts = posts.filter((frontMatter) => {
     const searchContent = frontMatter.title + frontMatter.summary + frontMatter.tags.join(' ')
