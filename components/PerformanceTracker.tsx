@@ -119,7 +119,7 @@ export const ResourceTracker = ({
 }
 
 // Route change performance tracker
-export const RoutePerformanceTracker = () => {
+export const RoutePerformanceTracker = (): null => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       // Track page load
@@ -171,6 +171,7 @@ export const RoutePerformanceTracker = () => {
         history.replaceState = originalReplaceState
       }
     }
+    return undefined
   }, [])
 
   return null

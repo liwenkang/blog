@@ -44,7 +44,7 @@ export default function PostLayout({
   prev,
   children,
 }: PostLayoutProps) {
-  const { slug, fileName, date, title, images, tags } = frontMatter
+  const { slug, fileName, date, title, tags } = frontMatter
 
   // Breadcrumb data for blog posts
   const breadcrumbs = [

@@ -30,7 +30,7 @@ interface Frontmatter {
 }
 
 // 判断是否为草稿的智能逻辑
-function isDraft(title: string = '', tags: string | string[] = [], content: string): boolean {
+function isDraft(title: string = '', _tags: string | string[] = [], content: string): boolean {
   // 如果标题包含明显的草稿标识
   if (title.includes('TODO') || title.includes('草稿') || title.includes('WIP')) {
     return true

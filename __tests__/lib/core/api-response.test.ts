@@ -72,31 +72,31 @@ describe('API Response', () => {
 
     it('开发环境应该包含堆栈信息', () => {
       const originalEnv = process.env.NODE_ENV
-      process.env.NODE_ENV = 'development'
+      Object.defineProperty(process.env, 'NODE_ENV', { value: 'development', writable: true })
 
       const error = new Error('Test error')
       const response = ApiResponse.error(error)
 
       expect(response.error.stack).toBeDefined()
 
-      process.env.NODE_ENV = originalEnv
+      Object.defineProperty(process.env, 'NODE_ENV', { value: originalEnv, writable: true })
     })
 
     it('生产环境不应该包含堆栈信息', () => {
       const originalEnv = process.env.NODE_ENV
-      process.env.NODE_ENV = 'production'
+      Object.defineProperty(process.env, 'NODE_ENV', { value: 'production', writable: true })
 
       const error = new Error('Test error')
       const response = ApiResponse.error(error)
 
       expect(response.error.stack).toBeUndefined()
 
-      process.env.NODE_ENV = originalEnv
+      Object.defineProperty(process.env, 'NODE_ENV', { value: originalEnv, writable: true })
     })
 
     it('应该包含错误详情', () => {
       const originalEnv = process.env.NODE_ENV
-      process.env.NODE_ENV = 'development'
+      Object.defineProperty(process.env, 'NODE_ENV', { value: 'development', writable: true })
 
       const error = new Error('Test error') as any
       error.details = { field: 'email', reason: 'invalid' }
@@ -105,7 +105,7 @@ describe('API Response', () => {
 
       expect(response.error.details).toEqual(error.details)
 
-      process.env.NODE_ENV = originalEnv
+      Object.defineProperty(process.env, 'NODE_ENV', { value: originalEnv, writable: true })
     })
 
     it('应该处理默认状态码', () => {

@@ -48,49 +48,55 @@ app.prepare().then(() => {
   if (watchDirs.length > 0) {
     chokidar
       .watch(watchDirs, { usePolling: Boolean(opts.polling) })
-      .on(opts.event, async (filePathContext: string, eventContext: string = defaultWatchEvent) => {
-        // Emit changes via socketio
-        io.emit('reload', filePathContext)
-        // @ts-ignore - Next.js internal API
-        app.server?.hotReloader?.send('building')
+      .on(
+        opts.event,
+        async (
+          filePathContext: string,
+          eventContext: string = defaultWatchEvent
+        ): Promise<void> => {
+          // Emit changes via socketio
+          io.emit('reload', filePathContext)
+          // @ts-ignore - Next.js internal API
+          app.server?.hotReloader?.send('building')
 
-        if (opts.command) {
-          // Use spawn here so that we can pipe stdio from the command without buffering
-          spawn(
-            shell || '/bin/sh',
-            [
-              '-c',
-              opts.command
-                .replace(/\{event\}/gi, filePathContext)
-                .replace(/\{path\}/gi, eventContext),
-            ],
-            {
-              stdio: 'inherit',
-            }
-          )
-        }
-
-        if (opts.script) {
-          try {
-            // find the path of your --script script
-            const scriptPath = path.join(process.cwd(), opts.script)
-
-            // require your --script script
-            const executeFile = await import(scriptPath)
-
-            // run the exported function from your --script script
-            if (typeof executeFile.default === 'function') {
-              executeFile.default(filePathContext, eventContext)
-            }
-          } catch (e) {
-            logger.error('Remote script failed', e as Error)
-            return e
+          if (opts.command) {
+            // Use spawn here so that we can pipe stdio from the command without buffering
+            spawn(
+              shell || '/bin/sh',
+              [
+                '-c',
+                opts.command
+                  .replace(/\{event\}/gi, filePathContext)
+                  .replace(/\{path\}/gi, eventContext),
+              ],
+              {
+                stdio: 'inherit',
+              }
+            )
           }
-        }
 
-        // @ts-ignore - Next.js internal API
-        app.server?.hotReloader?.send('reloadPage')
-      })
+          if (opts.script) {
+            try {
+              // find the path of your --script script
+              const scriptPath = path.join(process.cwd(), opts.script)
+
+              // require your --script script
+              const executeFile = await import(scriptPath)
+
+              // run the exported function from your --script script
+              if (typeof executeFile.default === 'function') {
+                executeFile.default(filePathContext, eventContext)
+              }
+            } catch (e) {
+              logger.error('Remote script failed', e as Error)
+              return
+            }
+          }
+
+          // @ts-ignore - Next.js internal API
+          app.server?.hotReloader?.send('reloadPage')
+        }
+      )
   }
 
   // create an express server

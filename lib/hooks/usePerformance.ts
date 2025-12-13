@@ -183,7 +183,7 @@ export function useImageLoadPerformance(src: string | null | undefined): void {
  */
 export function useLongTaskDetector(threshold = 50): void {
   useEffect(() => {
-    if (typeof window === 'undefined' || !('PerformanceObserver' in window)) return
+    if (typeof window === 'undefined' || !('PerformanceObserver' in window)) return undefined
 
     try {
       const observer = new PerformanceObserver((list) => {
@@ -200,6 +200,7 @@ export function useLongTaskDetector(threshold = 50): void {
     } catch {
       // Long Task API 可能不被支持
       console.warn('Long Task API not supported')
+      return undefined
     }
   }, [threshold])
 }

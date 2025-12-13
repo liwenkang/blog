@@ -85,11 +85,11 @@ describe('Logger System', () => {
   describe('性能日志', () => {
     it('logger.perf 应该在开发环境记录性能指标', () => {
       const originalEnv = process.env.NODE_ENV
-      process.env.NODE_ENV = 'development'
+      Object.defineProperty(process.env, 'NODE_ENV', { value: 'development', writable: true })
 
       logger.perf('TestMetric', 123.45, { component: 'Test' })
 
-      process.env.NODE_ENV = originalEnv
+      Object.defineProperty(process.env, 'NODE_ENV', { value: originalEnv, writable: true })
     })
   })
 
@@ -133,17 +133,16 @@ describe('Logger System', () => {
   })
 
   describe('环境感知', () => {
-    it('应该识别开发环境', () => {
-      // logger 实例在导入时就已经创建，isDev 在构造时确定
-      // 所以这里我们只能测试当前环境
-      expect(typeof logger.isDev).toBe('boolean')
+    it('应该正确创建 Logger 实例', () => {
+      // logger 实例在导入时就已经创建
+      expect(logger).toBeDefined()
+      expect(typeof logger.info).toBe('function')
     })
 
-    it('应该识别生产环境', () => {
-      // 创建一个新的 Logger 实例来测试
-      const prodLogger = new Logger()
-      // isDev 取决于 NODE_ENV，测试环境下通常为 test
-      expect(typeof prodLogger.isDev).toBe('boolean')
+    it('应该正确创建新的 Logger 实例', () => {
+      const newLogger = new Logger()
+      expect(newLogger).toBeDefined()
+      expect(typeof newLogger.info).toBe('function')
     })
   })
 

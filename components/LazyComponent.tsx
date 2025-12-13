@@ -1,22 +1,15 @@
 import React, { useState, useEffect, ReactNode, ComponentType, ReactElement } from 'react'
 import dynamic, { DynamicOptions, Loader } from 'next/dynamic'
 
-interface LazyLoadingOptions<P = any> {
-  fallback?: ReactNode
+interface LazyLoadingOptions<_P = any> {
   loadingComponent?: ReactNode
-  errorComponent?: ReactNode
   preload?: boolean
 }
 
 // Higher-order component for lazy loading
 export const withLazyLoading = <P extends object>(
   importFunc: Loader<P>,
-  {
-    fallback = null,
-    loadingComponent = null,
-    errorComponent = null,
-    preload = false,
-  }: LazyLoadingOptions<P> = {}
+  { loadingComponent = null, preload = false }: LazyLoadingOptions<P> = {}
 ): ComponentType<P> => {
   const LazyComponent = dynamic<P>(importFunc, {
     loading: () => (loadingComponent as ReactElement) || <DefaultLoading />,
@@ -41,8 +34,8 @@ const DefaultLoading = () => (
   </div>
 )
 
-// Default error component
-const DefaultError = () => (
+// Default error component (available for export if needed)
+export const DefaultError = () => (
   <div className="flex items-center justify-center p-8 text-center">
     <div>
       <svg

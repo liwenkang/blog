@@ -66,6 +66,7 @@ export function useModalFocus(isOpen: boolean, modalRef: RefObject<HTMLElement>)
         }
       }
     }
+    return undefined
   }, [isOpen, modalRef])
 }
 

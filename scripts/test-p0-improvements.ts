@@ -19,15 +19,7 @@ logger.perf('TestMetric', 123.45, { component: 'Test' })
 // 测试 API Errors
 console.log('\n========== 测试 API Errors ==========\n')
 
-import {
-  ApiError,
-  ValidationError,
-  NotFoundError,
-  ConflictError,
-  UnauthorizedError,
-  RateLimitError,
-  ExternalServiceError,
-} from '../lib/core/api-errors.js'
+import { ValidationError, ExternalServiceError } from '../lib/core/api-errors.js'
 
 const validationError = new ValidationError('Invalid email', { field: 'email' })
 console.log('ValidationError:', {
@@ -59,7 +51,7 @@ console.log('Error Response:', JSON.stringify(errorResponse, null, 2))
 // 测试环境变量
 console.log('\n========== 测试环境变量系统 ==========\n')
 
-import { env, getEnv, hasEnv, getEnvVar } from '../lib/config/env.js'
+import { env, getEnv, hasEnv } from '../lib/config/env.js'
 
 console.log('Environment:', {
   isDevelopment: env.isDevelopment,
@@ -79,7 +71,7 @@ console.log('Comment Config:', {
 
 // 测试环境变量验证
 try {
-  const validatedEnv = getEnv(false) // 非严格模式
+  getEnv(false) // 非严格模式
   console.log('✅ 环境变量验证通过（非严格模式）')
 } catch (error) {
   console.log('❌ 环境变量验证失败:', (error as Error).message)

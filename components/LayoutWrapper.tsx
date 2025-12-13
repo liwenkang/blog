@@ -1,4 +1,4 @@
-import { ReactNode, useState, useEffect, KeyboardEvent as ReactKeyboardEvent } from 'react'
+import { ReactNode, useState, useEffect } from 'react'
 import siteMetadata from '@/data/siteMetadata'
 import headerNavLinks from '@/data/headerNavLinks'
 import Logo from '@/data/logo.svg'
@@ -19,7 +19,7 @@ const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
 
   // 全局键盘快捷键监听 (Ctrl/Cmd + K)
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const handleKeyDown = (e: globalThis.KeyboardEvent) => {
       // 检查是否按下 Ctrl/Cmd + K
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault()

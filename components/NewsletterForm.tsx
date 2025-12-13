@@ -1,4 +1,4 @@
-import { useRef, useState, FormEvent, ChangeEvent } from 'react'
+import { useRef, useState, FormEvent } from 'react'
 
 import siteMetadata from '@/data/siteMetadata'
 import { announceToScreenReader } from '@/lib/focus-management'

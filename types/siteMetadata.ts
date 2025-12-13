@@ -1,6 +1,3 @@
-import { AnalyticsConfig } from './analytics'
-import { CommentConfig } from './comment'
-
 /**
  * Newsletter 提供商类型
  */

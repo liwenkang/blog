@@ -26,13 +26,7 @@ interface PostSimpleProps {
   children: ReactNode
 }
 
-export default function PostLayout({
-  frontMatter,
-  authorDetails,
-  next,
-  prev,
-  children,
-}: PostSimpleProps) {
+export default function PostLayout({ frontMatter, next, prev, children }: PostSimpleProps) {
   const { date, title } = frontMatter
 
   return (

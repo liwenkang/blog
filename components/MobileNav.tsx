@@ -30,6 +30,7 @@ const MobileNav = () => {
 
       return cleanup
     }
+    return undefined
   }, [navShow])
 
   const onToggleNav = useCallback(() => {

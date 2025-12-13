@@ -2,7 +2,6 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import siteMetadata from '@/data/siteMetadata'
 import { toISOString } from '@/lib/utils/formatDate'
-import type { PostFrontmatter } from '../types/content'
 
 interface OgImage {
   '@type': 'ImageObject'
