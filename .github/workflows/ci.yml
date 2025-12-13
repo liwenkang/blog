@@ -65,7 +65,7 @@ jobs:
         run: npm run build
 
       - name: Validate data integrity
-        run: node scripts/validate-data.js
+        run: npx ts-node scripts/validate-data.ts
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
