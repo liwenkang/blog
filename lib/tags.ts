@@ -6,26 +6,26 @@ import kebabCase from './utils/kebabCase'
 
 const root = process.cwd()
 
+export type TagCount = Record<string, number>
+
+interface Frontmatter {
+  tags?: string[]
+  draft?: boolean
+}
+
 /**
- * @typedef {import('../types/content').TagSummary} TagSummary
+ * 获取指定类型的所有标签及其数量
  */
-/**
- * @param {string} type
- * @returns {Promise<Record<string, number>>}
- */
-export async function getAllTags(type) {
+export async function getAllTags(type: string): Promise<TagCount> {
   const files = await getFiles(type)
 
-  /** @type {Record<string, number>} */
-  let tagCount = {}
-  // Iterate through each post, putting all found tags into `tags`
+  const tagCount: TagCount = {}
   files.forEach((file) => {
     const source = fs.readFileSync(path.join(root, 'data', type, file), 'utf8')
-    const { data } = matter(source)
-    /** @type {{ tags?: string[]; draft?: boolean }} */
-    const fm = data
-    if (fm.tags && fm.draft !== true) {
-      fm.tags.forEach((tag) => {
+    const { data } = matter(source) as { data: Frontmatter }
+
+    if (data.tags && data.draft !== true) {
+      data.tags.forEach((tag) => {
         const formattedTag = kebabCase(tag)
         if (formattedTag in tagCount) {
           tagCount[formattedTag] += 1

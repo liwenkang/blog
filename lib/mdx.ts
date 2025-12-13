@@ -1,16 +1,13 @@
 import { bundleMDX } from 'mdx-bundler'
-import fs from 'node:fs'
+import fs from 'fs'
 import matter from 'gray-matter'
-import path from 'node:path'
-import { createHash } from 'node:crypto'
+import path from 'path'
+import { createHash } from 'crypto'
 import readingTime from 'reading-time'
 import getAllFilesRecursively from './utils/files'
-
-/**
- * @typedef {import('../types/content').PostFrontmatter} PostFrontmatter
- * @typedef {import('../types/content').PostItem} PostItem
- */
 import { toISOString } from './utils/formatDate'
+import type { TocHeading } from './remark-toc-headings'
+
 // Remark packages
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
@@ -29,20 +26,29 @@ const root = process.cwd()
 
 // 简单的基于内容的 MDX 编译缓存
 const MDX_CACHE_VERSION = 'v1'
-const getMdxCacheDir = (type) => path.join(root, '.next', 'cache', 'mdx', type)
-const getMdxCacheFile = (type, slug) => path.join(getMdxCacheDir(type), `${slug}.json`)
+const getMdxCacheDir = (type: string): string => path.join(root, '.next', 'cache', 'mdx', type)
+const getMdxCacheFile = (type: string, slug: string): string =>
+  path.join(getMdxCacheDir(type), `${slug}.json`)
 
-function ensureDir(dirPath) {
+interface MdxCache {
+  sourceHash: string
+  code: string
+  frontmatter: any
+  toc: TocHeading[]
+  generatedAt: string
+}
+
+function ensureDir(dirPath: string): void {
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath, { recursive: true })
   }
 }
 
-function hashContent(source) {
+function hashContent(source: string): string {
   return createHash('sha256').update(source).update(MDX_CACHE_VERSION).digest('hex')
 }
 
-function readMdxCache(type, slug) {
+function readMdxCache(type: string, slug: string): MdxCache | null {
   try {
     const file = getMdxCacheFile(type, slug)
     if (!fs.existsSync(file)) return null
@@ -53,7 +59,7 @@ function readMdxCache(type, slug) {
   }
 }
 
-function writeMdxCache(type, slug, payload) {
+function writeMdxCache(type: string, slug: string, payload: MdxCache): void {
   try {
     const dir = getMdxCacheDir(type)
     ensureDir(dir)
@@ -66,10 +72,8 @@ function writeMdxCache(type, slug, payload) {
 
 /**
  * 获取指定类型的所有文件路径
- * @param {string} type - 内容类型（如 'blog'）
- * @returns {string[]} 文件路径数组
  */
-export function getFiles(type) {
+export function getFiles(type: string): string[] {
   const prefixPaths = path.join(root, 'data', type)
   const files = getAllFilesRecursively(prefixPaths)
   // Only want to return blog/path and ignore root, replace is needed to work on Windows
@@ -78,32 +82,42 @@ export function getFiles(type) {
 
 /**
  * 格式化 slug，移除文件扩展名
- * @param {string} slug - 原始 slug
- * @returns {string} 格式化后的 slug
  */
-export function formatSlug(slug) {
+export function formatSlug(slug: string): string {
   return slug.replace(/\.(mdx|md)/, '')
 }
 
 /**
  * 日期降序排序函数
- * @param {string | Date} a - 第一个日期
- * @param {string | Date} b - 第二个日期
- * @returns {number} 排序结果
  */
-export function dateSortDesc(a, b) {
+export function dateSortDesc(a: string | Date, b: string | Date): number {
   if (a > b) return -1
   if (a < b) return 1
   return 0
 }
 
+export interface FrontMatter {
+  [key: string]: any
+  title?: string
+  date: string
+  tags?: string[]
+  draft?: boolean
+  summary?: string
+  slug?: string | null
+  fileName?: string
+  readingTime?: ReturnType<typeof readingTime>
+}
+
+export interface MdxFileData {
+  mdxSource: string
+  toc: TocHeading[]
+  frontMatter: FrontMatter
+}
+
 /**
  * 根据 slug 获取 MDX 文件内容和元数据
- * @param {string} type - 内容类型
- * @param {string} slug - 文件 slug
- * @returns {Promise<{mdxSource: string, toc: any[], frontMatter: any}>}
  */
-export async function getFileBySlug(type, slug) {
+export async function getFileBySlug(type: string, slug: string): Promise<MdxFileData> {
   const mdxPath = path.join(root, 'data', type, `${slug}.mdx`)
   const mdPath = path.join(root, 'data', type, `${slug}.md`)
   const source = fs.existsSync(mdxPath)
@@ -126,7 +140,7 @@ export async function getFileBySlug(type, slug) {
         slug: slug || null,
         fileName: fs.existsSync(mdxPath) ? `${slug}.mdx` : `${slug}.md`,
         ...frontmatter,
-        date: toISOString(frontmatter.date),
+        date: toISOString(frontmatter.date) || frontmatter.date,
         _fromCache: true,
       },
     }
@@ -139,7 +153,7 @@ export async function getFileBySlug(type, slug) {
     process.env.ESBUILD_BINARY_PATH = path.join(root, 'node_modules', 'esbuild', 'bin', 'esbuild')
   }
 
-  let toc = []
+  const toc: TocHeading[] = []
 
   const { code, frontmatter } = await bundleMDX({
     source,
@@ -192,22 +206,20 @@ export async function getFileBySlug(type, slug) {
       slug: slug || null,
       fileName: fs.existsSync(mdxPath) ? `${slug}.mdx` : `${slug}.md`,
       ...frontmatter,
-      date: toISOString(frontmatter.date),
+      date: toISOString(frontmatter.date) || frontmatter.date,
     },
   }
 }
 
 /**
  * 获取文件夹中所有文件的 frontmatter
- * @param {string} folder - 文件夹名称
- * @returns {Promise<any[]>} frontmatter 数组，按日期降序排序
  */
-export async function getAllFilesFrontMatter(folder) {
+export async function getAllFilesFrontMatter(folder: string): Promise<FrontMatter[]> {
   const prefixPaths = path.join(root, 'data', folder)
 
   const files = getAllFilesRecursively(prefixPaths)
 
-  const allFrontMatter = []
+  const allFrontMatter: FrontMatter[] = []
 
   files.forEach((file) => {
     // Replace is needed to work on Windows
@@ -222,7 +234,7 @@ export async function getAllFilesFrontMatter(folder) {
       allFrontMatter.push({
         ...frontmatter,
         slug: formatSlug(fileName),
-        date: toISOString(frontmatter.date),
+        date: toISOString(frontmatter.date) || frontmatter.date,
       })
     }
   })

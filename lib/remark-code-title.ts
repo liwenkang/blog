@@ -1,8 +1,17 @@
 import { visit } from 'unist-util-visit'
+import type { Node, Parent } from 'unist'
+
+interface CodeNode extends Node {
+  type: 'code'
+  lang?: string
+  value: string
+}
 
 export default function remarkCodeTitles() {
-  return (tree) =>
-    visit(tree, 'code', (node, index, parent) => {
+  return (tree: Node) =>
+    visit(tree, 'code', (node: CodeNode, index: number | undefined, parent: Parent | undefined) => {
+      if (index === undefined || !parent) return
+
       const nodeLang = node.lang || ''
       let language = ''
       let title = ''

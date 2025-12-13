@@ -30,6 +30,36 @@
       "type": "shell",
       "command": "npm run build",
       "group": "build"
+    },
+    {
+      "label": "验证P0迁移",
+      "type": "shell",
+      "command": "npm run build",
+      "group": "build"
+    },
+    {
+      "label": "重新验证P0",
+      "type": "shell",
+      "command": "npm run build",
+      "group": "build"
+    },
+    {
+      "label": "验证P1迁移",
+      "type": "shell",
+      "command": "npm run build",
+      "group": "build"
+    },
+    {
+      "label": "重新验证P1修复",
+      "type": "shell",
+      "command": "npm run build",
+      "group": "build"
+    },
+    {
+      "label": "验证类型安装",
+      "type": "shell",
+      "command": "npm run build",
+      "group": "build"
     }
   ]
 }

@@ -1,20 +1,27 @@
 import { escape } from '@/lib/utils/htmlEscaper'
-
 import siteMetadata from '@/data/siteMetadata'
 
-const generateRssItem = (post) => `
+interface Post {
+  slug: string
+  title: string
+  summary?: string
+  date: string
+  tags?: string[]
+}
+
+const generateRssItem = (post: Post): string => `
   <item>
     <guid>${siteMetadata.siteUrl}/blog/${post.slug}</guid>
     <title>${escape(post.title)}</title>
     <link>${siteMetadata.siteUrl}/blog/${post.slug}</link>
-    ${post.summary && `<description>${escape(post.summary)}</description>`}
+    ${post.summary ? `<description>${escape(post.summary)}</description>` : ''}
     <pubDate>${new Date(post.date).toUTCString()}</pubDate>
     <author>${siteMetadata.email} (${siteMetadata.author})</author>
-    ${post.tags && post.tags.map((t) => `<category>${t}</category>`).join('')}
+    ${post.tags ? post.tags.map((t) => `<category>${t}</category>`).join('') : ''}
   </item>
 `
 
-const generateRss = (posts, page = 'feed.xml') => `
+const generateRss = (posts: Post[], page = 'feed.xml'): string => `
   <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
       <title>${escape(siteMetadata.title)}</title>
@@ -29,4 +36,5 @@ const generateRss = (posts, page = 'feed.xml') => `
     </channel>
   </rss>
 `
+
 export default generateRss

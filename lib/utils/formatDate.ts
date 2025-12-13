@@ -1,6 +1,4 @@
-import siteMetadata from '@/data/siteMetadata'
-
-const formatDate = (date) => {
+const formatDate = (date: string | Date | null | undefined): string => {
   if (!date) return ''
 
   // 使用固定的日期格式，避免 SSR/CSR 不一致
@@ -20,10 +18,8 @@ const formatDate = (date) => {
 
 /**
  * 将日期字符串转换为ISO格式，确保SSR和客户端渲染一致性
- * @param {string|Date} date - 日期字符串或Date对象
- * @returns {string} ISO格式的日期字符串
  */
-export const toISOString = (date) => {
+export const toISOString = (date: string | Date | null | undefined): string | null => {
   if (!date) return null
 
   // 如果是字符串，确保它是有效的日期格式
