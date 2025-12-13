@@ -35,298 +35,441 @@
   --spacing-9\/16: 56.25%;
 }
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-*/
-@layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
-  }
+/* Typography styles - Native CSS for v4 */
+.prose {
+  font-size: 1rem;
+  line-height: 1.75rem;
+  color: rgb(55 65 81);
+  max-width: none;
 }
 
-/* Typography styles - Manual implementation for v4 */
-@layer components {
-  .prose {
-    @apply text-base leading-7 text-gray-700 dark:text-gray-300;
-    @apply max-w-none;
-  }
-
-  .prose a {
-    @apply text-primary-500 no-underline;
-    @apply transition-colors duration-200;
-  }
-
-  .prose a:hover {
-    @apply text-primary-600 dark:text-primary-400;
-  }
-
-  .prose a code {
-    @apply text-primary-400;
-  }
-
-  .prose strong {
-    @apply font-semibold text-gray-600 dark:text-gray-100;
-  }
-
-  .prose h1 {
-    @apply text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100;
-    @apply mt-0 mb-4;
-  }
-
-  .prose h2 {
-    @apply text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100;
-    @apply mt-8 mb-4;
-  }
-
-  .prose h3 {
-    @apply text-2xl font-semibold text-gray-900 dark:text-gray-100;
-    @apply mt-6 mb-3;
-  }
-
-  .prose h4,
-  .prose h5,
-  .prose h6 {
-    @apply text-xl font-semibold text-gray-900 dark:text-gray-100;
-    @apply mt-4 mb-2;
-  }
-
-  .prose p {
-    @apply my-4;
-  }
-
-  .prose code {
-    @apply text-pink-500 bg-gray-100 dark:bg-gray-800;
-    @apply px-1 py-0.5 rounded text-sm font-normal;
-  }
-
-  .prose code::before,
-  .prose code::after {
-    content: none;
-  }
-
-  .prose pre {
-    @apply bg-gray-800 text-gray-100;
-    @apply p-4 rounded-lg overflow-x-auto my-4;
-  }
-
-  .prose pre code {
-    @apply bg-transparent text-inherit p-0;
-  }
-
-  .prose blockquote {
-    @apply border-l-4 border-gray-200 dark:border-gray-700;
-    @apply pl-4 italic text-gray-900 dark:text-gray-100 my-4;
-  }
-
-  .prose hr {
-    @apply border-gray-200 dark:border-gray-700 my-8;
-  }
-
-  .prose ol,
-  .prose ul {
-    @apply my-4 pl-6;
-  }
-
-  .prose ol {
-    @apply list-decimal;
-  }
-
-  .prose ul {
-    @apply list-disc;
-  }
-
-  .prose li {
-    @apply my-2;
-  }
-
-  .prose ol > li::marker {
-    @apply font-semibold text-gray-500 dark:text-gray-400;
-  }
-
-  .prose ul > li::marker {
-    @apply text-gray-500 dark:text-gray-400;
-  }
-
-  .prose table {
-    @apply w-full my-4 text-left;
-  }
-
-  .prose thead {
-    @apply border-b-2 border-gray-200 dark:border-gray-700;
-  }
-
-  .prose thead th {
-    @apply font-semibold text-gray-900 dark:text-gray-100 py-2 px-4;
-  }
-
-  .prose tbody tr {
-    @apply border-b border-gray-200 dark:border-gray-700;
-  }
-
-  .prose tbody td {
-    @apply py-2 px-4;
-  }
-
-  .prose img {
-    @apply my-4 rounded-lg;
-  }
-
-  .prose figure {
-    @apply my-4;
-  }
-
-  .prose figcaption {
-    @apply text-sm text-gray-600 dark:text-gray-400 text-center mt-2;
-  }
-
-  .prose details {
-    @apply bg-gray-100 dark:bg-gray-800;
-    @apply px-1 py-0.5 rounded;
-  }
+.dark .prose {
+  color: rgb(209 213 219);
 }
 
+.prose a {
+  color: var(--color-primary-500);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.prose a:hover {
+  color: var(--color-primary-600);
+}
+
+.dark .prose a:hover {
+  color: var(--color-primary-400);
+}
+
+.prose a code {
+  color: var(--color-primary-400);
+}
+
+.prose strong {
+  font-weight: 600;
+  color: rgb(75 85 99);
+}
+
+.dark .prose strong {
+  color: rgb(243 244 246);
+}
+
+.prose h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: rgb(17 24 39);
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.dark .prose h1 {
+  color: rgb(243 244 246);
+}
+
+.prose h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: rgb(17 24 39);
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.dark .prose h2 {
+  color: rgb(243 244 246);
+}
+
+.prose h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: rgb(17 24 39);
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.dark .prose h3 {
+  color: rgb(243 244 246);
+}
+
+.prose h4,
+.prose h5,
+.prose h6 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: rgb(17 24 39);
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.dark .prose h4,
+.dark .prose h5,
+.dark .prose h6 {
+  color: rgb(243 244 246);
+}
+
+.prose p {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.prose code {
+  color: rgb(236 72 153);
+  background-color: rgb(243 244 246);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.dark .prose code {
+  background-color: rgb(31 41 55);
+}
+
+.prose code::before,
+.prose code::after {
+  content: none;
+}
+
+.prose pre {
+  background-color: rgb(31 41 55);
+  color: rgb(243 244 246);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.prose pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+.prose blockquote {
+  border-left-width: 4px;
+  border-color: rgb(229 231 235);
+  padding-left: 1rem;
+  font-style: italic;
+  color: rgb(17 24 39);
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.dark .prose blockquote {
+  border-color: rgb(55 65 81);
+  color: rgb(243 244 246);
+}
+
+.prose hr {
+  border-color: rgb(229 231 235);
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.dark .prose hr {
+  border-color: rgb(55 65 81);
+}
+
+.prose ol,
+.prose ul {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.prose ol {
+  list-style-type: decimal;
+}
+
+.prose ul {
+  list-style-type: disc;
+}
+
+.prose li {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose ol > li::marker {
+  font-weight: 600;
+  color: rgb(107 114 128);
+}
+
+.dark .prose ol > li::marker {
+  color: rgb(156 163 175);
+}
+
+.prose ul > li::marker {
+  color: rgb(107 114 128);
+}
+
+.dark .prose ul > li::marker {
+  color: rgb(156 163 175);
+}
+
+/* Table styles */
+.prose table {
+  width: 100%;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.prose thead {
+  border-bottom-width: 2px;
+  border-color: rgb(229 231 235);
+}
+
+.dark .prose thead {
+  border-color: rgb(55 65 81);
+}
+
+.prose thead th {
+  font-weight: 600;
+  color: rgb(17 24 39);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.dark .prose thead th {
+  color: rgb(243 244 246);
+}
+
+.prose tbody tr {
+  border-bottom-width: 1px;
+  border-color: rgb(229 231 235);
+}
+
+.dark .prose tbody tr {
+  border-color: rgb(55 65 81);
+}
+
+.prose tbody td {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Image styles */
+.prose img {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+}
+
+.prose figure {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.prose figcaption {
+  font-size: 0.875rem;
+  color: rgb(75 85 99);
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.dark .prose figcaption {
+  color: rgb(156 163 175);
+}
+
+/* Details element */
+.prose details {
+  background-color: rgb(243 244 246);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.dark .prose details {
+  background-color: rgb(31 41 55);
+}
+
+/* Task list items */
 .task-list-item::before {
-  @apply hidden;
+  display: none;
 }
 
 .task-list-item {
-  @apply list-none;
+  list-style: none;
 }
 
+/* Footnotes */
 .footnotes {
-  @apply mt-12 border-t border-gray-200 pt-8 dark:border-gray-700;
+  margin-top: 3rem;
+  border-top-width: 1px;
+  border-color: rgb(229 231 235);
+  padding-top: 2rem;
 }
 
+.dark .footnotes {
+  border-color: rgb(55 65 81);
+}
+
+/* CSL entry */
 .csl-entry {
-  @apply my-5;
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
 }
 
-/* https://stackoverflow.com/questions/61083813/how-to-avoid-internal-autofill-selected-style-to-be-applied */
+/* Autofill styles */
 input:-webkit-autofill,
 input:-webkit-autofill:focus {
+  -webkit-transition:
+    background-color 600000s 0s,
+    color 600000s 0s;
   transition:
     background-color 600000s 0s,
     color 600000s 0s;
 }
 
-/* Accessibility improvements */
-@layer base {
-  html {
-    scroll-behavior: smooth;
-    @supports (scroll-behavior: smooth) {
-      scroll-behavior: smooth;
-    }
-  }
-
-  body {
-    @apply text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900;
-    @apply antialiased;
-  }
-
-  /* Ensure proper contrast for text selection */
-  * {
-    @apply selection:bg-primary-100 dark:selection:bg-primary-900;
-    @apply selection:text-primary-900 dark:selection:text-primary-100;
-  }
+/* Base styles */
+html {
+  scroll-behavior: smooth;
 }
 
-/* Form controls - v4 built-in support with custom styling */
-@layer components {
-  input[type='email'],
-  input[type='text'],
-  input[type='password'],
-  input[type='search'],
-  input[type='url'],
-  input[type='tel'],
-  input[type='number'],
-  input[type='date'],
-  textarea,
-  select {
-    @apply block w-full rounded-md border border-gray-300 dark:border-gray-600;
-    @apply bg-white dark:bg-gray-800;
-    @apply text-gray-900 dark:text-gray-100;
-    @apply placeholder-gray-500 dark:placeholder-gray-400;
-    @apply px-4 py-2;
-    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
-    @apply transition-colors duration-200;
-  }
-
-  input[type='checkbox'],
-  input[type='radio'] {
-    @apply rounded border-gray-300 dark:border-gray-600;
-    @apply text-primary-600 focus:ring-primary-500;
-  }
+body {
+  color: rgb(17 24 39);
+  background-color: white;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@layer components {
-  /* Basic accessibility improvements */
-  .sr-only {
-    position: absolute !important;
-    width: 1px !important;
-    height: 1px !important;
-    padding: 0 !important;
-    margin: -1px !important;
-    overflow: hidden !important;
-    clip: rect(0, 0, 0, 0) !important;
-    white-space: nowrap !important;
-    border: 0 !important;
-  }
+.dark body {
+  color: rgb(243 244 246);
+  background-color: rgb(17 24 39);
+}
 
-  /* Skip link styles */
-  .skip-link {
-    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100;
-    @apply border border-gray-300 dark:border-gray-600;
-    @apply px-4 py-2;
-    @apply -translate-y-full;
-    @apply focus:translate-y-0;
-    @apply transition-transform duration-200;
-    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
-  }
+/* Selection styles */
+* {
+  --tw-selection-bg: var(--color-primary-100);
+  --tw-selection-color: var(--color-primary-900);
+}
 
-  /* Basic focus styles */
-  button:focus,
-  a:focus,
-  input:focus,
-  textarea:focus,
-  select:focus,
-  [tabindex]:not([tabindex='-1']):focus {
-    @apply outline-none ring-2 ring-primary-500 ring-offset-2;
-  }
+.dark * {
+  --tw-selection-bg: var(--color-primary-900);
+  --tw-selection-color: var(--color-primary-100);
+}
 
-  button:focus-visible,
-  a:focus-visible,
-  input:focus-visible,
-  textarea:focus-visible,
-  select:focus-visible,
-  [tabindex]:not([tabindex='-1']):focus-visible {
-    @apply outline-none ring-2 ring-primary-500 ring-offset-2 ring-offset-white dark:ring-offset-black;
-  }
+::selection {
+  background-color: var(--tw-selection-bg);
+  color: var(--tw-selection-color);
+}
 
-  /* Form controls */
-  .form-control {
-    @apply border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 rounded-md px-4 py-2;
-  }
+/* Form controls */
+input[type='date'],
+input[type='email'],
+input[type='number'],
+input[type='password'],
+input[type='search'],
+input[type='tel'],
+input[type='text'],
+input[type='url'],
+select,
+textarea {
+  display: block;
+  width: 100%;
+  border-radius: 0.375rem;
+  border-width: 1px;
+  border-color: rgb(209 213 219);
+  background-color: white;
+  color: rgb(17 24 39);
+  padding: 0.5rem 1rem;
+  transition: colors 0.2s;
+}
 
-  .form-control:focus {
-    @apply border-transparent focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black;
-  }
+.dark input[type='date'],
+.dark input[type='email'],
+.dark input[type='number'],
+.dark input[type='password'],
+.dark input[type='search'],
+.dark input[type='tel'],
+.dark input[type='text'],
+.dark input[type='url'],
+.dark select,
+.dark textarea {
+  border-color: rgb(75 85 99);
+  background-color: rgb(31 41 55);
+  color: rgb(243 244 246);
+}
 
-  /* Link styles */
-  .link-interactive {
-    @apply text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors duration-200;
-  }
+input[type='date']::placeholder,
+input[type='email']::placeholder,
+input[type='number']::placeholder,
+input[type='password']::placeholder,
+input[type='search']::placeholder,
+input[type='tel']::placeholder,
+input[type='text']::placeholder,
+input[type='url']::placeholder,
+textarea::placeholder {
+  color: rgb(107 114 128);
+}
 
-  .link-interactive:focus {
-    @apply outline-none ring-2 ring-primary-500 ring-offset-1 rounded;
-  }
+.dark input[type='date']::placeholder,
+.dark input[type='email']::placeholder,
+.dark input[type='number']::placeholder,
+.dark input[type='password']::placeholder,
+.dark input[type='search']::placeholder,
+.dark input[type='tel']::placeholder,
+.dark input[type='text']::placeholder,
+.dark input[type='url']::placeholder,
+.dark textarea::placeholder {
+  color: rgb(156 163 175);
+}
 
-  .link-interactive:focus-visible {
-    @apply outline-none ring-2 ring-primary-500 ring-offset-1 rounded;
-  }
+input[type='date']:focus,
+input[type='email']:focus,
+input[type='number']:focus,
+input[type='password']:focus,
+input[type='search']:focus,
+input[type='tel']:focus,
+input[type='text']:focus,
+input[type='url']:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  --tw-ring-width: 2px;
+  --tw-ring-color: var(--color-primary-500);
+  border-color: transparent;
+}
+
+input[type='checkbox'],
+input[type='radio'] {
+  border-radius: 0.25rem;
+  border-color: rgb(209 213 219);
+  color: var(--color-primary-600);
+}
+
+.dark input[type='checkbox'],
+.dark input[type='radio'] {
+  border-color: rgb(75 85 99);
+}
+
+input[type='checkbox']:focus,
+input[type='radio']:focus {
+  --tw-ring-color: var(--color-primary-500);
 }
