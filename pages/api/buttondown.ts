@@ -1,10 +1,24 @@
+import type { NextApiRequest, NextApiResponse } from 'next'
 import { apiHandler, validateBody, isValidEmail } from '@/lib/core/api-handler'
 import { ValidationError, ExternalServiceError } from '@/lib/core/api-errors'
 import { env } from '@/lib/config/env'
 import { logger } from '@/lib/core/logger'
 
-const buttondownHandler = async (req, _res) => {
-  const { email } = req.body
+interface ButtondownRequestBody {
+  email: string
+}
+
+interface ButtondownResponse {
+  statusCode: number
+  data: { subscribed: boolean }
+  message: string
+}
+
+const buttondownHandler = async (
+  req: NextApiRequest,
+  _res: NextApiResponse
+): Promise<ButtondownResponse> => {
+  const { email } = req.body as ButtondownRequestBody
 
   validateBody(req.body, ['email'])
 
@@ -43,10 +57,10 @@ const buttondownHandler = async (req, _res) => {
       message: 'Successfully subscribed to newsletter',
     }
   } catch (error) {
-    logger.error('Buttondown API error', error, {
+    logger.error('Buttondown API error', error as Error, {
       email: email.slice(0, 3) + '***',
     })
-    throw new ExternalServiceError('Buttondown', error)
+    throw new ExternalServiceError('Buttondown', error as Error)
   }
 }
 

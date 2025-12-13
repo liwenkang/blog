@@ -1,11 +1,16 @@
 import mailchimp from '@mailchimp/mailchimp_marketing'
+import type { NextApiRequest, NextApiResponse } from 'next'
 import { apiHandler, validateBody, isValidEmail } from '@/lib/core/api-handler'
 import { ValidationError, ConflictError, ExternalServiceError } from '@/lib/core/api-errors'
 import { env } from '@/lib/config/env'
 import { logger } from '@/lib/core/logger'
 
+interface MailchimpConfig {
+  audienceId: string
+}
+
 // 配置 Mailchimp
-const configureMailchimp = () => {
+const configureMailchimp = (): MailchimpConfig => {
   const { apiKey, server, audienceId } = env.newsletter.mailchimp
 
   if (!apiKey || !server || !audienceId) {
@@ -22,9 +27,22 @@ const configureMailchimp = () => {
   return { audienceId }
 }
 
+interface MailchimpRequestBody {
+  email: string
+}
+
+interface MailchimpResponse {
+  statusCode: number
+  data: { subscribed: boolean }
+  message: string
+}
+
 // Mailchimp 订阅处理器
-const mailchimpHandler = async (req, _res) => {
-  const { email } = req.body
+const mailchimpHandler = async (
+  req: NextApiRequest,
+  _res: NextApiResponse
+): Promise<MailchimpResponse> => {
+  const { email } = req.body as MailchimpRequestBody
 
   // 验证请求体
   validateBody(req.body, ['email'])
@@ -35,12 +53,12 @@ const mailchimpHandler = async (req, _res) => {
   }
 
   // 配置 Mailchimp
-  let config
+  let config: MailchimpConfig
   try {
     config = configureMailchimp()
   } catch (error) {
-    logger.error('Mailchimp configuration error', error)
-    throw new ExternalServiceError('Mailchimp', error)
+    logger.error('Mailchimp configuration error', error as Error)
+    throw new ExternalServiceError('Mailchimp', error as Error)
   }
 
   try {
@@ -60,7 +78,7 @@ const mailchimpHandler = async (req, _res) => {
       data: { subscribed: true },
       message: 'Successfully subscribed to newsletter',
     }
-  } catch (error) {
+  } catch (error: any) {
     // 处理 Mailchimp 特定错误
     if (error.message?.includes('already a member') || error.message?.includes('is already')) {
       throw new ConflictError('You are already subscribed to the newsletter')

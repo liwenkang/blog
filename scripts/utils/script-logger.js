@@ -1,4 +1,7 @@
-// CommonJS friendly logger for Node scripts, aligned with app logger behavior
+/**
+ * 脚本日志工具
+ * 专门用于 Node.js 脚本的日志输出,保持与应用 logger 一致的行为
+ */
 
 const LOG_LEVELS = {
   DEBUG: 0,
@@ -9,8 +12,8 @@ const LOG_LEVELS = {
 }
 
 function getLogLevel() {
-  const envLevel = process.env.NEXT_PUBLIC_LOG_LEVEL || 'INFO'
-  return LOG_LEVELS[envLevel] ?? LOG_LEVELS.INFO
+  const level = process.env.LOG_LEVEL || 'info'
+  return LOG_LEVELS[level.toUpperCase()] || LOG_LEVELS.INFO
 }
 
 class ScriptLogger {
@@ -32,38 +35,56 @@ class ScriptLogger {
   }
 
   debug(message, meta = {}) {
-    if (this.isDev && this.shouldLog('DEBUG')) console.log('🔍 [DEBUG]', message, meta)
+    if (this.isDev && this.shouldLog('DEBUG')) {
+      console.log('🔍 [DEBUG]', message, meta)
+    }
   }
+
   info(message, meta = {}) {
     if (!this.shouldLog('INFO')) return
-    if (this.isDev) console.log('ℹ️  [INFO]', message, meta)
-    else console.log(JSON.stringify(this.format('INFO', message, meta)))
+    if (this.isDev) {
+      console.log('ℹ️  [INFO]', message, meta)
+    } else {
+      console.log(JSON.stringify(this.format('INFO', message, meta)))
+    }
   }
+
   warn(message, meta = {}) {
     if (!this.shouldLog('WARN')) return
-    if (this.isDev) console.warn('⚠️  [WARN]', message, meta)
-    else console.warn(JSON.stringify(this.format('WARN', message, meta)))
+    if (this.isDev) {
+      console.warn('⚠️  [WARN]', message, meta)
+    } else {
+      console.warn(JSON.stringify(this.format('WARN', message, meta)))
+    }
   }
+
   error(message, error = null, meta = {}) {
     if (!this.shouldLog('ERROR')) return
-    const merged = error
+
+    const errorMeta = error
       ? {
-          message: error.message,
-          stack: this.isDev ? error.stack : undefined,
+          error: error.message,
+          stack: error.stack,
           name: error.name,
           ...meta,
         }
       : meta
-    if (this.isDev) console.error('❌ [ERROR]', message, merged)
-    else console.error(JSON.stringify(this.format('ERROR', message, merged)))
+
+    if (this.isDev) {
+      console.error('❌ [ERROR]', message, errorMeta)
+      if (error) console.error(error)
+    } else {
+      console.error(JSON.stringify(this.format('ERROR', message, errorMeta)))
+    }
   }
+
   success(message, meta = {}) {
-    if (!this.shouldLog('INFO')) return
-    if (this.isDev) console.log('✅ [SUCCESS]', message, meta)
-    else console.log(JSON.stringify(this.format('INFO', message, meta)))
+    if (this.isDev && this.shouldLog('INFO')) {
+      console.log('✅ [SUCCESS]', message, meta)
+    }
   }
 }
 
 const logger = new ScriptLogger()
 
-module.exports = { logger, LOG_LEVELS, ScriptLogger }
+module.exports = { logger, ScriptLogger }

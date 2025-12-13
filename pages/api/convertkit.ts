@@ -1,10 +1,24 @@
+import type { NextApiRequest, NextApiResponse } from 'next'
 import { apiHandler, validateBody, isValidEmail } from '@/lib/core/api-handler'
 import { ValidationError, ExternalServiceError } from '@/lib/core/api-errors'
 import { env } from '@/lib/config/env'
 import { logger } from '@/lib/core/logger'
 
-const convertkitHandler = async (req, _res) => {
-  const { email } = req.body
+interface ConvertkitRequestBody {
+  email: string
+}
+
+interface ConvertkitResponse {
+  statusCode: number
+  data: { subscribed: boolean }
+  message: string
+}
+
+const convertkitHandler = async (
+  req: NextApiRequest,
+  _res: NextApiResponse
+): Promise<ConvertkitResponse> => {
+  const { email } = req.body as ConvertkitRequestBody
 
   validateBody(req.body, ['email'])
 
@@ -42,10 +56,10 @@ const convertkitHandler = async (req, _res) => {
       message: 'Successfully subscribed to newsletter',
     }
   } catch (error) {
-    logger.error('ConvertKit API error', error, {
+    logger.error('ConvertKit API error', error as Error, {
       email: email.slice(0, 3) + '***',
     })
-    throw new ExternalServiceError('ConvertKit', error)
+    throw new ExternalServiceError('ConvertKit', error as Error)
   }
 }
 

@@ -98,10 +98,12 @@ export const envSchema = baseEnvSchema
   .merge(commentSchema)
   .merge(analyticsSchema)
 
+export type EnvSchema = z.infer<typeof envSchema>
+
 /**
  * Newsletter Provider 配置验证规则
  */
-const newsletterValidationRules = {
+const newsletterValidationRules: Record<string, string[]> = {
   mailchimp: ['MAILCHIMP_API_KEY', 'MAILCHIMP_API_SERVER', 'MAILCHIMP_AUDIENCE_ID'],
   buttondown: ['BUTTONDOWN_API_KEY'],
   convertkit: ['CONVERTKIT_API_KEY', 'CONVERTKIT_FORM_ID'],
@@ -113,7 +115,7 @@ const newsletterValidationRules = {
 /**
  * Comment Provider 配置验证规则
  */
-const commentValidationRules = {
+const commentValidationRules: Record<string, string[]> = {
   giscus: [
     'NEXT_PUBLIC_GISCUS_REPO',
     'NEXT_PUBLIC_GISCUS_REPOSITORY_ID',
@@ -126,15 +128,12 @@ const commentValidationRules = {
 
 /**
  * 条件验证：根据 provider 验证对应的必需字段
- * @param {Object} env - 环境变量对象
- * @returns {Object} 验证后的环境变量
- * @throws {Error} 如果验证失败
  */
-export function validateEnvWithProvider(env) {
+export function validateEnvWithProvider(env: Record<string, any>): EnvSchema {
   // 首先进行基础验证
   const parsed = envSchema.parse(env)
 
-  const errors = []
+  const errors: string[] = []
 
   // Newsletter provider 验证
   const newsletterProvider = parsed.NEWSLETTER_PROVIDER || 'mailchimp'
@@ -142,7 +141,7 @@ export function validateEnvWithProvider(env) {
 
   if (requiredNewsletterFields) {
     const missingFields = requiredNewsletterFields.filter(
-      (field) => !parsed[field] || parsed[field] === ''
+      (field) => !parsed[field as keyof EnvSchema] || parsed[field as keyof EnvSchema] === ''
     )
 
     if (missingFields.length > 0) {
@@ -158,7 +157,7 @@ export function validateEnvWithProvider(env) {
 
   if (requiredCommentFields) {
     const missingFields = requiredCommentFields.filter(
-      (field) => !parsed[field] || parsed[field] === ''
+      (field) => !parsed[field as keyof EnvSchema] || parsed[field as keyof EnvSchema] === ''
     )
 
     if (missingFields.length > 0) {
@@ -166,7 +165,7 @@ export function validateEnvWithProvider(env) {
     }
   }
 
-  // 如果有错误，抛出异常
+  // 如果有错误,抛出异常
   if (errors.length > 0) {
     throw new Error(`Environment validation failed:\n- ${errors.join('\n- ')}`)
   }
@@ -175,12 +174,10 @@ export function validateEnvWithProvider(env) {
 }
 
 /**
- * 宽松验证：只进行基础 schema 验证，不检查 provider 必需字段
+ * 宽松验证：只进行基础 schema 验证,不检查 provider 必需字段
  * 用于生产环境或不需要严格验证的场景
- * @param {Object} env - 环境变量对象
- * @returns {Object} 验证后的环境变量
  */
-export function validateEnvLoose(env) {
+export function validateEnvLoose(env: Record<string, any>): EnvSchema {
   return envSchema.parse(env)
 }
 

@@ -5,10 +5,24 @@
 
 import { logger } from './logger'
 
+interface PerformanceMetric {
+  name: string
+  value: number
+  timestamp: number
+  metadata: Record<string, any>
+}
+
+interface PerformanceObserver {
+  disconnect: () => void
+}
+
 /**
  * 性能指标收集器
  */
 export class PerformanceCollector {
+  private metrics: Map<string, PerformanceMetric>
+  private observers: PerformanceObserver[]
+
   constructor() {
     this.metrics = new Map()
     this.observers = []
@@ -17,8 +31,8 @@ export class PerformanceCollector {
   /**
    * 记录性能指标
    */
-  record(name, value, metadata = {}) {
-    const metric = {
+  record(name: string, value: number, metadata: Record<string, any> = {}): PerformanceMetric {
+    const metric: PerformanceMetric = {
       name,
       value: Math.round(value * 100) / 100,
       timestamp: Date.now(),
@@ -29,8 +43,8 @@ export class PerformanceCollector {
     logger.perf(name, value, metadata)
 
     // 发送到 Google Analytics（如果可用）
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'performance_metric', {
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      ;(window as any).gtag('event', 'performance_metric', {
         event_category: 'Performance',
         event_label: name,
         value: Math.round(value),
@@ -44,21 +58,21 @@ export class PerformanceCollector {
   /**
    * 获取所有指标
    */
-  getMetrics() {
+  getMetrics(): PerformanceMetric[] {
     return Array.from(this.metrics.values())
   }
 
   /**
    * 清除指标
    */
-  clear() {
+  clear(): void {
     this.metrics.clear()
   }
 
   /**
    * 清理观察者
    */
-  cleanup() {
+  cleanup(): void {
     this.observers.forEach((observer) => observer.disconnect())
     this.observers = []
   }
@@ -70,7 +84,7 @@ export const performanceCollector = new PerformanceCollector()
 /**
  * 测量函数执行时间
  */
-export function measure(name, fn) {
+export function measure<T>(name: string, fn: () => T): T {
   const start = performance.now()
   const result = fn()
 
@@ -78,7 +92,7 @@ export function measure(name, fn) {
     return result.finally(() => {
       const duration = performance.now() - start
       performanceCollector.record(name, duration)
-    })
+    }) as T
   }
 
   const duration = performance.now() - start
@@ -89,7 +103,7 @@ export function measure(name, fn) {
 /**
  * 测量异步函数执行时间
  */
-export async function measureAsync(name, fn) {
+export async function measureAsync<T>(name: string, fn: () => Promise<T>): Promise<T> {
   const start = performance.now()
   try {
     return await fn()
@@ -102,7 +116,7 @@ export async function measureAsync(name, fn) {
 /**
  * 创建性能标记
  */
-export function mark(name) {
+export function mark(name: string): void {
   if (typeof performance !== 'undefined' && performance.mark) {
     performance.mark(name)
   }
@@ -111,7 +125,7 @@ export function mark(name) {
 /**
  * 测量两个标记之间的时间
  */
-export function measureBetween(name, startMark, endMark) {
+export function measureBetween(name: string, startMark: string, endMark: string): number {
   if (typeof performance !== 'undefined' && performance.measure) {
     try {
       performance.measure(name, startMark, endMark)
@@ -133,7 +147,11 @@ export function measureBetween(name, startMark, endMark) {
 /**
  * 监控组件渲染性能
  */
-export function trackComponentRender(componentName, renderTime, metadata = {}) {
+export function trackComponentRender(
+  componentName: string,
+  renderTime: number,
+  metadata: Record<string, any> = {}
+): void {
   performanceCollector.record(`component:${componentName}`, renderTime, {
     type: 'component_render',
     component: componentName,
@@ -144,7 +162,11 @@ export function trackComponentRender(componentName, renderTime, metadata = {}) {
 /**
  * 监控路由变化性能
  */
-export function trackRouteChange(path, duration, metadata = {}) {
+export function trackRouteChange(
+  path: string,
+  duration: number,
+  metadata: Record<string, any> = {}
+): void {
   performanceCollector.record('route:change', duration, {
     type: 'route_change',
     path,
@@ -155,7 +177,7 @@ export function trackRouteChange(path, duration, metadata = {}) {
 /**
  * 监控资源加载性能
  */
-export function trackResourceLoad(resourceName, duration, size = 0) {
+export function trackResourceLoad(resourceName: string, duration: number, size: number = 0): void {
   performanceCollector.record(`resource:${resourceName}`, duration, {
     type: 'resource_load',
     resource: resourceName,
@@ -163,16 +185,28 @@ export function trackResourceLoad(resourceName, duration, size = 0) {
   })
 }
 
+interface PageLoadMetrics {
+  dns: number
+  tcp: number
+  request: number
+  domParse: number
+  domContentLoaded: number
+  resourceLoad: number
+  pageLoad: number
+  firstPaint: number
+  firstContentfulPaint: number
+}
+
 /**
  * 获取页面加载性能指标
  */
-export function getPageLoadMetrics() {
+export function getPageLoadMetrics(): PageLoadMetrics | null {
   if (typeof performance === 'undefined') return null
 
-  const navigation = performance.getEntriesByType('navigation')[0]
+  const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
   if (!navigation) return null
 
-  const metrics = {
+  const metrics: PageLoadMetrics = {
     // DNS 查询时间
     dns: Math.round(navigation.domainLookupEnd - navigation.domainLookupStart),
 
@@ -216,7 +250,7 @@ export function getPageLoadMetrics() {
 /**
  * 获取首次绘制时间
  */
-function getFirstPaint() {
+function getFirstPaint(): number {
   if (typeof performance === 'undefined') return 0
 
   const paintEntries = performance.getEntriesByType('paint')
@@ -227,7 +261,7 @@ function getFirstPaint() {
 /**
  * 获取首次内容绘制时间
  */
-function getFirstContentfulPaint() {
+function getFirstContentfulPaint(): number {
   if (typeof performance === 'undefined') return 0
 
   const paintEntries = performance.getEntriesByType('paint')
@@ -238,13 +272,13 @@ function getFirstContentfulPaint() {
 /**
  * 监控 Web Vitals
  */
-export async function trackWebVitals() {
+export async function trackWebVitals(): Promise<void> {
   if (typeof window === 'undefined') return
 
   try {
-    const { getCLS, getFID, getFCP, getLCP, getTTFB, onINP } = await import('web-vitals')
+    const { onCLS, onFCP, onINP, onLCP, onTTFB } = await import('web-vitals')
 
-    const reportMetric = (metric) => {
+    const reportMetric = (metric: any) => {
       const value = Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value)
 
       performanceCollector.record(`webvital:${metric.name}`, value, {
@@ -255,8 +289,8 @@ export async function trackWebVitals() {
       })
 
       // 发送到 Google Analytics
-      if (window.gtag) {
-        window.gtag('event', metric.name, {
+      if ((window as any).gtag) {
+        ;(window as any).gtag('event', metric.name, {
           event_category: 'Web Vitals',
           event_label: metric.id,
           value,
@@ -265,33 +299,36 @@ export async function trackWebVitals() {
       }
     }
 
-    getCLS(reportMetric)
-    getFID(reportMetric)
-    getFCP(reportMetric)
-    getLCP(reportMetric)
-    getTTFB(reportMetric)
-
-    // INP (Interaction to Next Paint) - 新指标
-    if (onINP) {
-      onINP(reportMetric)
-    }
-  } catch (error) {
+    onCLS(reportMetric)
+    onFCP(reportMetric)
+    onLCP(reportMetric)
+    onTTFB(reportMetric)
+    onINP(reportMetric)
+  } catch (error: any) {
     logger.warn('Failed to track Web Vitals', { error: error.message })
   }
+}
+
+interface MemoryUsage {
+  usedJSHeapSize: number
+  totalJSHeapSize: number
+  jsHeapSizeLimit: number
+  usagePercent: number
 }
 
 /**
  * 监控内存使用
  */
-export function getMemoryUsage() {
-  if (typeof performance === 'undefined' || !performance.memory) return null
+export function getMemoryUsage(): MemoryUsage | null {
+  if (typeof performance === 'undefined' || !(performance as any).memory) return null
 
-  const memory = {
-    usedJSHeapSize: Math.round(performance.memory.usedJSHeapSize / 1048576), // MB
-    totalJSHeapSize: Math.round(performance.memory.totalJSHeapSize / 1048576), // MB
-    jsHeapSizeLimit: Math.round(performance.memory.jsHeapSizeLimit / 1048576), // MB
+  const memory: MemoryUsage = {
+    usedJSHeapSize: Math.round((performance as any).memory.usedJSHeapSize / 1048576), // MB
+    totalJSHeapSize: Math.round((performance as any).memory.totalJSHeapSize / 1048576), // MB
+    jsHeapSizeLimit: Math.round((performance as any).memory.jsHeapSizeLimit / 1048576), // MB
     usagePercent: Math.round(
-      (performance.memory.usedJSHeapSize / performance.memory.jsHeapSizeLimit) * 100
+      ((performance as any).memory.usedJSHeapSize / (performance as any).memory.jsHeapSizeLimit) *
+        100
     ),
   }
 
@@ -306,12 +343,12 @@ export function getMemoryUsage() {
 /**
  * 监控 FPS
  */
-export function trackFPS(callback) {
+export function trackFPS(callback?: (fps: number) => void): () => void {
   if (typeof window === 'undefined') return () => {}
 
   let frameCount = 0
   let lastTime = performance.now()
-  let rafId = null
+  let rafId: number | null = null
 
   const measureFPS = () => {
     frameCount++
@@ -342,21 +379,39 @@ export function trackFPS(callback) {
   }
 }
 
+interface PerformanceReport {
+  timestamp: string
+  metrics: Record<
+    string,
+    {
+      value: number
+      metadata: Record<string, any>
+    }
+  >
+  summary: {
+    totalMetrics: number
+    categories: Record<string, number>
+  }
+}
+
 /**
  * 性能报告
  */
-export function getPerformanceReport() {
+export function getPerformanceReport(): PerformanceReport {
   const metrics = performanceCollector.getMetrics()
 
-  const report = {
+  const report: PerformanceReport = {
     timestamp: new Date().toISOString(),
-    metrics: metrics.reduce((acc, metric) => {
-      acc[metric.name] = {
-        value: metric.value,
-        metadata: metric.metadata,
-      }
-      return acc
-    }, {}),
+    metrics: metrics.reduce(
+      (acc, metric) => {
+        acc[metric.name] = {
+          value: metric.value,
+          metadata: metric.metadata,
+        }
+        return acc
+      },
+      {} as Record<string, { value: number; metadata: Record<string, any> }>
+    ),
     summary: {
       totalMetrics: metrics.length,
       categories: {},

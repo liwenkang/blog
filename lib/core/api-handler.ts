@@ -3,26 +3,44 @@
  * 提供统一的错误处理、日志记录、方法验证
  */
 
+import { NextApiRequest, NextApiResponse } from 'next'
 import { logger } from './logger'
 import { ApiResponse } from './api-response'
 import { ApiError } from './api-errors'
 
+export interface ApiHandlerOptions {
+  methods?: string[]
+  requireAuth?: boolean
+}
+
+export interface ApiHandlerResult<T = any> {
+  statusCode?: number
+  data?: T
+  message?: string
+}
+
+export type ApiHandlerFunction<T = any> = (
+  req: NextApiRequest,
+  res: NextApiResponse
+) => Promise<ApiHandlerResult<T> | T | void>
+
 /**
  * API 处理器包装函数
- * @param {Function} handler - API 处理函数
- * @param {Object} options - 配置选项
- * @param {Array<string>} options.methods - 允许的 HTTP 方法
- * @param {boolean} options.requireAuth - 是否需要认证
- * @returns {Function} 包装后的处理函数
+ * @param handler - API 处理函数
+ * @param options - 配置选项
+ * @returns 包装后的处理函数
  */
-export function apiHandler(handler, options = {}) {
-  return async (req, res) => {
+export function apiHandler<T = any>(
+  handler: ApiHandlerFunction<T>,
+  options: ApiHandlerOptions = {}
+) {
+  return async (req: NextApiRequest, res: NextApiResponse) => {
     const startTime = Date.now()
     const { method, url } = req
 
     try {
       // 方法验证
-      if (options.methods && !options.methods.includes(method)) {
+      if (options.methods && method && !options.methods.includes(method)) {
         throw new ApiError(`Method ${method} not allowed`, 405, 'METHOD_NOT_ALLOWED')
       }
 
@@ -40,17 +58,20 @@ export function apiHandler(handler, options = {}) {
       }
 
       // 发送成功响应
-      const statusCode = result?.statusCode || 200
-      const responseData = result?.data !== undefined ? result.data : result
-      const message = result?.message || 'Success'
+      const statusCode = (result as ApiHandlerResult)?.statusCode || 200
+      const responseData =
+        (result as ApiHandlerResult)?.data !== undefined
+          ? (result as ApiHandlerResult).data
+          : result
+      const message = (result as ApiHandlerResult)?.message || 'Success'
 
       res.status(statusCode).json(ApiResponse.success(responseData, message))
 
       // 记录成功日志
-      logger.api(method, url, statusCode, {
+      logger.api(method || 'UNKNOWN', url || '/', statusCode, {
         duration: Date.now() - startTime,
       })
-    } catch (error) {
+    } catch (error: any) {
       // 如果已经发送响应，只记录错误
       if (res.headersSent) {
         logger.error('Error after response sent', error, {
@@ -79,11 +100,11 @@ export function apiHandler(handler, options = {}) {
 
 /**
  * 验证请求体
- * @param {Object} body - 请求体
- * @param {Array<string>} requiredFields - 必需字段
- * @throws {ApiError} 如果验证失败
+ * @param body - 请求体
+ * @param requiredFields - 必需字段
+ * @throws ApiError 如果验证失败
  */
-export function validateBody(body, requiredFields) {
+export function validateBody(body: any, requiredFields: string[]): void {
   const missing = requiredFields.filter((field) => !body || !body[field])
 
   if (missing.length > 0) {
@@ -95,10 +116,10 @@ export function validateBody(body, requiredFields) {
 
 /**
  * 验证邮箱格式
- * @param {string} email - 邮箱地址
- * @returns {boolean} 是否有效
+ * @param email - 邮箱地址
+ * @returns 是否有效
  */
-export function isValidEmail(email) {
+export function isValidEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return emailRegex.test(email)
 }

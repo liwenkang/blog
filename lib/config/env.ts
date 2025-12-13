@@ -3,17 +3,15 @@
  * 提供统一的环境变量读取接口
  */
 
-import { validateEnvWithProvider, validateEnvLoose } from './env-schema.js'
+import { validateEnvWithProvider, validateEnvLoose, type EnvSchema } from './env-schema'
 
-let _env = null
-let _validationError = null
+let _env: EnvSchema | null = null
+let _validationError: Error | null = null
 
 /**
  * 获取验证后的环境变量
- * @param {boolean} strict - 是否使用严格验证
- * @returns {Object} 验证后的环境变量对象
  */
-export function getEnv(strict = false) {
+export function getEnv(strict = false): EnvSchema | Record<string, any> {
   if (_env) return _env
 
   try {
@@ -32,11 +30,11 @@ export function getEnv(strict = false) {
 
     return _env
   } catch (error) {
-    _validationError = error
+    _validationError = error as Error
 
     // 记录错误
     if (typeof console !== 'undefined') {
-      console.error('❌ Environment validation failed:', error.message)
+      console.error('❌ Environment validation failed:', (error as Error).message)
     }
 
     // 开发环境抛出错误
@@ -48,26 +46,22 @@ export function getEnv(strict = false) {
     if (typeof console !== 'undefined') {
       console.warn('⚠️  Using raw process.env due to validation failure')
     }
-    return process.env
+    return process.env as any
   }
 }
 
 /**
  * 获取环境变量验证错误
- * @returns {Error|null} 验证错误对象
  */
-export function getValidationError() {
+export function getValidationError(): Error | null {
   return _validationError
 }
 
 /**
  * 安全访问环境变量
- * @param {string} key - 环境变量键名
- * @param {*} defaultValue - 默认值
- * @returns {*} 环境变量值或默认值
  */
-export function getEnvVar(key, defaultValue = undefined) {
-  const env = getEnv()
+export function getEnvVar(key: string, defaultValue?: any): any {
+  const env = getEnv() as Record<string, any>
   const value = env[key]
 
   // 处理空字符串
@@ -80,11 +74,8 @@ export function getEnvVar(key, defaultValue = undefined) {
 
 /**
  * 检查必需的环境变量
- * @param {string} key - 环境变量键名
- * @returns {string} 环境变量值
- * @throws {Error} 如果环境变量不存在
  */
-export function requireEnv(key) {
+export function requireEnv(key: string): string {
   const value = getEnvVar(key)
   if (!value) {
     throw new Error(`Required environment variable ${key} is not set`)
@@ -94,18 +85,93 @@ export function requireEnv(key) {
 
 /**
  * 检查环境变量是否存在且非空
- * @param {string} key - 环境变量键名
- * @returns {boolean} 是否存在
  */
-export function hasEnv(key) {
+export function hasEnv(key: string): boolean {
   const value = getEnvVar(key)
   return value !== undefined && value !== null && value !== ''
+}
+
+interface NewsletterConfig {
+  provider: string
+  mailchimp: {
+    apiKey: string | undefined
+    server: string | undefined
+    audienceId: string | undefined
+  }
+  buttondown: {
+    apiKey: string | undefined
+    apiUrl: string
+  }
+  convertkit: {
+    apiKey: string | undefined
+    formId: string | undefined
+    apiUrl: string
+  }
+  klaviyo: {
+    apiKey: string | undefined
+    listId: string | undefined
+  }
+  revue: {
+    apiKey: string | undefined
+    apiUrl: string
+  }
+  emailoctopus: {
+    apiKey: string | undefined
+    listId: string | undefined
+    apiUrl: string
+  }
+}
+
+interface CommentConfig {
+  provider: string
+  giscus: {
+    repo: string | undefined
+    repositoryId: string | undefined
+    category: string | undefined
+    categoryId: string | undefined
+  }
+  utterances: {
+    repo: string | undefined
+  }
+  disqus: {
+    shortname: string | undefined
+  }
+}
+
+interface SentryConfig {
+  dsn: string | undefined
+  org: string | undefined
+  project: string | undefined
+}
+
+interface AnalyticsConfig {
+  googleAnalyticsId: string | undefined
+  plausibleDomain: string | undefined
+  umamiWebsiteId: string | undefined
+  posthogId: string | undefined
+}
+
+interface LoggingConfig {
+  enabled: boolean
+  level: string
+}
+
+interface Env {
+  isDevelopment: boolean
+  isProduction: boolean
+  isTest: boolean
+  logLevel: string
+  logging: LoggingConfig
+  newsletter: NewsletterConfig
+  comment: CommentConfig
+  sentry: SentryConfig
+  analytics: AnalyticsConfig
 }
 
 /**
  * 导出常用环境变量的便捷访问对象
  */
-export const env = {
+export const env: Env = {
   // 环境判断
   get isDevelopment() {
     return getEnvVar('NODE_ENV') === 'development'
@@ -121,10 +187,17 @@ export const env = {
   get logLevel() {
     return getEnvVar('NEXT_PUBLIC_LOG_LEVEL', 'INFO')
   },
+  get logging() {
+    return {
+      enabled: true,
+      level: getEnvVar('NEXT_PUBLIC_LOG_LEVEL', 'INFO'),
+    }
+  },
 
   // Newsletter 配置
-  get newsletter() {
+  get newsletter(): NewsletterConfig {
     const provider = getEnvVar('NEWSLETTER_PROVIDER', 'mailchimp')
+
     return {
       provider,
       mailchimp: {
@@ -134,7 +207,7 @@ export const env = {
       },
       buttondown: {
         apiKey: getEnvVar('BUTTONDOWN_API_KEY'),
-        apiUrl: getEnvVar('BUTTONDOWN_API_URL', 'https://buttondown.email/v1/subscribers'),
+        apiUrl: getEnvVar('BUTTONDOWN_API_URL', 'https://api.buttondown.email/v1/'),
       },
       convertkit: {
         apiKey: getEnvVar('CONVERTKIT_API_KEY'),
@@ -158,8 +231,9 @@ export const env = {
   },
 
   // 评论系统配置
-  get comment() {
+  get comment(): CommentConfig {
     const provider = getEnvVar('COMMENT_PROVIDER', 'giscus')
+
     return {
       provider,
       giscus: {
@@ -178,7 +252,7 @@ export const env = {
   },
 
   // Sentry 配置
-  get sentry() {
+  get sentry(): SentryConfig {
     return {
       dsn: getEnvVar('NEXT_PUBLIC_SENTRY_DSN'),
       org: getEnvVar('SENTRY_ORG'),
@@ -187,7 +261,7 @@ export const env = {
   },
 
   // Analytics 配置
-  get analytics() {
+  get analytics(): AnalyticsConfig {
     return {
       googleAnalyticsId: getEnvVar('NEXT_PUBLIC_GA_ID'),
       plausibleDomain: getEnvVar('NEXT_PUBLIC_PLAUSIBLE_DOMAIN'),

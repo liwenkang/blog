@@ -1,10 +1,21 @@
+import type { NextApiRequest, NextApiResponse } from 'next'
 import { apiHandler, validateBody, isValidEmail } from '@/lib/core/api-handler'
 import { ValidationError, ExternalServiceError } from '@/lib/core/api-errors'
 import { env } from '@/lib/config/env'
 import { logger } from '@/lib/core/logger'
 
-const revueHandler = async (req, _res) => {
-  const { email } = req.body
+interface RevueRequestBody {
+  email: string
+}
+
+interface RevueResponse {
+  statusCode: number
+  data: { subscribed: boolean }
+  message: string
+}
+
+const revueHandler = async (req: NextApiRequest, _res: NextApiResponse): Promise<RevueResponse> => {
+  const { email } = req.body as RevueRequestBody
 
   validateBody(req.body, ['email'])
 
@@ -43,10 +54,10 @@ const revueHandler = async (req, _res) => {
       message: 'Successfully subscribed to newsletter',
     }
   } catch (error) {
-    logger.error('Revue API error', error, {
+    logger.error('Revue API error', error as Error, {
       email: email.slice(0, 3) + '***',
     })
-    throw new ExternalServiceError('Revue', error)
+    throw new ExternalServiceError('Revue', error as Error)
   }
 }
 

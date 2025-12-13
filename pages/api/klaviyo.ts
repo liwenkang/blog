@@ -1,10 +1,24 @@
+import type { NextApiRequest, NextApiResponse } from 'next'
 import { apiHandler, validateBody, isValidEmail } from '@/lib/core/api-handler'
 import { ValidationError, ExternalServiceError } from '@/lib/core/api-errors'
 import { env } from '@/lib/config/env'
 import { logger } from '@/lib/core/logger'
 
-const klaviyoHandler = async (req, _res) => {
-  const { email } = req.body
+interface KlaviyoRequestBody {
+  email: string
+}
+
+interface KlaviyoResponse {
+  statusCode: number
+  data: { subscribed: boolean }
+  message: string
+}
+
+const klaviyoHandler = async (
+  req: NextApiRequest,
+  _res: NextApiResponse
+): Promise<KlaviyoResponse> => {
+  const { email } = req.body as KlaviyoRequestBody
 
   validateBody(req.body, ['email'])
 
@@ -48,10 +62,10 @@ const klaviyoHandler = async (req, _res) => {
       message: 'Successfully subscribed to newsletter',
     }
   } catch (error) {
-    logger.error('Klaviyo API error', error, {
+    logger.error('Klaviyo API error', error as Error, {
       email: email.slice(0, 3) + '***',
     })
-    throw new ExternalServiceError('Klaviyo', error)
+    throw new ExternalServiceError('Klaviyo', error as Error)
   }
 }
 

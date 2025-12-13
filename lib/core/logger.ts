@@ -3,31 +3,54 @@
  * 支持不同环境、日志级别、结构化输出
  */
 
-const LOG_LEVELS = {
+export const LOG_LEVELS = {
   DEBUG: 0,
   INFO: 1,
   WARN: 2,
   ERROR: 3,
   SILENT: 4,
+} as const
+
+type LogLevel = keyof typeof LOG_LEVELS
+
+interface LogMetadata {
+  [key: string]: any
 }
 
-class Logger {
+interface FormattedMessage {
+  timestamp: string
+  level: LogLevel
+  context?: string
+  message: string
+  meta?: LogMetadata
+  [key: string]: any
+}
+
+export class Logger {
+  private level: number
+  private isDev: boolean
+  private isServer: boolean
+
   constructor() {
     this.level = this.getLogLevel()
     this.isDev = process.env.NODE_ENV === 'development'
     this.isServer = typeof window === 'undefined'
   }
 
-  getLogLevel() {
-    const envLevel = process.env.NEXT_PUBLIC_LOG_LEVEL || 'INFO'
+  private getLogLevel(): number {
+    const envLevel = (process.env.NEXT_PUBLIC_LOG_LEVEL || 'INFO') as LogLevel
     return LOG_LEVELS[envLevel] || LOG_LEVELS.INFO
   }
 
-  shouldLog(level) {
+  private shouldLog(level: LogLevel): boolean {
     return LOG_LEVELS[level] >= this.level
   }
 
-  formatMessage(level, message, meta = {}) {
+  private formatMessage(
+    level: LogLevel,
+    message: string,
+    meta: LogMetadata = {}
+  ): FormattedMessage {
     const timestamp = new Date().toISOString()
     const context = this.isServer ? '[Server]' : '[Client]'
 
@@ -50,13 +73,13 @@ class Logger {
     }
   }
 
-  debug(message, meta = {}) {
+  debug(message: string, meta: LogMetadata = {}): void {
     if (this.shouldLog('DEBUG') && this.isDev) {
       console.log('🔍 [DEBUG]', message, meta)
     }
   }
 
-  info(message, meta = {}) {
+  info(message: string, meta: LogMetadata = {}): void {
     if (this.shouldLog('INFO')) {
       const formatted = this.formatMessage('INFO', message, meta)
       if (this.isDev) {
@@ -67,7 +90,7 @@ class Logger {
     }
   }
 
-  warn(message, meta = {}) {
+  warn(message: string, meta: LogMetadata = {}): void {
     if (this.shouldLog('WARN')) {
       const formatted = this.formatMessage('WARN', message, meta)
       if (this.isDev) {
@@ -78,7 +101,7 @@ class Logger {
     }
   }
 
-  error(message, error = null, meta = {}) {
+  error(message: string, error: Error | null = null, meta: LogMetadata = {}): void {
     if (this.shouldLog('ERROR')) {
       const errorData = error
         ? {
@@ -104,7 +127,7 @@ class Logger {
     }
   }
 
-  sendToSentry(error, meta = {}) {
+  private sendToSentry(error: Error, meta: LogMetadata = {}): void {
     // 动态导入 Sentry 避免影响构建
     if (typeof window !== 'undefined') {
       try {
@@ -125,7 +148,7 @@ class Logger {
   }
 
   // 用于 API 日志
-  api(method, url, status, meta = {}) {
+  api(method: string, url: string, status: number, meta: LogMetadata = {}): void {
     const statusEmoji = status >= 500 ? '🔴' : status >= 400 ? '🟡' : '🟢'
     const message = `${method} ${url} - ${status}`
 
@@ -139,14 +162,14 @@ class Logger {
   }
 
   // 用于性能日志
-  perf(metric, value, meta = {}) {
+  perf(metric: string, value: number, meta: LogMetadata = {}): void {
     if (this.isDev && this.shouldLog('DEBUG')) {
       this.debug(`⚡ Performance: ${metric} = ${value}ms`, meta)
     }
   }
 
   // 用于成功操作日志
-  success(message, meta = {}) {
+  success(message: string, meta: LogMetadata = {}): void {
     if (this.shouldLog('INFO')) {
       if (this.isDev) {
         console.log('✅ [SUCCESS]', message, meta)
@@ -162,8 +185,5 @@ export const logger = new Logger()
 
 // 便捷方法导出
 export const { debug, info, warn, error, api, perf, success } = logger
-
-// 导出 LOG_LEVELS 和 Logger 类供测试使用
-export { LOG_LEVELS, Logger }
 
 export default logger

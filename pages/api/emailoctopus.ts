@@ -1,10 +1,24 @@
+import type { NextApiRequest, NextApiResponse } from 'next'
 import { apiHandler, validateBody, isValidEmail } from '@/lib/core/api-handler'
 import { ValidationError, ExternalServiceError } from '@/lib/core/api-errors'
 import { env } from '@/lib/config/env'
 import { logger } from '@/lib/core/logger'
 
-const emailoctopusHandler = async (req, _res) => {
-  const { email } = req.body
+interface EmailoctopusRequestBody {
+  email: string
+}
+
+interface EmailoctopusResponse {
+  statusCode: number
+  data: { subscribed: boolean }
+  message: string
+}
+
+const emailoctopusHandler = async (
+  req: NextApiRequest,
+  _res: NextApiResponse
+): Promise<EmailoctopusResponse> => {
+  const { email } = req.body as EmailoctopusRequestBody
 
   validateBody(req.body, ['email'])
 
@@ -42,10 +56,10 @@ const emailoctopusHandler = async (req, _res) => {
       message: 'Successfully subscribed to newsletter',
     }
   } catch (error) {
-    logger.error('EmailOctopus API error', error, {
+    logger.error('EmailOctopus API error', error as Error, {
       email: email.slice(0, 3) + '***',
     })
-    throw new ExternalServiceError('EmailOctopus', error)
+    throw new ExternalServiceError('EmailOctopus', error as Error)
   }
 }
 

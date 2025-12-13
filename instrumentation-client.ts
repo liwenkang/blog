@@ -20,5 +20,5 @@ Sentry.init({
 })
 
 // Export Sentry hooks for Next.js instrumentation
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart
-export const onRequestError = Sentry.captureRequestError
+export const onRouterTransitionStart = (Sentry as any).captureRouterTransitionStart
+export const onRequestError = (Sentry as any).captureRequestError
