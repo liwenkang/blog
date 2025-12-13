@@ -3,7 +3,7 @@ import { useTheme } from 'next-themes'
 
 import siteMetadata from '@/data/siteMetadata'
 
-const Utterances = () => {
+const Giscus = () => {
   const [enableLoadComments, setEnabledLoadComments] = useState(true)
   const [mounted, setMounted] = useState(false)
   const { theme, resolvedTheme } = useTheme()
@@ -14,21 +14,43 @@ const Utterances = () => {
   }, [])
 
   const commentsTheme =
-    theme === 'dark' || resolvedTheme === 'dark'
-      ? siteMetadata.comment.utterancesConfig.darkTheme
-      : siteMetadata.comment.utterancesConfig.theme
+    siteMetadata.comment.giscusConfig.themeURL === ''
+      ? theme === 'dark' || resolvedTheme === 'dark'
+        ? siteMetadata.comment.giscusConfig.darkTheme
+        : siteMetadata.comment.giscusConfig.theme
+      : siteMetadata.comment.giscusConfig.themeURL
 
   const COMMENTS_ID = 'comments-container'
 
   const LoadComments = useCallback(() => {
     setEnabledLoadComments(false)
+
+    const {
+      repo = '',
+      repositoryId = '',
+      category = '',
+      categoryId = '',
+      mapping = '',
+      reactions = '',
+      metadata = '',
+      inputPosition = '',
+      lang = '',
+    } = siteMetadata?.comment?.giscusConfig ?? {}
+
     const script = document.createElement('script')
-    script.src = 'https://utteranc.es/client.js'
-    script.setAttribute('repo', siteMetadata.comment.utterancesConfig.repo)
-    script.setAttribute('issue-term', siteMetadata.comment.utterancesConfig.issueTerm)
-    script.setAttribute('label', siteMetadata.comment.utterancesConfig.label)
-    script.setAttribute('theme', commentsTheme)
+    script.src = 'https://giscus.app/client.js'
+    script.setAttribute('data-repo', repo)
+    script.setAttribute('data-repo-id', repositoryId)
+    script.setAttribute('data-category', category)
+    script.setAttribute('data-category-id', categoryId)
+    script.setAttribute('data-mapping', mapping)
+    script.setAttribute('data-reactions-enabled', reactions)
+    script.setAttribute('data-emit-metadata', metadata)
+    script.setAttribute('data-input-position', inputPosition)
+    script.setAttribute('data-lang', lang)
+    script.setAttribute('data-theme', commentsTheme)
     script.setAttribute('crossorigin', 'anonymous')
+    script.setAttribute('data-loading', 'lazy')
     script.async = true
 
     const comments = document.getElementById(COMMENTS_ID)
@@ -43,28 +65,27 @@ const Utterances = () => {
   // Reload on theme change
   useEffect(() => {
     if (mounted) {
-      const iframe = document.querySelector('iframe.utterances-frame')
+      const iframe = document.querySelector('iframe.giscus-frame')
       if (!iframe) return
       LoadComments()
     }
-  }, [LoadComments, mounted])
+  }, [mounted, LoadComments])
 
   // 在服务端渲染时返回一个占位符，避免水合错误
   if (!mounted) {
     return (
       <div className="pt-6 pb-6 text-center text-gray-700 dark:text-gray-300">
-        <div className="utterances-frame relative" id={COMMENTS_ID} />
+        <div className="giscus" id={COMMENTS_ID} />
       </div>
     )
   }
 
-  // Added `relative` to fix a weird bug with `utterances-frame` position
   return (
     <div className="pt-6 pb-6 text-center text-gray-700 dark:text-gray-300">
       {enableLoadComments && <button onClick={LoadComments}>Load Comments</button>}
-      <div className="utterances-frame relative" id={COMMENTS_ID} />
+      <div className="giscus" id={COMMENTS_ID} />
     </div>
   )
 }
 
-export default Utterances
+export default Giscus

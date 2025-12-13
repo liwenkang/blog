@@ -2,6 +2,12 @@ import Script from 'next/script'
 
 import siteMetadata from '@/data/siteMetadata'
 
+declare global {
+  interface Window {
+    posthog?: any
+  }
+}
+
 const PosthogScript = () => {
   return (
     <>

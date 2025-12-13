@@ -2,7 +2,25 @@ import React, { useState, useEffect } from 'react'
 
 import siteMetadata from '@/data/siteMetadata'
 
-const Disqus = ({ frontMatter }) => {
+interface DisqusProps {
+  frontMatter: Record<string, any>
+}
+
+interface DisqusConfig {
+  page: {
+    url: string
+    identifier: string
+  }
+}
+
+declare global {
+  interface Window {
+    DISQUS?: any
+    disqus_config?: (this: DisqusConfig) => void
+  }
+}
+
+const Disqus = ({ frontMatter }: DisqusProps) => {
   const [enableLoadComments, setEnabledLoadComments] = useState(true)
   const [mounted, setMounted] = useState(false)
 

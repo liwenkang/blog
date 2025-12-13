@@ -1,5 +1,11 @@
 import Script from 'next/script'
 
+declare global {
+  interface Window {
+    sa_event?: (eventName: string, callback?: () => void) => void
+  }
+}
+
 const SimpleAnalyticsScript = () => {
   return (
     <>
@@ -14,7 +20,7 @@ const SimpleAnalyticsScript = () => {
 }
 
 // https://docs.simpleanalytics.com/events
-export const logEvent = (eventName, callback) => {
+export const logEvent = (eventName: string, callback?: () => void) => {
   if (callback) {
     return window.sa_event?.(eventName, callback)
   } else {

@@ -2,6 +2,12 @@ import Script from 'next/script'
 
 import siteMetadata from '@/data/siteMetadata'
 
+declare global {
+  interface Window {
+    plausible?: (eventName: string, ...rest: any[]) => void
+  }
+}
+
 const PlausibleScript = () => {
   return (
     <>
@@ -22,6 +28,6 @@ const PlausibleScript = () => {
 export default PlausibleScript
 
 // https://plausible.io/docs/custom-event-goals
-export const logEvent = (eventName, ...rest) => {
+export const logEvent = (eventName: string, ...rest: any[]) => {
   return window.plausible?.(eventName, ...rest)
 }
