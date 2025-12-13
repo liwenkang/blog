@@ -1,7 +1,11 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, Dispatch, SetStateAction } from 'react'
 
 // Reading progress indicator
-export const ReadingProgress = ({ target }) => {
+interface ReadingProgressProps {
+  target: string
+}
+
+export const ReadingProgress = ({ target }: ReadingProgressProps) => {
   const [progress, setProgress] = useState(0)
 
   useEffect(() => {
@@ -44,7 +48,11 @@ export const ReadingProgress = ({ target }) => {
 }
 
 // Back to top button
-export const BackToTop = ({ threshold = 300 }) => {
+interface BackToTopProps {
+  threshold?: number
+}
+
+export const BackToTop = ({ threshold = 300 }: BackToTopProps) => {
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
@@ -84,8 +92,14 @@ export const BackToTop = ({ threshold = 300 }) => {
 }
 
 // Table of contents auto-highlight
-export const TOCAutoHighlight = ({ headings, _activeHeading, setActiveHeading }) => {
-  const headingRefs = useRef([])
+interface TOCAutoHighlightProps {
+  headings: any[]
+  _activeHeading: number
+  setActiveHeading: Dispatch<SetStateAction<number>>
+}
+
+export const TOCAutoHighlight = ({ headings, setActiveHeading }: TOCAutoHighlightProps) => {
+  const headingRefs = useRef<(Element | null)[]>([])
 
   useEffect(() => {
     headingRefs.current = headingRefs.current.slice(0, headings.length)
@@ -123,12 +137,14 @@ export const TOCAutoHighlight = ({ headings, _activeHeading, setActiveHeading })
 // Smooth scroll for anchor links
 export const SmoothScroll = () => {
   useEffect(() => {
-    const handleAnchorClick = (e) => {
-      const target = e.target.closest('a[href^="#"]')
+    const handleAnchorClick = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement).closest('a[href^="#"]')
       if (!target) return
 
       e.preventDefault()
       const targetId = target.getAttribute('href')
+      if (!targetId) return
+
       const targetElement = document.querySelector(targetId)
 
       if (targetElement) {
@@ -139,8 +155,8 @@ export const SmoothScroll = () => {
       }
     }
 
-    document.addEventListener('click', handleAnchorClick)
-    return () => document.removeEventListener('click', handleAnchorClick)
+    document.addEventListener('click', handleAnchorClick as EventListener)
+    return () => document.removeEventListener('click', handleAnchorClick as EventListener)
   }, [])
 
   return null
@@ -154,7 +170,7 @@ export const CopyCode = () => {
 
       codeBlocks.forEach((codeBlock) => {
         const pre = codeBlock.parentElement
-        if (pre.querySelector('.copy-button')) return
+        if (!pre || pre.querySelector('.copy-button')) return
 
         const button = document.createElement('button')
         button.className =
@@ -163,6 +179,8 @@ export const CopyCode = () => {
 
         button.addEventListener('click', async () => {
           const text = codeBlock.textContent
+          if (!text) return
+
           try {
             await navigator.clipboard.writeText(text)
             button.innerHTML = 'Copied!'
@@ -176,7 +194,7 @@ export const CopyCode = () => {
             }, 2000)
           } catch (err) {
             import('@/lib/core/logger').then(({ logger }) => {
-              logger.error('Failed to copy text', err)
+              logger.error('Failed to copy text')
             })
           }
         })
@@ -210,7 +228,11 @@ export const CopyCode = () => {
 }
 
 // Print functionality
-export const PrintButton = ({ className = '' }) => {
+interface PrintButtonProps {
+  className?: string
+}
+
+export const PrintButton = ({ className = '' }: PrintButtonProps) => {
   const handlePrint = useCallback(() => {
     window.print()
   }, [])
@@ -235,13 +257,18 @@ export const PrintButton = ({ className = '' }) => {
 }
 
 // Reading time estimator
-export const ReadingTimeEstimator = ({ content, className = '' }) => {
+interface ReadingTimeEstimatorProps {
+  content: string
+  className?: string
+}
+
+export const ReadingTimeEstimator = ({ content, className = '' }: ReadingTimeEstimatorProps) => {
   const [readingTime, setReadingTime] = useState({ minutes: 0, seconds: 0 })
 
   useEffect(() => {
     if (!content) return
 
-    const calculateReadingTime = (text) => {
+    const calculateReadingTime = (text: string) => {
       // Average reading speed: 200-250 words per minute
       const wordsPerMinute = 225
       const wordsPerSecond = wordsPerMinute / 60
@@ -283,16 +310,24 @@ export const ReadingTimeEstimator = ({ content, className = '' }) => {
 }
 
 // Font size adjuster
-export const FontSizeAdjuster = ({ className = '' }) => {
-  const [fontSize, setFontSize] = useState('base')
+interface FontSizeAdjusterProps {
+  className?: string
+}
+
+type FontSize = 'sm' | 'base' | 'lg' | 'xl'
+
+export const FontSizeAdjuster = ({ className = '' }: FontSizeAdjusterProps) => {
+  const [fontSize, setFontSize] = useState<FontSize>('base')
 
   useEffect(() => {
-    const savedSize = localStorage.getItem('blog-font-size') || 'base'
+    const savedSize = (localStorage.getItem('blog-font-size') as FontSize) || 'base'
     setFontSize(savedSize)
-    document.documentElement.classList.add(`text-${savedSize}`)
+    if (savedSize !== 'base') {
+      document.documentElement.classList.add(`text-${savedSize}`)
+    }
   }, [])
 
-  const adjustFontSize = useCallback((size) => {
+  const adjustFontSize = useCallback((size: FontSize) => {
     // Remove existing font size classes
     document.documentElement.classList.remove('text-sm', 'text-base', 'text-lg', 'text-xl')
 
@@ -305,7 +340,7 @@ export const FontSizeAdjuster = ({ className = '' }) => {
     localStorage.setItem('blog-font-size', size)
   }, [])
 
-  const sizes = [
+  const sizes: Array<{ name: string; value: FontSize; icon: string }> = [
     { name: 'Small', value: 'sm', icon: 'A-' },
     { name: 'Base', value: 'base', icon: 'A' },
     { name: 'Large', value: 'lg', icon: 'A+' },
@@ -338,14 +373,14 @@ export const FontSizeAdjuster = ({ className = '' }) => {
 
 // Lazy load images helper
 export const useImageLazyLoad = () => {
-  const [loadedImages, setLoadedImages] = useState(new Set())
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set())
 
-  const markImageLoaded = useCallback((src) => {
+  const markImageLoaded = useCallback((src: string) => {
     setLoadedImages((prev) => new Set(prev).add(src))
   }, [])
 
   const isImageLoaded = useCallback(
-    (src) => {
+    (src: string) => {
       return loadedImages.has(src)
     },
     [loadedImages]

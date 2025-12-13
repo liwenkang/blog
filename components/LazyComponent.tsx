@@ -1,23 +1,36 @@
-import React, { useState, Suspense } from 'react'
-import dynamic from 'next/dynamic'
+import React, { useState, useEffect, ReactNode, ComponentType, ReactElement } from 'react'
+import dynamic, { DynamicOptions, Loader } from 'next/dynamic'
+
+interface LazyLoadingOptions<P = any> {
+  fallback?: ReactNode
+  loadingComponent?: ReactNode
+  errorComponent?: ReactNode
+  preload?: boolean
+}
 
 // Higher-order component for lazy loading
-export const withLazyLoading = (
-  importFunc,
-  { fallback = null, loadingComponent = null, errorComponent = null, preload = false } = {}
-) => {
-  const LazyComponent = dynamic(importFunc, {
-    loading: () => loadingComponent || <DefaultLoading />,
-    onError: () => errorComponent || <DefaultError />,
+export const withLazyLoading = <P extends object>(
+  importFunc: Loader<P>,
+  {
+    fallback = null,
+    loadingComponent = null,
+    errorComponent = null,
+    preload = false,
+  }: LazyLoadingOptions<P> = {}
+): ComponentType<P> => {
+  const LazyComponent = dynamic<P>(importFunc, {
+    loading: () => (loadingComponent as ReactElement) || <DefaultLoading />,
     ssr: false, // Disable server-side rendering for better code splitting
-  })
+  } as DynamicOptions<P>)
 
   // Preload the component if requested
   if (preload && typeof window !== 'undefined') {
-    importFunc()
+    if (typeof importFunc === 'function') {
+      importFunc()
+    }
   }
 
-  return LazyComponent
+  return LazyComponent as ComponentType<P>
 }
 
 // Default loading component
@@ -50,18 +63,25 @@ const DefaultError = () => (
   </div>
 )
 
+interface LazyLoadComponentProps {
+  children: ReactNode
+  rootMargin?: string
+  threshold?: number
+  fallback?: ReactNode
+}
+
 // Intersection Observer based lazy loader
 export const LazyLoadComponent = ({
   children,
   rootMargin = '50px',
   threshold = 0.1,
   fallback = <DefaultLoading />,
-}) => {
+}: LazyLoadComponentProps) => {
   const [isInView, setIsInView] = useState(false)
-  const [elementRef, setElementRef] = useState(null)
+  const [elementRef, setElementRef] = useState<HTMLDivElement | null>(null)
 
   // Use Intersection Observer for lazy loading
-  React.useEffect(() => {
+  useEffect(() => {
     if (!elementRef || typeof window === 'undefined') return
 
     const observer = new IntersectionObserver(

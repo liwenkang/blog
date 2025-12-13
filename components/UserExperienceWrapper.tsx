@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, ReactNode } from 'react'
 import {
   ReadingProgress,
   BackToTop,
@@ -8,14 +8,24 @@ import {
   FontSizeAdjuster,
 } from './UserExperience'
 
-const UserExperienceWrapper = ({ children, showReadingProgress = true, showBackToTop = true }) => {
+interface UserExperienceWrapperProps {
+  children: ReactNode
+  showReadingProgress?: boolean
+  showBackToTop?: boolean
+}
+
+const UserExperienceWrapper = ({
+  children,
+  showReadingProgress = true,
+  showBackToTop = true,
+}: UserExperienceWrapperProps) => {
   const [showControls, setShowControls] = useState(false)
   const [isPrint, setIsPrint] = useState(false)
 
   useEffect(() => {
     // Check if we're in print mode
     const mediaQuery = window.matchMedia('print')
-    const handleMediaChange = (e) => setIsPrint(e.matches)
+    const handleMediaChange = (e: MediaQueryListEvent) => setIsPrint(e.matches)
 
     mediaQuery.addEventListener('change', handleMediaChange)
     setIsPrint(mediaQuery.matches)

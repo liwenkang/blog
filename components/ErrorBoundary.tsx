@@ -1,24 +1,34 @@
-import React from 'react'
+import React, { Component, ErrorInfo, ReactNode } from 'react'
 import Link from 'next/link'
 
 // Import Sentry only on client side
-let Sentry
+let Sentry: typeof import('@sentry/nextjs') | undefined
 if (typeof window !== 'undefined') {
   Sentry = require('@sentry/nextjs')
 }
 
-class ErrorBoundary extends React.Component {
-  constructor(props) {
+interface ErrorBoundaryProps {
+  children: ReactNode
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean
+  error: Error | null
+  errorInfo: ErrorInfo | null
+}
+
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props)
     this.state = { hasError: false, error: null, errorInfo: null }
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
     // Update state so the next render will show the fallback UI.
     return { hasError: true }
   }
 
-  componentDidCatch(error, errorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Catch errors in any components below and re-render with error message
     this.setState({
       error: error,
@@ -26,7 +36,7 @@ class ErrorBoundary extends React.Component {
     })
 
     // You can also log error messages to an error reporting service here
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && Sentry) {
       Sentry.captureException(error, {
         contexts: {
           react: {
@@ -79,7 +89,7 @@ class ErrorBoundary extends React.Component {
                     {this.state.error && this.state.error.toString()}
                     <br />
                     <br />
-                    {this.state.errorInfo.componentStack}
+                    {this.state.errorInfo && this.state.errorInfo.componentStack}
                   </code>
                 </pre>
               </details>
