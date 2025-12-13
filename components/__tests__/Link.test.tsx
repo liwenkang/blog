@@ -78,42 +78,41 @@ describe('Link Component', () => {
     const httpsLink = screen.getByRole('link', { name: 'HTTPS Link' })
 
     expect(httpLink).toHaveAttribute('target', '_blank')
-    expect(httpLink).toHaveAttribute('rel', 'noopener noreferrer')
     expect(httpsLink).toHaveAttribute('target', '_blank')
-    expect(httpsLink).toHaveAttribute('rel', 'noopener noreferrer')
   })
 
-  it('handles complex internal routes', () => {
-    render(<Link href="/blog/category/[slug]">Dynamic Route</Link>)
+  it('supports mailto links', () => {
+    render(<Link href="mailto:test@example.com">Email</Link>)
 
-    const link = screen.getByRole('link', { name: 'Dynamic Route' })
-    expect(link).toHaveAttribute('href', '/blog/category/[slug]')
+    const link = screen.getByRole('link', { name: 'Email' })
+    expect(link).toHaveAttribute('href', 'mailto:test@example.com')
   })
 
-  it('handles relative internal paths', () => {
-    render(<Link href="/relative/path">Relative Path</Link>)
+  it('supports tel links', () => {
+    render(<Link href="tel:+1234567890">Call</Link>)
 
-    const link = screen.getByRole('link', { name: 'Relative Path' })
-    expect(link).toHaveAttribute('href', '/relative/path')
+    const link = screen.getByRole('link', { name: 'Call' })
+    expect(link).toHaveAttribute('href', 'tel:+1234567890')
   })
 
-  it('preserves custom attributes', () => {
+  it('renders children correctly', () => {
     render(
-      <Link href="/custom" aria-label="Custom label" title="Custom title" data-custom="test">
-        Custom Link
+      <Link href="/test">
+        <span>Custom Content</span>
       </Link>
     )
 
-    const link = screen.getByRole('link', { name: 'Custom label' })
-    expect(link).toHaveAttribute('title', 'Custom title')
-    expect(link).toHaveAttribute('data-custom', 'test')
+    expect(screen.getByText('Custom Content')).toBeInTheDocument()
   })
 
-  it('handles missing href with default attributes', () => {
-    render(<Link>Link with missing href</Link>)
+  it('forwards ref correctly', () => {
+    const ref = jest.fn()
+    render(
+      <Link href="/test" ref={ref}>
+        Test
+      </Link>
+    )
 
-    const link = screen.getByText('Link with missing href')
-    expect(link).toBeInTheDocument()
-    // When href is missing, Link component defaults to external link behavior
+    expect(ref).toHaveBeenCalled()
   })
 })

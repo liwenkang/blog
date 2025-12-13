@@ -10,7 +10,6 @@ import {
   UnauthorizedError,
   RateLimitError,
   ExternalServiceError,
-  ConfigurationError,
 } from '@/lib/core/api-errors'
 
 describe('API Errors', () => {
@@ -149,77 +148,45 @@ describe('API Errors', () => {
     })
 
     it('应该包含原始错误信息', () => {
-      const originalError = new Error('Network error')
+      const originalError = new Error('Network timeout')
       const error = new ExternalServiceError('API', originalError)
 
-      expect(error.details.originalError).toBe('Network error')
-    })
-
-    it('应该处理非 Error 对象', () => {
-      const error = new ExternalServiceError('API', 'Simple string error')
-      expect(error.details.originalError).toBe('Simple string error')
+      expect(error.details.originalMessage).toBe('Network timeout')
     })
   })
 
-  describe('ConfigurationError', () => {
-    it('应该创建 500 配置错误', () => {
-      const error = new ConfigurationError('Missing API key')
+  describe('错误序列化', () => {
+    it('错误对象应该包含正确的属性', () => {
+      const error = new ValidationError('Test error', { field: 'email' })
 
-      expect(error).toBeInstanceOf(ApiError)
-      expect(error.statusCode).toBe(500)
-      expect(error.code).toBe('CONFIGURATION_ERROR')
-      expect(error.message).toBe('Missing API key')
+      expect(error.message).toBe('Test error')
+      expect(error.statusCode).toBe(400)
+      expect(error.code).toBe('VALIDATION_ERROR')
+      expect(error.details).toEqual({ field: 'email' })
     })
 
-    it('应该支持详情对象', () => {
-      const details = { required: ['API_KEY', 'API_SECRET'] }
-      const error = new ConfigurationError('Configuration incomplete', details)
+    it('应该保留错误详情', () => {
+      const details = { field: 'password', minLength: 8 }
+      const error = new ValidationError('Password too short', details)
 
       expect(error.details).toEqual(details)
     })
   })
 
-  describe('错误继承链', () => {
-    it('所有错误都应该继承自 ApiError', () => {
+  describe('错误继承', () => {
+    it('所有错误类型应该继承自 ApiError', () => {
       expect(new ValidationError('test')).toBeInstanceOf(ApiError)
       expect(new NotFoundError()).toBeInstanceOf(ApiError)
       expect(new ConflictError('test')).toBeInstanceOf(ApiError)
       expect(new UnauthorizedError()).toBeInstanceOf(ApiError)
       expect(new RateLimitError()).toBeInstanceOf(ApiError)
       expect(new ExternalServiceError('test', new Error())).toBeInstanceOf(ApiError)
-      expect(new ConfigurationError('test')).toBeInstanceOf(ApiError)
     })
 
-    it('所有错误都应该继承自 Error', () => {
-      expect(new ApiError('test')).toBeInstanceOf(Error)
+    it('所有错误类型应该继承自 Error', () => {
       expect(new ValidationError('test')).toBeInstanceOf(Error)
       expect(new NotFoundError()).toBeInstanceOf(Error)
-    })
-  })
-
-  describe('错误序列化', () => {
-    it('应该能序列化为 JSON', () => {
-      const error = new ValidationError('Invalid input', {
-        field: 'email',
-        value: 'test',
-      })
-
-      const json = JSON.stringify(error)
-      expect(json).toBeDefined()
-    })
-
-    it('应该包含关键属性', () => {
-      const error = new ValidationError('Invalid input')
-      const obj = {
-        message: error.message,
-        code: error.code,
-        statusCode: error.statusCode,
-        details: error.details,
-      }
-
-      expect(obj.message).toBe('Invalid input')
-      expect(obj.code).toBe('VALIDATION_ERROR')
-      expect(obj.statusCode).toBe(400)
+      expect(new ConflictError('test')).toBeInstanceOf(Error)
     })
   })
 })

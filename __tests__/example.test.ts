@@ -21,4 +21,16 @@ describe('Example tests', () => {
     expect(obj).toHaveProperty('name', 'test')
     expect(obj).toEqual({ name: 'test', value: 42 })
   })
+
+  test('should handle async operations', async () => {
+    const promise = Promise.resolve('resolved')
+    await expect(promise).resolves.toBe('resolved')
+  })
+
+  test('should handle boolean values', () => {
+    expect(true).toBeTruthy()
+    expect(false).toBeFalsy()
+    expect(0).toBeFalsy()
+    expect(1).toBeTruthy()
+  })
 })

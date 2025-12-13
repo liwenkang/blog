@@ -4,7 +4,7 @@ import Tag from '../Tag'
 
 // Mock Next.js Link
 jest.mock('next/link', () => {
-  return function MockLink({ href, children, ...props }) {
+  return function MockLink({ href, children, ...props }: any) {
     return (
       <a href={href} {...props}>
         {children}
@@ -15,7 +15,7 @@ jest.mock('next/link', () => {
 
 // Mock kebabCase utility
 jest.mock('@/lib/utils/kebabCase', () => {
-  const mockKebabCase = jest.fn((text) => text.toLowerCase().replace(/\s+/g, '-'))
+  const mockKebabCase = jest.fn((text: string) => text.toLowerCase().replace(/\s+/g, '-'))
   return {
     __esModule: true,
     default: mockKebabCase,
@@ -80,6 +80,29 @@ describe('Tag component', () => {
     render(<Tag text="" />)
 
     const tagLink = screen.getByRole('link')
+    expect(tagLink).toBeInTheDocument()
     expect(tagLink).toHaveTextContent('')
+  })
+
+  it('handles special characters in tag text', () => {
+    render(<Tag text="C++ Programming" />)
+
+    const tagLink = screen.getByRole('link')
+    expect(tagLink).toHaveTextContent('C++-Programming')
+  })
+
+  it('creates correct href path', () => {
+    render(<Tag text="TypeScript" />)
+
+    const tagLink = screen.getByRole('link')
+    expect(tagLink).toHaveAttribute('href', '/tags/typescript')
+  })
+
+  it('preserves uppercase in display text', () => {
+    render(<Tag text="API Design" />)
+
+    const tagLink = screen.getByRole('link')
+    // The component uses uppercase class, but text content should be "API-Design"
+    expect(tagLink).toHaveTextContent('API-Design')
   })
 })

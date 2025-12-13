@@ -45,7 +45,7 @@ describe('API Response', () => {
 
   describe('error 方法', () => {
     it('应该创建错误响应', () => {
-      const error = new Error('Something went wrong')
+      const error = new Error('Something went wrong') as any
       error.code = 'TEST_ERROR'
 
       const response = ApiResponse.error(error, 500)
@@ -98,7 +98,7 @@ describe('API Response', () => {
       const originalEnv = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
 
-      const error = new Error('Test error')
+      const error = new Error('Test error') as any
       error.details = { field: 'email', reason: 'invalid' }
 
       const response = ApiResponse.error(error)
@@ -119,121 +119,122 @@ describe('API Response', () => {
   describe('paginated 方法', () => {
     it('应该创建分页响应', () => {
       const items = [1, 2, 3, 4, 5]
-      const pagination = {
-        page: 2,
-        pageSize: 5,
-        total: 25,
-      }
 
-      const response = ApiResponse.paginated(items, pagination)
+      const response = ApiResponse.paginated(items, 2, 5, 25)
 
       expect(response.success).toBe(true)
-      expect(response.data).toEqual(items)
-      expect(response.pagination).toBeDefined()
+      expect(response.data.items).toEqual(items)
+      expect(response.data.pagination).toBeDefined()
+      expect(response.data.pagination.page).toBe(2)
+      expect(response.data.pagination.limit).toBe(5)
+      expect(response.data.pagination.total).toBe(25)
+      expect(response.data.pagination.pages).toBe(5)
       expect(response.timestamp).toBeDefined()
     })
 
     it('应该计算总页数', () => {
-      const pagination = {
-        page: 1,
-        pageSize: 10,
-        total: 25,
-      }
+      const response = ApiResponse.paginated([], 1, 10, 25)
 
-      const response = ApiResponse.paginated([], pagination)
-
-      expect(response.pagination.totalPages).toBe(3)
+      expect(response.data.pagination.pages).toBe(3)
     })
 
     it('应该包含分页信息', () => {
-      const pagination = {
-        page: 2,
-        pageSize: 20,
-        total: 100,
-      }
+      const response = ApiResponse.paginated([1, 2, 3], 2, 10, 50)
 
-      const response = ApiResponse.paginated([], pagination)
-
-      expect(response.pagination.page).toBe(2)
-      expect(response.pagination.pageSize).toBe(20)
-      expect(response.pagination.total).toBe(100)
-      expect(response.pagination.totalPages).toBe(5)
+      expect(response.data.pagination.page).toBe(2)
+      expect(response.data.pagination.limit).toBe(10)
+      expect(response.data.pagination.total).toBe(50)
+      expect(response.data.pagination.pages).toBe(5)
     })
 
-    it('应该处理空数组', () => {
-      const pagination = {
-        page: 1,
-        pageSize: 10,
-        total: 0,
-      }
+    it('应该处理最后一页', () => {
+      const response = ApiResponse.paginated([1, 2, 3, 4, 5], 3, 10, 25)
 
-      const response = ApiResponse.paginated([], pagination)
-
-      expect(response.data).toEqual([])
-      expect(response.pagination.totalPages).toBe(0)
+      expect(response.data.pagination.pages).toBe(3)
+      expect(response.data.pagination.hasNext).toBe(false)
     })
 
-    it('应该正确处理不能整除的页数', () => {
-      const pagination = {
-        page: 1,
-        pageSize: 7,
-        total: 30,
-      }
+    it('应该处理空结果', () => {
+      const response = ApiResponse.paginated([], 1, 10, 0)
 
-      const response = ApiResponse.paginated([], pagination)
+      expect(response.data.items).toEqual([])
+      expect(response.data.pagination.total).toBe(0)
+      expect(response.data.pagination.pages).toBe(0)
+    })
 
-      expect(response.pagination.totalPages).toBe(5) // ceil(30/7) = 5
+    it('应该有默认消息', () => {
+      const response = ApiResponse.paginated([], 1, 10, 0)
+      expect(response.message).toBe('Success')
     })
   })
 
-  describe('响应格式一致性', () => {
-    it('成功响应应该包含 success 字段', () => {
-      const response = ApiResponse.success({})
-      expect(response).toHaveProperty('success')
-    })
-
-    it('错误响应应该包含 success 字段', () => {
-      const response = ApiResponse.error(new Error())
-      expect(response).toHaveProperty('success')
-    })
-
-    it('分页响应应该包含 success 字段', () => {
-      const response = ApiResponse.paginated([], { page: 1, pageSize: 10, total: 0 })
-      expect(response).toHaveProperty('success')
-    })
-
-    it('所有响应都应该包含时间戳', () => {
-      expect(ApiResponse.success({})).toHaveProperty('timestamp')
-      expect(ApiResponse.error(new Error())).toHaveProperty('timestamp')
-      expect(ApiResponse.paginated([], { page: 1, pageSize: 10, total: 0 })).toHaveProperty(
-        'timestamp'
-      )
-    })
-  })
-
-  describe('响应序列化', () => {
-    it('成功响应应该可以序列化为 JSON', () => {
+  describe('响应格式', () => {
+    it('成功响应应该有正确的结构', () => {
       const response = ApiResponse.success({ test: 'data' })
-      const json = JSON.stringify(response)
 
-      expect(json).toBeDefined()
-      expect(() => JSON.parse(json)).not.toThrow()
+      expect(response).toHaveProperty('success')
+      expect(response).toHaveProperty('message')
+      expect(response).toHaveProperty('data')
+      expect(response).toHaveProperty('timestamp')
     })
 
-    it('错误响应应该可以序列化为 JSON', () => {
-      const response = ApiResponse.error(new Error('Test'))
-      const json = JSON.stringify(response)
+    it('错误响应应该有正确的结构', () => {
+      const response = ApiResponse.error(new Error('test'))
 
-      expect(json).toBeDefined()
-      expect(() => JSON.parse(json)).not.toThrow()
+      expect(response).toHaveProperty('success')
+      expect(response).toHaveProperty('error')
+      expect(response).toHaveProperty('timestamp')
+      expect(response.error).toHaveProperty('message')
+      expect(response.error).toHaveProperty('code')
     })
 
-    it('分页响应应该可以序列化为 JSON', () => {
-      const response = ApiResponse.paginated([1, 2, 3], { page: 1, pageSize: 10, total: 3 })
-      const json = JSON.stringify(response)
+    it('分页响应应该有正确的结构', () => {
+      const response = ApiResponse.paginated([1, 2, 3], 1, 10, 3)
 
-      expect(json).toBeDefined()
-      expect(() => JSON.parse(json)).not.toThrow()
+      expect(response).toHaveProperty('success')
+      expect(response).toHaveProperty('message')
+      expect(response).toHaveProperty('data')
+      expect(response.data).toHaveProperty('items')
+      expect(response.data).toHaveProperty('pagination')
+      expect(response).toHaveProperty('timestamp')
+    })
+  })
+
+  describe('类型安全', () => {
+    it('success 应该支持泛型类型', () => {
+      interface User {
+        id: number
+        name: string
+      }
+
+      const user: User = { id: 1, name: 'Test' }
+      const response = ApiResponse.success(user)
+
+      expect(response.data).toEqual(user)
+    })
+
+    it('paginated 应该支持泛型类型', () => {
+      interface Item {
+        id: number
+        title: string
+      }
+
+      const items: Item[] = [
+        { id: 1, title: 'First' },
+        { id: 2, title: 'Second' },
+      ]
+
+      const response = ApiResponse.paginated(items, 1, 10, 2)
+
+      expect(response.data.items).toEqual(items)
+      expect(response.data.pagination).toEqual({
+        page: 1,
+        limit: 10,
+        total: 2,
+        pages: 1,
+        hasNext: false,
+        hasPrev: false,
+      })
     })
   })
 })

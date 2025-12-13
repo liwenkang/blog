@@ -1,9 +1,13 @@
-import React from 'react'
-import { render, RenderOptions } from '@testing-library/react'
+import React, { ReactElement } from 'react'
+import { render, RenderOptions, RenderResult } from '@testing-library/react'
 import { ThemeProvider } from 'next-themes'
 
 // Create a custom render function that includes providers
-const AllTheProviders = ({ children }) => {
+interface AllTheProvidersProps {
+  children: React.ReactNode
+}
+
+const AllTheProviders: React.FC<AllTheProvidersProps> = ({ children }) => {
   return (
     <ThemeProvider attribute="class" defaultTheme="light">
       {children}
@@ -11,7 +15,8 @@ const AllTheProviders = ({ children }) => {
   )
 }
 
-const customRender = (ui, options = {}) => render(ui, { wrapper: AllTheProviders, ...options })
+const customRender = (ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>): RenderResult =>
+  render(ui, { wrapper: AllTheProviders, ...options })
 
 // re-export everything from testing-library
 export * from '@testing-library/react'
@@ -29,6 +34,10 @@ export const mockRouter = {
     off: jest.fn(),
     emit: jest.fn(),
   },
+  pathname: '/',
+  route: '/',
+  query: {},
+  asPath: '/',
 }
 
 // Mock Next.js image

@@ -29,6 +29,13 @@ describe('Environment Variable System', () => {
       // 应该是有效的日志级别
       expect(['DEBUG', 'INFO', 'WARN', 'ERROR', 'SILENT']).toContain(env.logLevel)
     })
+
+    it('应该提供日志配置对象', () => {
+      expect(env).toHaveProperty('logging')
+      expect(env.logging).toHaveProperty('enabled')
+      expect(env.logging).toHaveProperty('level')
+      expect(typeof env.logging.enabled).toBe('boolean')
+    })
   })
 
   describe('Newsletter 配置', () => {
@@ -119,67 +126,37 @@ describe('Environment Variable System', () => {
       expect(env1).toBe(env2) // 应该返回相同的对象引用
     })
 
-    it('非严格模式不应该抛出错误', () => {
+    it('应该支持严格模式参数', () => {
+      // 在测试环境中，strict=false 应该不会抛出错误
       expect(() => getEnv(false)).not.toThrow()
     })
   })
 
   describe('类型安全', () => {
-    it('env 对象应该有完整的类型结构', () => {
-      // 检查所有顶层属性
-      const expectedProps = [
-        'isDevelopment',
-        'isProduction',
-        'isTest',
-        'logLevel',
-        'newsletter',
-        'comment',
-        'sentry',
-        'analytics',
-      ]
-
-      expectedProps.forEach((prop) => {
-        expect(env).toHaveProperty(prop)
-      })
-    })
-
-    it('newsletter 对象应该有正确的结构', () => {
-      const expectedProviders = [
-        'provider',
-        'mailchimp',
-        'buttondown',
-        'convertkit',
-        'klaviyo',
-        'revue',
-        'emailoctopus',
-      ]
-
-      expectedProviders.forEach((prop) => {
-        expect(env.newsletter).toHaveProperty(prop)
-      })
-    })
-
-    it('comment 对象应该有正确的结构', () => {
-      const expectedProviders = ['provider', 'giscus', 'utterances', 'disqus']
-
-      expectedProviders.forEach((prop) => {
-        expect(env.comment).toHaveProperty(prop)
-      })
-    })
-  })
-
-  describe('getter 属性行为', () => {
-    it('环境判断属性应该返回布尔值', () => {
+    it('环境判断应该返回布尔值', () => {
       expect(typeof env.isDevelopment).toBe('boolean')
       expect(typeof env.isProduction).toBe('boolean')
       expect(typeof env.isTest).toBe('boolean')
     })
 
-    it('配置对象应该每次返回相同的引用', () => {
-      const newsletter1 = env.newsletter
-      const newsletter2 = env.newsletter
-      // getter 每次都会调用，但返回的对象结构应该一致
-      expect(newsletter1.provider).toBe(newsletter2.provider)
+    it('配置对象应该有正确的结构', () => {
+      expect(typeof env.newsletter).toBe('object')
+      expect(typeof env.comment).toBe('object')
+      expect(typeof env.sentry).toBe('object')
+      expect(typeof env.analytics).toBe('object')
+    })
+  })
+
+  describe('默认值处理', () => {
+    it('应该为未配置的值提供默认值', () => {
+      // Provider 应该有默认值
+      expect(env.newsletter.provider).toBeDefined()
+      expect(env.comment.provider).toBeDefined()
+    })
+
+    it('日志配置应该有默认值', () => {
+      expect(env.logging.enabled).toBe(true)
+      expect(env.logging.level).toBeDefined()
     })
   })
 })

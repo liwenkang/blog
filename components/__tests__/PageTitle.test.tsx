@@ -58,7 +58,15 @@ describe('PageTitle component', () => {
     expect(heading).toBeEmptyDOMElement()
   })
 
-  it('handles number as children', () => {
+  it('renders string children', () => {
+    const title = 'Simple String Title'
+    render(<PageTitle>{title}</PageTitle>)
+
+    const heading = screen.getByRole('heading', { level: 1 })
+    expect(heading).toHaveTextContent(title)
+  })
+
+  it('renders number children', () => {
     render(<PageTitle>{2024}</PageTitle>)
 
     const heading = screen.getByRole('heading', { level: 1 })
