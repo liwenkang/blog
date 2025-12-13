@@ -2,6 +2,12 @@
 
 @config '../tailwind.config.js';
 
+@source '../pages/**/*.{js,jsx,ts,tsx}';
+@source '../components/**/*.{js,jsx,ts,tsx}';
+@source '../layouts/**/*.{js,jsx,ts,tsx}';
+@source '../lib/**/*.{js,jsx,ts,tsx}';
+@source '../data/**/*.mdx';
+
 /*
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still
