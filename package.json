@@ -64,6 +64,7 @@
     "@types/js-yaml": "^4.0.9",
     "@types/mdast": "^4.0.4",
     "@types/node": "^25.0.1",
+    "@types/postcss-load-config": "^2.0.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.1",
     "@types/unist": "^3.0.3",

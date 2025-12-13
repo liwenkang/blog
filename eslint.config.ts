@@ -1,13 +1,13 @@
-const { FlatCompat } = require('@eslint/eslintrc')
-const js = require('@eslint/js')
-const path = require('path')
+import { FlatCompat } from '@eslint/eslintrc'
+import js from '@eslint/js'
+import type { Linter } from 'eslint'
 
 const compat = new FlatCompat({
-  baseDirectory: __dirname,
+  baseDirectory: import.meta.dirname,
   recommendedConfig: js.configs.recommended,
 })
 
-module.exports = [
+const config: Linter.Config[] = [
   {
     ignores: [
       'node_modules/**',
@@ -25,11 +25,11 @@ module.exports = [
   ...compat.extends('next/core-web-vitals', 'plugin:prettier/recommended'),
   {
     files: [
-      'pages/**/*.js',
-      'components/**/*.js',
-      'lib/**/*.js',
-      'layouts/**/*.js',
-      'scripts/**/*.js',
+      'pages/**/*.{js,ts,tsx}',
+      'components/**/*.{js,ts,tsx}',
+      'lib/**/*.{js,ts,tsx}',
+      'layouts/**/*.{js,ts,tsx}',
+      'scripts/**/*.{js,ts}',
     ],
     languageOptions: {
       ecmaVersion: 2022,
@@ -68,3 +68,5 @@ module.exports = [
     },
   },
 ]
+
+export default config
