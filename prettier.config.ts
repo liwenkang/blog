@@ -1,13 +1,3 @@
-import type { Config } from 'prettier'
-
-const config: Config = {
-  semi: false,
-  singleQuote: true,
-  printWidth: 100,
-  tabWidth: 2,
-  useTabs: false,
-  trailingComma: 'es5',
-  bracketSpacing: true,
-}
-
-export default config
+// Legacy entrypoint kept to avoid tooling that auto-detects `prettier.config.ts`.
+// Prefer `prettier.config.cjs` for a warning-free, Node-native config.
+module.exports = require('./prettier.config.cjs')

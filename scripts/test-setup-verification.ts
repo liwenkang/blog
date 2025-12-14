@@ -1,8 +1,8 @@
 #!/usr/bin/env ts-node
 
 // Simple verification script to check if test setup is correct
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 import { logger } from './utils/script-logger.js'
 
 logger.info('🧪 Verifying Jest test setup...')

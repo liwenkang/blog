@@ -8,15 +8,15 @@
 import chalk from 'chalk'
 import chokidar from 'chokidar'
 import { program } from 'commander'
-import http from 'http'
+import http from 'node:http'
 import { Server as SocketIO } from 'socket.io'
 import express from 'express'
-import { spawn } from 'child_process'
+import { spawn } from 'node:child_process'
 import next from 'next'
-import path from 'path'
-import { parse } from 'url'
+import path from 'node:path'
+import { parse } from 'node:url'
 import { logger } from './utils/script-logger.js'
-import { readFileSync } from 'fs'
+import { readFileSync } from 'node:fs'
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf-8'))
 
@@ -50,10 +50,7 @@ app.prepare().then(() => {
       .watch(watchDirs, { usePolling: Boolean(opts.polling) })
       .on(
         opts.event,
-        async (
-          filePathContext: string,
-          eventContext: string = defaultWatchEvent
-        ): Promise<void> => {
+        async (filePathContext: string, eventContext: string = defaultWatchEvent): Promise<void> => {
           // Emit changes via socketio
           io.emit('reload', filePathContext)
           // @ts-ignore - Next.js internal API
@@ -115,7 +112,7 @@ app.prepare().then(() => {
     const color = req.body.color as string | undefined
     if (msg) {
       // @ts-ignore - chalk dynamic color access
-      logger.info(color && chalk[color] ? chalk[color](msg) : msg)
+      logger.info(color && (chalk as any)[color] ? (chalk as any)[color](msg) : msg)
     }
 
     // reload the nextjs app

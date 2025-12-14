@@ -3,13 +3,14 @@
   "version": "1.5.6",
   "private": true,
   "scripts": {
-    "start": "cross-env SOCKET=true ts-node ./scripts/next-remote-watch.ts ./data",
+    "start": "cross-env SOCKET=true ts-node ./scripts/next-remote-watch.mts ./data",
     "dev": "next dev",
-    "build": "ts-node ./scripts/generate-search-index.ts && next build && ts-node ./scripts/generate-sitemap.ts",
+    "build": "ts-node ./scripts/generate-search-index.mts && next build && ts-node ./scripts/generate-sitemap.mts",
     "serve": "next start",
     "analyze": "cross-env ANALYZE=true next build",
     "lint": "eslint --fix --ext .js,.jsx,.ts,.tsx pages components lib layouts scripts",
     "prettier": "prettier --write .",
+    "postinstall": "patch-package",
     "prepare": "husky install",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -30,6 +31,7 @@
     "next": "^15.5.7",
     "next-themes": "^0.4.6",
     "preact": "^10.27.2",
+    "punycode": "^2.3.1",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-intersection-observer": "^10.0.0",
@@ -66,6 +68,8 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.1",
     "@types/unist": "^3.0.3",
+    "@typescript-eslint/eslint-plugin": "^8.49.0",
+    "@typescript-eslint/parser": "^8.49.0",
     "autoprefixer": "^10.4.22",
     "cross-env": "^10.1.0",
     "dedent": "^1.7.0",
@@ -82,6 +86,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "lint-staged": "^16.2.5",
     "next-remote-watch": "^2.0.0",
+    "patch-package": "^8.0.0",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.7.1",
@@ -109,6 +114,8 @@
     },
     "@testing-library/dom": {
       "react": "^19.0.0"
-    }
+    },
+    "whatwg-url": "11.0.0",
+    "tr46": "6.0.0"
   }
 }

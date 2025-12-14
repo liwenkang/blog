@@ -10,7 +10,7 @@ import { logger } from './utils/script-logger.js'
 const getSiteUrl = (): string => {
   const metadataPath = './data/siteMetadata.ts'
   const content = fs.readFileSync(metadataPath, 'utf8')
-  const regex = /siteUrl:\s*['"](https:\/\/liwenkang\.space)['"]/
+  const regex = /siteUrl:\s*['"](https:\/\/liwenkang\.space)['"]/ 
   const match = regex.exec(content)
   return match ? match[1] : 'https://liwenkang.space'
 }

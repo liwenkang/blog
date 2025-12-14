@@ -41,7 +41,7 @@ export const getStaticProps: GetStaticProps<{
   const authorDetails = await Promise.all(authorPromise)
 
   // 清理 undefined 字段以避免序列化错误
-  const cleanedAuthorDetails = authorDetails.map((author) => structuredClone(author))
+  const cleanedAuthorDetails = JSON.parse(JSON.stringify(authorDetails)) as Author[]
 
   // rss
   if (allPosts.length > 0) {

@@ -15,7 +15,7 @@ jest.mock('next/link', () => {
 
 // Mock kebabCase utility
 jest.mock('@/lib/utils/kebabCase', () => {
-  const mockKebabCase = jest.fn((text: string) => text.toLowerCase().replace(/\s+/g, '-'))
+  const mockKebabCase = jest.fn((text: string) => text.toLowerCase().replaceAll(/\s+/g, '-'))
   return {
     __esModule: true,
     default: mockKebabCase,
