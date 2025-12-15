@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 
 import fs from 'node:fs'
-import { logger } from './utils/script-logger.js'
+import { logger } from './utils/script-logger.mts'
 
 logger.info('🧪 验证测试配置...')
 logger.info('')

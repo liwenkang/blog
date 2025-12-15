@@ -4,7 +4,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import matter from 'gray-matter'
 import readingTime from 'reading-time'
-import { logger } from './utils/script-logger.js'
+import { logger } from './utils/script-logger.mts'
 
 // 搜索索引数据存放路径
 const SEARCH_INDEX_PATH = path.join(process.cwd(), 'public', 'search.json')

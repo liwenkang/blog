@@ -4,7 +4,7 @@ import fs from 'node:fs'
 import { globby } from 'globby'
 import matter from 'gray-matter'
 import prettier from 'prettier'
-import { logger } from './utils/script-logger.js'
+import { logger } from './utils/script-logger.mts'
 
 // 读取 siteMetadata (避免 ESM 导入问题)
 const getSiteUrl = (): string => {

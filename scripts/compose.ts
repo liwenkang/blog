@@ -4,7 +4,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import inquirer from 'inquirer'
 import dedent from 'dedent'
-import { logger } from './utils/script-logger.js'
+import { logger } from './utils/script-logger.mts'
 
 // unify console outputs through script logger
 console.log = function (...args: any[]) {

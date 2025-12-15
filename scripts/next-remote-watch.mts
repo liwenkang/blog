@@ -15,7 +15,7 @@ import { spawn } from 'node:child_process'
 import next from 'next'
 import path from 'node:path'
 import { parse } from 'node:url'
-import { logger } from './utils/script-logger.js'
+import { logger } from './utils/script-logger.mts'
 import { readFileSync } from 'node:fs'
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf-8'))
