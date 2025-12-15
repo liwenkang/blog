@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 
 import siteMetadata from '@/data/siteMetadata'
 import { PostFrontMatter } from '@/types'
@@ -27,6 +27,7 @@ declare global {
 const Disqus = ({ frontMatter }: DisqusProps) => {
   const [enableLoadComments, setEnableLoadComments] = useState(true)
   const [mounted, setMounted] = useState(false)
+  const containerRef = useRef<HTMLDivElement | null>(null)
 
   // 确保组件在客户端挂载后才渲染
   useEffect(() => {
@@ -35,7 +36,7 @@ const Disqus = ({ frontMatter }: DisqusProps) => {
 
   const COMMENTS_ID = 'disqus_thread'
 
-  function LoadComments() {
+  const LoadComments = useCallback(() => {
     setEnableLoadComments(false)
 
     // Disqus API requires 'this' context - this is not a React component method
@@ -58,7 +59,28 @@ const Disqus = ({ frontMatter }: DisqusProps) => {
     } else {
       globalThis.DISQUS.reset({ reload: true })
     }
-  }
+  }, [frontMatter.slug])
+
+  useEffect(() => {
+    if (!mounted || !enableLoadComments) return
+    if (typeof IntersectionObserver === 'undefined') return
+
+    const target = containerRef.current
+    if (!target) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          LoadComments()
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '200px 0px' }
+    )
+
+    observer.observe(target)
+    return () => observer.disconnect()
+  }, [LoadComments, enableLoadComments, mounted])
 
   // 在服务端渲染时返回一个占位符，避免水合错误
   if (!mounted) {
@@ -70,7 +92,7 @@ const Disqus = ({ frontMatter }: DisqusProps) => {
   }
 
   return (
-    <div className="pt-6 pb-6 text-center text-gray-700 dark:text-gray-300">
+    <div ref={containerRef} className="pt-6 pb-6 text-center text-gray-700 dark:text-gray-300">
       {enableLoadComments && <button onClick={LoadComments}>Load Comments</button>}
       <div className="disqus-frame" id={COMMENTS_ID} />
     </div>

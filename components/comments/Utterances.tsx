@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { useTheme } from 'next-themes'
 
 import siteMetadata from '@/data/siteMetadata'
@@ -6,6 +6,7 @@ import siteMetadata from '@/data/siteMetadata'
 const Utterances = () => {
   const [enableLoadComments, setEnabledLoadComments] = useState(true)
   const [mounted, setMounted] = useState(false)
+  const containerRef = useRef<HTMLDivElement | null>(null)
   const { theme, resolvedTheme } = useTheme()
 
   // 确保组件在客户端挂载后才渲染主题相关的内容
@@ -40,6 +41,27 @@ const Utterances = () => {
     }
   }, [commentsTheme])
 
+  useEffect(() => {
+    if (!mounted || !enableLoadComments) return
+    if (typeof IntersectionObserver === 'undefined') return
+
+    const target = containerRef.current
+    if (!target) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          LoadComments()
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '200px 0px' }
+    )
+
+    observer.observe(target)
+    return () => observer.disconnect()
+  }, [LoadComments, enableLoadComments, mounted])
+
   // Reload on theme change
   useEffect(() => {
     if (mounted) {
@@ -60,7 +82,7 @@ const Utterances = () => {
 
   // Added `relative` to fix a weird bug with `utterances-frame` position
   return (
-    <div className="pt-6 pb-6 text-center text-gray-700 dark:text-gray-300">
+    <div ref={containerRef} className="pt-6 pb-6 text-center text-gray-700 dark:text-gray-300">
       {enableLoadComments && <button onClick={LoadComments}>Load Comments</button>}
       <div className="utterances-frame relative" id={COMMENTS_ID} />
     </div>
