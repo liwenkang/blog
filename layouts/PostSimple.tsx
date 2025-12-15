@@ -44,7 +44,7 @@ export default function PostLayout({ frontMatter, next, prev, children }: PostSi
               <dl>
                 <div>
                   <dt className="sr-only">Published on</dt>
-                  <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
+                  <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-300">
                     <time dateTime={date}>{formatDate(date)}</time>
                   </dd>
                 </div>
@@ -59,7 +59,7 @@ export default function PostLayout({ frontMatter, next, prev, children }: PostSi
             style={{ gridTemplateRows: 'auto 1fr' }}
           >
             <div className="divide-y divide-gray-200 dark:divide-gray-700 xl:col-span-3 xl:row-span-2 xl:pb-0">
-              <div className="prose max-w-none pt-10 pb-8">{children}</div>
+              <div className="prose max-w-none pt-10 pb-8 dark:prose-invert">{children}</div>
             </div>
             <Comments frontMatter={frontMatter} />
             <footer>
