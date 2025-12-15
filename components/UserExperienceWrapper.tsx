@@ -55,7 +55,7 @@ const UserExperienceWrapper = ({
       <CopyCode />
 
       {showControls && (
-        <div className="fixed bottom-8 left-8 z-40 flex flex-col space-y-4">
+        <div className="fixed bottom-8 left-8 z-40 flex flex-col space-y-4 print:hidden">
           <FontSizeAdjuster className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700" />
           <PrintButton className="bg-white dark:bg-gray-800 p-2 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700" />
         </div>

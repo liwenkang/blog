@@ -45,6 +45,7 @@ const SkipToContent = () => {
         focus:translate-y-0
         border border-gray-300 dark:border-gray-600
         transition-transform duration-200
+        print:hidden
         ${isFocused ? 'translate-y-0' : ''}
       `}
     >
