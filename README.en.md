@@ -161,6 +161,15 @@ Basic env checks run automatically in development (see lib/env-validation.ts).
 - Badge updates: only the Ubuntu + Node 22.x job updates the README coverage badge to avoid concurrent writes.
 - Tip: if your default branch is not `main`/`master`, adjust the workflow’s `on.push` branches accordingly.
 
+## CI Tips
+
+- Trigger issues: ensure Actions are enabled in Settings → Actions → General; verify the selected branch exists and matches the workflow `on` filters.
+- Cache misses: `.next/cache` may be invalidated when `package-lock.json`, `next.config.js`, or `tsconfig.json` changes; to fully reset, remove caches from Actions or tweak the cache key.
+- Badge not updating: badges refresh only on the Ubuntu + Node 22.x job for “push on default branch”; PRs or non‑default branches won’t update badges.
+- Cross‑platform quirks: on Windows/macOS, case‑sensitive paths, line endings, or native deps (e.g., `sharp`) may behave differently—check Ubuntu logs first to isolate issues.
+- Build failures (images): if using external images, add allowed domains under `images.domains` in `next.config.js`.
+- Concurrency: add a `concurrency` block to cancel in‑flight runs on rapid pushes to save CI resources.
+
 ## Docs
 
 See the Chinese docs under docs/ for migration notes, fix logs, and guides.

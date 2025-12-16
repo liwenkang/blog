@@ -164,6 +164,15 @@ canonicalUrl: https://example.com/blog/my-post # SEO 规范链接
 - 徽章更新：仅在 Ubuntu + Node 22.x 的作业中更新 README 覆盖率徽章，避免并发冲突。
 - 提示：若默认分支非 `main`/`master`，可在工作流 `on.push` 的分支列表中自行调整。
 
+## CI 使用小贴士
+
+- 触发失败：在仓库 Settings → Actions → General 中确认权限未被禁用；确保选择的分支存在且被工作流 `on` 匹配。
+- 缓存未命中：当 `package-lock.json`、`next.config.js`、`tsconfig.json` 变化时 `.next/cache` 会失效属正常；如需彻底清理，可在 Actions 里手动删除该 workflow 的 cache 或修改 key。
+- 徽章不更新：仅在“push 到默认分支”的 Ubuntu + Node 22.x 作业中更新 README；PR 及非默认分支不会更新。
+- 多平台差异：Windows/macOS 上若出现路径大小写/换行符/二进制依赖（如 `sharp`）问题，可先参考 Ubuntu 作业日志定位，再做平台差异化处理。
+- 构建失败（图片域名）：如使用外链图片，请在 `next.config.js` 的 `images.domains` 中加入允许域名。
+- 并发控制：如频繁 push 导致重复排队，可在工作流中加入 `concurrency` 取消旧运行，节省 CI 资源。
+
 ## 文档与报告
 
 项目在 docs/ 目录下提供了多份中文说明与改进报告，例如：
