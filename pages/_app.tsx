@@ -3,7 +3,7 @@ import '@/css/prism.css'
 import 'katex/dist/katex.css'
 
 import '@fontsource/inter/index.css'
-import React from 'react'
+import { useEffect } from 'react'
 
 import { ThemeProvider } from 'next-themes'
 import Head from 'next/head'
@@ -37,7 +37,7 @@ const isSocket = process.env.SOCKET
 
 export default function App({ Component, pageProps }: AppProps) {
   // Report web vitals
-  React.useEffect(() => {
+  useEffect(() => {
     if (globalThis.window !== undefined) {
       reportWebVitals()
     }

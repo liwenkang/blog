@@ -1,4 +1,3 @@
-import React from 'react'
 import { render, screen } from '../../__tests__/utils/testUtils'
 import Tag from '../Tag'
 

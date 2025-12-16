@@ -57,9 +57,6 @@ const securityHeaders = [
 const moduleExports = withBundleAnalyzer({
   reactStrictMode: true,
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
-  eslint: {
-    dirs: ['pages', 'components', 'lib', 'layouts', 'scripts'],
-  },
   experimental: {
     optimizePackageImports: ['react-intersection-observer'],
     scrollRestoration: true,
@@ -91,7 +88,12 @@ const moduleExports = withBundleAnalyzer({
     ]
   },
   images: {
-    domains: ['localhost'],
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+    ],
     formats: ['image/webp', 'image/avif'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
@@ -105,15 +107,16 @@ const moduleExports = withBundleAnalyzer({
       use: ['@svgr/webpack'],
     })
 
-    if (!dev && !isServer) {
-      // Replace React with Preact only in client production build
-      Object.assign(config.resolve.alias, {
-        'react/jsx-runtime.js': 'preact/compat/jsx-runtime',
-        react: 'preact/compat',
-        'react-dom/test-utils': 'preact/test-utils',
-        'react-dom': 'preact/compat',
-      })
-    }
+    // REMOVED: Preact aliasing is not compatible with Next.js 16 + React 19
+    // The automatic JSX runtime in React 19 conflicts with Preact compat layer
+    // if (!dev && !isServer) {
+    //   Object.assign(config.resolve.alias, {
+    //     'react/jsx-runtime.js': 'preact/compat/jsx-runtime',
+    //     react: 'preact/compat',
+    //     'react-dom/test-utils': 'preact/test-utils',
+    //     'react-dom': 'preact/compat',
+    //   })
+    // }
 
     return config
   },

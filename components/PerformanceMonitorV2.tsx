@@ -3,7 +3,7 @@
  * 整合所有性能监控功能，使用新的性能系统
  */
 
-import React, { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   performanceCollector,
   getPageLoadMetrics,

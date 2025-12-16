@@ -1,4 +1,5 @@
-import React, { useState, useEffect, ReactNode, ComponentType, ReactElement } from 'react'
+import { useState, useEffect } from 'react'
+import type { ReactNode, ComponentType, ReactElement } from 'react'
 import dynamic, { DynamicOptions, Loader } from 'next/dynamic'
 
 interface LazyLoadingOptions<_P = any> {
