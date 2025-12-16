@@ -6,6 +6,7 @@
     "start": "cross-env SOCKET=true ts-node ./scripts/next-remote-watch.mts ./data",
     "dev": "next dev",
     "build": "ts-node ./scripts/generate-search-index.mts && next build && ts-node ./scripts/generate-sitemap.mts",
+    "compose": "ts-node ./scripts/compose.ts",
     "serve": "next start",
     "analyze": "cross-env ANALYZE=true next build",
     "lint": "eslint --fix --ext .js,.jsx,.ts,.tsx pages components lib layouts scripts",

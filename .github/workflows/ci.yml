@@ -1,3 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Lint
+        run: npm run lint --if-present
+
+      - name: Test with coverage
+        run: npm run test:coverage
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage
+
+      - name: Update badges (pushes to default branch)
+        if: github.event_name == 'push'
+        env:
+          REPO: ${{ github.repository }}
+        run: |
+          set -e
+          if [ ! -f coverage/coverage-summary.json ]; then
+            echo "No coverage summary found, skipping badge update."; exit 0; fi
+
+          # Read coverage percent (lines)
+          PCT=$(node -e "const s=require('./coverage/coverage-summary.json');console.log(s.total.lines.pct.toFixed(2))")
+
+          # Decide badge color
+          COLOR=red
+          awk -v p="$PCT" 'BEGIN{ if(p>=80) print "brightgreen"; else if(p>=50) print "yellow"; else print "red" }' | read COLOR
+
+          # Escape percent for shields URL
+          PCT_ESC=$(printf '%s' "$PCT" | sed 's/$/%25/')
+
+          # Update coverage badge in README files
+          for FILE in README.md README.en.md; do
+            if [ -f "$FILE" ]; then
+              sed -i.bak -E "s|!\[coverage\]\(https://img.shields.io/badge/coverage-[0-9.]+%25-[a-zA-Z]+\)|![coverage](https://img.shields.io/badge/coverage-${PCT_ESC}-${COLOR})|g" "$FILE"
+              # Replace CI badge placeholder with actual repo slug
+              sed -i.bak -E "s|OWNER_REPO_PLACEHOLDER|${REPO}|g" "$FILE"
+              rm -f "$FILE.bak"
+            fi
+          done
+
+          # Commit changes if any
+          if git diff --quiet; then
+            echo "No README changes to commit."; exit 0; fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md README.en.md || true
+          git commit -m "chore(ci): update badges"
+          git push
 name: CI/CD Pipeline
 
 on:
