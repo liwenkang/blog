@@ -4,7 +4,7 @@
 
 # Tailwind Next.js Blog Starter (TypeScript)
 
-![coverage](https://img.shields.io/badge/coverage-11.35%25-red) ![node](https://img.shields.io/badge/node-%3E%3D22.0.0-339933?logo=node.js) [![CI](https://github.com/liwenkang/blog/actions/workflows/ci.yml/badge.svg)](https://github.com/liwenkang/blog/actions/workflows/ci.yml)
+![coverage](https://img.shields.io/badge/coverage-11.35%25-red) ![node](https://img.shields.io/badge/node-%3E%3D22.0.0-339933?logo=node.js) [![CI](https://github.com/liwenkang/blog/actions/workflows/ci.yml/badge.svg)](https://github.com/liwenkang/blog/actions/workflows/ci.yml) [Run workflow](#ci-manual)
 
 A modern Markdown/MDX blog starter built with Next.js 15, React 19, Tailwind CSS 3, and TypeScript. It ships with SEO, RSS, on-site search, dark/light theme, comments and newsletter, code highlighting, KaTeX, Sentry monitoring, and more. The production build automatically switches to Preact to reduce bundle size.
 
@@ -152,7 +152,7 @@ Basic env checks run automatically in development (see lib/env-validation.ts).
 - Search index: `ts-node scripts/generate-search-index.mts` (runs during build)
 - Sitemap: `ts-node scripts/generate-sitemap.mts` (runs during build)
 
-## CI Workflow (manual trigger)
+## CI Workflow (manual trigger) <a id="ci-manual"></a>
 
 - Entry: open the Actions page of this repo and select the CI workflow.
   - https://github.com/liwenkang/blog/actions/workflows/ci.yml

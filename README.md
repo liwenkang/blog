@@ -4,7 +4,7 @@
 
 # Tailwind Next.js 博客模板（TypeScript）
 
-![coverage](https://img.shields.io/badge/coverage-11.35%25-red) ![node](https://img.shields.io/badge/node-%3E%3D22.0.0-339933?logo=node.js) [![CI](https://github.com/liwenkang/blog/actions/workflows/ci.yml/badge.svg)](https://github.com/liwenkang/blog/actions/workflows/ci.yml)
+![coverage](https://img.shields.io/badge/coverage-11.35%25-red) ![node](https://img.shields.io/badge/node-%3E%3D22.0.0-339933?logo=node.js) [![CI](https://github.com/liwenkang/blog/actions/workflows/ci.yml/badge.svg)](https://github.com/liwenkang/blog/actions/workflows/ci.yml) [CI 手动触发](#ci-manual)
 
 一个使用 Next.js 15、React 19、Tailwind CSS 3 与 TypeScript 构建的现代化 Markdown/MDX 博客模板。内置 SEO、RSS、站内搜索、深浅色主题、评论与邮件订阅、代码高亮、KaTeX 数学公式、Sentry 监控等；生产环境自动切换到 Preact 以优化体积与性能。
 
@@ -155,7 +155,7 @@ canonicalUrl: https://example.com/blog/my-post # SEO 规范链接
 - 生成搜索索引：`ts-node scripts/generate-search-index.mts`（构建过程会自动执行）
 - 生成站点地图：`ts-node scripts/generate-sitemap.mts`（构建过程会自动执行）
 
-## CI 工作流（手动触发）
+## CI 工作流（手动触发） <a id="ci-manual"></a>
 
 - 入口：在 GitHub 仓库的 Actions 页面打开本项目工作流。
   - https://github.com/liwenkang/blog/actions/workflows/ci.yml
