@@ -43,7 +43,7 @@ export class ApiResponse {
    * @returns 格式化的错误响应
    */
   static error(error: any, _statusCode: number = 500): ApiErrorResponse {
-    const isDev = process.env.NODE_ENV === 'development'
+    const isDev = process.env.NODE_ENV !== 'production'
 
     const response: ApiErrorResponse = {
       success: false,
@@ -56,7 +56,9 @@ export class ApiResponse {
 
     // 只在开发环境返回详细信息
     if (isDev) {
-      response.error.stack = error.stack
+      if (error.stack) {
+        response.error.stack = error.stack
+      }
       if (error.details) {
         response.error.details = error.details
       }
