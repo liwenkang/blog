@@ -152,6 +152,15 @@ Basic env checks run automatically in development (see lib/env-validation.ts).
 - Search index: `ts-node scripts/generate-search-index.mts` (runs during build)
 - Sitemap: `ts-node scripts/generate-sitemap.mts` (runs during build)
 
+## CI Workflow (manual trigger)
+
+- Entry: open the Actions page of this repo and select the CI workflow.
+  - https://github.com/liwenkang/blog/actions/workflows/ci.yml
+- Manual trigger: click “Run workflow” on the top-right, select a branch, then click “Run workflow” again.
+- What it does: install deps → lint → test with coverage → build; runs a matrix across multiple OS (Ubuntu/Mac/Windows) and Node versions (22.x/22.11.0); enables npm and `.next/cache` caching for speed.
+- Badge updates: only the Ubuntu + Node 22.x job updates the README coverage badge to avoid concurrent writes.
+- Tip: if your default branch is not `main`/`master`, adjust the workflow’s `on.push` branches accordingly.
+
 ## Docs
 
 See the Chinese docs under docs/ for migration notes, fix logs, and guides.
