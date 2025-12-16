@@ -4,7 +4,7 @@
 
 # Tailwind Next.js Blog Starter (TypeScript)
 
-![coverage](https://img.shields.io/badge/coverage-11.35%25-red) ![node](https://img.shields.io/badge/node-%3E%3D22.0.0-339933?logo=node.js) [![CI](https://github.com/liwenkang/blog/actions/workflows/ci.yml/badge.svg)](https://github.com/liwenkang/blog/actions/workflows/ci.yml) [Run workflow](#ci-manual)
+![coverage](https://img.shields.io/badge/coverage-11.35%25-red) ![node](https://img.shields.io/badge/node-%3E%3D22.0.0-339933?logo=node.js) [![CI](https://github.com/liwenkang/blog/actions/workflows/ci.yml/badge.svg)](https://github.com/liwenkang/blog/actions/workflows/ci.yml)
 
 A modern Markdown/MDX blog starter built with Next.js 15, React 19, Tailwind CSS 3, and TypeScript. It ships with SEO, RSS, on-site search, dark/light theme, comments and newsletter, code highlighting, KaTeX, Sentry monitoring, and more. The production build automatically switches to Preact to reduce bundle size.
 
@@ -151,15 +151,6 @@ Basic env checks run automatically in development (see lib/env-validation.ts).
 - Bundle analysis: `npm run analyze` (set `ANALYZE=true`)
 - Search index: `ts-node scripts/generate-search-index.mts` (runs during build)
 - Sitemap: `ts-node scripts/generate-sitemap.mts` (runs during build)
-
-## CI Workflow (manual trigger) <a id="ci-manual"></a>
-
-- Entry: open the Actions page of this repo and select the CI workflow.
-  - https://github.com/liwenkang/blog/actions/workflows/ci.yml
-- Manual trigger: click “Run workflow” on the top-right, select a branch, then click “Run workflow” again.
-- What it does: install deps → lint → test with coverage → build; runs a matrix across multiple OS (Ubuntu/Mac/Windows) and Node versions (22.x/22.11.0); enables npm and `.next/cache` caching for speed.
-- Badge updates: only the Ubuntu + Node 22.x job updates the README coverage badge to avoid concurrent writes.
-- Tip: if your default branch is not `main`/`master`, adjust the workflow’s `on.push` branches accordingly.
 
 ## CI Tips
 

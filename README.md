@@ -4,7 +4,7 @@
 
 # Tailwind Next.js 博客模板（TypeScript）
 
-![coverage](https://img.shields.io/badge/coverage-11.35%25-red) ![node](https://img.shields.io/badge/node-%3E%3D22.0.0-339933?logo=node.js) [![CI](https://github.com/liwenkang/blog/actions/workflows/ci.yml/badge.svg)](https://github.com/liwenkang/blog/actions/workflows/ci.yml) [CI 手动触发](#ci-manual)
+![coverage](https://img.shields.io/badge/coverage-11.35%25-red) ![node](https://img.shields.io/badge/node-%3E%3D22.0.0-339933?logo=node.js) [![CI](https://github.com/liwenkang/blog/actions/workflows/ci.yml/badge.svg)](https://github.com/liwenkang/blog/actions/workflows/ci.yml)
 
 一个使用 Next.js 15、React 19、Tailwind CSS 3 与 TypeScript 构建的现代化 Markdown/MDX 博客模板。内置 SEO、RSS、站内搜索、深浅色主题、评论与邮件订阅、代码高亮、KaTeX 数学公式、Sentry 监控等；生产环境自动切换到 Preact 以优化体积与性能。
 
@@ -154,15 +154,6 @@ canonicalUrl: https://example.com/blog/my-post # SEO 规范链接
 - 分析包体积：`npm run analyze`（设置 `ANALYZE=true`）
 - 生成搜索索引：`ts-node scripts/generate-search-index.mts`（构建过程会自动执行）
 - 生成站点地图：`ts-node scripts/generate-sitemap.mts`（构建过程会自动执行）
-
-## CI 工作流（手动触发） <a id="ci-manual"></a>
-
-- 入口：在 GitHub 仓库的 Actions 页面打开本项目工作流。
-  - https://github.com/liwenkang/blog/actions/workflows/ci.yml
-- 手动触发：点击页面右上角的“Run workflow”，选择要运行的分支后再次点击“Run workflow”。
-- 工作流行为：安装依赖 → Lint → 测试覆盖率 → 构建；使用 matrix 并行验证多平台（Ubuntu/Mac/Windows）与多 Node 版本（22.x/22.11.0）；启用 npm 与 `.next/cache` 缓存加速。
-- 徽章更新：仅在 Ubuntu + Node 22.x 的作业中更新 README 覆盖率徽章，避免并发冲突。
-- 提示：若默认分支非 `main`/`master`，可在工作流 `on.push` 的分支列表中自行调整。
 
 ## CI 使用小贴士
 
