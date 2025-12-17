@@ -1,0 +1,66 @@
+{
+  // These tasks will run in order when initializing your CodeSandbox project.
+  "setupTasks": [
+    {
+      "command": "npm install",
+      "name": "Installing Dependencies"
+    }
+  ],
+
+  // These tasks can be run from CodeSandbox. Running one will open a log in the app.
+  "tasks": {
+    "start": {
+      "name": "start",
+      "command": "npm run start"
+    },
+    "dev": {
+      "name": "dev",
+      "command": "npm run start",
+      "runAtStart": true
+    },
+    "build": {
+      "name": "build",
+      "command": "npm run build"
+    },
+    "compose": {
+      "name": "compose",
+      "command": "npm run compose"
+    },
+    "serve": {
+      "name": "serve",
+      "command": "npm run serve"
+    },
+    "analyze": {
+      "name": "analyze",
+      "command": "npm run analyze"
+    },
+    "lint": {
+      "name": "lint",
+      "command": "npm run lint"
+    },
+    "prettier": {
+      "name": "prettier",
+      "command": "npm run prettier"
+    },
+    "postinstall": {
+      "name": "postinstall",
+      "command": "npm run postinstall"
+    },
+    "prepare": {
+      "name": "prepare",
+      "command": "npm run prepare"
+    },
+    "test": {
+      "name": "test",
+      "command": "npm run test"
+    },
+    "test:watch": {
+      "name": "test:watch",
+      "command": "npm run test:watch"
+    },
+    "test:coverage": {
+      "name": "test:coverage",
+      "command": "npm run test:coverage"
+    }
+  }
+}
