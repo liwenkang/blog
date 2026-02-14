@@ -6,6 +6,7 @@
     "start": "cross-env SOCKET=true tsx ./scripts/next-remote-watch.mts ./data",
     "dev": "next dev",
     "build": "tsx ./scripts/generate-search-index.mts && next build --webpack && tsx ./scripts/generate-sitemap.mts",
+    "validate:data": "tsx ./scripts/validate-data.ts",
     "compose": "ts-node ./scripts/compose.ts",
     "serve": "next start",
     "analyze": "cross-env ANALYZE=true next build",

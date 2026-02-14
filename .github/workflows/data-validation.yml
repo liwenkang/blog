@@ -27,39 +27,7 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: Validate data integrity
-        run: node scripts/validate-data.js
-
-      - name: Check for required fields
-        run: |
-          echo "📊 Checking for required frontmatter fields..."
-          node -e "
-          const fs = require('fs');
-          const path = require('path');
-          const matter = require('gray-matter');
-
-          const blogDir = 'data/blog';
-          const files = fs.readdirSync(blogDir).filter(f => f.endsWith('.md'));
-          let errors = [];
-
-          files.forEach(file => {
-            const content = fs.readFileSync(path.join(blogDir, file), 'utf8');
-            const { data } = matter(content);
-
-            if (!data.title) errors.push(\`Missing title in \${file}\`);
-            if (!data.date) errors.push(\`Missing date in \${file}\`);
-            if (!data.tags || !Array.isArray(data.tags)) errors.push(\`Invalid tags in \${file}\`);
-            if (data.draft === undefined) errors.push(\`Missing draft field in \${file}\`);
-          });
-
-          if (errors.length > 0) {
-            console.error('❌ Frontmatter validation failed:');
-            errors.forEach(e => console.error('  -', e));
-            process.exit(1);
-          }
-
-          console.log('✅ All frontmatter validation passed!');
-          console.log(\`📈 Checked \${files.length} blog files\`);
-          "
+        run: npm run validate:data
 
       - name: Check for broken links (if any)
         run: |

@@ -29,9 +29,9 @@ interface ProblematicFile {
 }
 
 // 必需字段
-const requiredFields = ['title', 'date']
+const requiredFields = ['title', 'date', 'tags', 'draft']
 // 推荐字段
-const recommendedFields = ['tags', 'summary', 'draft']
+const recommendedFields = ['summary']
 
 function validateFile(filePath: string): ValidationResult {
   const content = fs.readFileSync(filePath, 'utf8')
@@ -56,7 +56,7 @@ function validateFile(filePath: string): ValidationResult {
   })
 
   // 检查字段类型
-  if (data.tags && !Array.isArray(data.tags)) {
+  if (data.tags !== undefined && !Array.isArray(data.tags)) {
     errors.push('tags 字段应该是数组类型')
   }
 
