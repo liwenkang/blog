@@ -57,6 +57,14 @@ const securityHeaders = [
 const moduleExports = withBundleAnalyzer({
   reactStrictMode: true,
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
+  },
   experimental: {
     optimizePackageImports: ['react-intersection-observer'],
     scrollRestoration: true,

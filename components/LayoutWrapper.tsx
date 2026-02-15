@@ -42,7 +42,7 @@ const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
   return (
     <SectionContainer>
       <div className="flex h-screen flex-col justify-between">
-        <header className="flex items-center justify-between py-10" role="banner">
+        <header className="flex items-center justify-between py-10 print:hidden" role="banner">
           <div>
             <Link
               href="/"
@@ -114,7 +114,9 @@ const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
         <main id="main-content" className="mb-auto" tabIndex={-1} role="main">
           {children}
         </main>
-        <Footer />
+        <div className="print:hidden">
+          <Footer />
+        </div>
       </div>
 
       {/* 搜索模态框 */}

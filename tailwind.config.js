@@ -22,7 +22,27 @@ module.exports = {
         14: '3.5rem',
       },
       fontFamily: {
-        sans: ['InterVariable', ...fontFamily.sans],
+        sans: [
+          'InterVariable',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'PingFang SC',
+          'Hiragino Sans GB',
+          'Microsoft YaHei',
+          'Noto Sans CJK SC',
+          ...fontFamily.sans,
+        ],
+        serif: [
+          'ui-serif',
+          'Georgia',
+          'Cambria',
+          'Times New Roman',
+          'Times',
+          'Songti SC',
+          'STSong',
+          'SimSun',
+          'serif',
+        ],
       },
       colors: {
         primary: colors.teal,

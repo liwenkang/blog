@@ -182,7 +182,7 @@ img {
   @apply border-2 border-red-500;
 }
 
-::after {
+[alt='']::after {
   content: ' (missing alt text)';
   @apply text-red-500 text-xs ml-2;
 }
@@ -198,6 +198,12 @@ img {
 
 /* Print styles for accessibility */
 @media print {
+  html,
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
   .no-print {
     display: none !important;
   }
@@ -212,6 +218,25 @@ img {
 
   .print-break-inside-avoid {
     page-break-inside: avoid;
+  }
+
+  .dark,
+  .dark * {
+    color: black !important;
+    background: transparent !important;
+  }
+
+  .prose,
+  .prose * {
+    color: black !important;
+  }
+
+  pre,
+  code,
+  pre *,
+  code * {
+    color: black !important;
+    text-shadow: none !important;
   }
 
   a {

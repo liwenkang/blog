@@ -34,3 +34,12 @@ input:-webkit-autofill:focus {
     @apply bg-white text-gray-900 antialiased dark:bg-gray-900 dark:text-gray-50;
   }
 }
+
+@media print {
+  body,
+  .prose {
+    font-family:
+      'InterVariable', '-apple-system', 'BlinkMacSystemFont', 'PingFang SC', 'Hiragino Sans GB',
+      'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif !important;
+  }
+}

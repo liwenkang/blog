@@ -101,7 +101,7 @@ export default function PostLayout({
               className="divide-y divide-gray-200 pb-8 dark:divide-gray-700 xl:grid xl:grid-cols-4 xl:gap-x-6 xl:divide-y-0"
               style={{ gridTemplateRows: 'auto 1fr' }}
             >
-              <dl className="pt-6 pb-10 xl:border-b xl:border-gray-200 xl:pt-11 xl:dark:border-gray-700">
+              <dl className="pt-6 pb-10 xl:border-b xl:border-gray-200 xl:pt-11 xl:dark:border-gray-700 print:hidden">
                 <dt className="sr-only">Authors</dt>
                 <dd>
                   <ul className="flex justify-center space-x-8 sm:space-x-12 xl:block xl:space-x-0 xl:space-y-8">
@@ -138,14 +138,16 @@ export default function PostLayout({
               </dl>
               <div className="divide-y divide-gray-200 dark:divide-gray-700 xl:col-span-3 xl:row-span-2 xl:pb-0">
                 <div className="prose max-w-none pt-10 pb-8 dark:prose-invert">{children}</div>
-                <div className="pt-6 pb-6 text-sm text-gray-700 dark:text-gray-300">
+                <div className="pt-6 pb-6 text-sm text-gray-700 dark:text-gray-300 print:hidden">
                   <Link href={editUrl(fileName)}>{'View on GitHub'}</Link>
                 </div>
-                <RegionErrorBoundary label="评论">
-                  <Comments frontMatter={frontMatter} />
-                </RegionErrorBoundary>
+                <div className="print:hidden">
+                  <RegionErrorBoundary label="评论">
+                    <Comments frontMatter={frontMatter} />
+                  </RegionErrorBoundary>
+                </div>
               </div>
-              <footer>
+              <footer className="print:hidden">
                 <div className="divide-gray-200 text-sm font-medium leading-5 dark:divide-gray-700 xl:col-start-1 xl:row-start-2 xl:divide-y">
                   {tags && (
                     <div className="py-4 xl:py-8">
