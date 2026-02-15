@@ -51,7 +51,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: pnpm run lint --if-present
+        run: pnpm run --if-present lint
 
       - name: Test with coverage
         run: pnpm run test:coverage
