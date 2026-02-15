@@ -26,33 +26,38 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node }} with npm cache
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Use Node.js ${{ matrix.node }} with pnpm cache
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-          cache: npm
-          cache-dependency-path: package-lock.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Cache Next build output
         uses: actions/cache@v4
         with:
           path: |
             .next/cache
-          key: next-${{ runner.os }}-${{ matrix.node }}-${{ hashFiles('package-lock.json', 'next.config.js', 'tsconfig.json') }}
+          key: next-${{ runner.os }}-${{ matrix.node }}-${{ hashFiles('pnpm-lock.yaml', 'next.config.js', 'tsconfig.json') }}
           restore-keys: |
             next-${{ runner.os }}-${{ matrix.node }}-
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: npm run lint --if-present
+        run: pnpm run lint --if-present
 
       - name: Test with coverage
-        run: npm run test:coverage
+        run: pnpm run test:coverage
 
       - name: Build
-        run: npm run build
+        run: pnpm run build
 
       - name: Upload coverage artifact
         if: always()
