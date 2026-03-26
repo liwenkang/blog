@@ -168,6 +168,19 @@
     "searchText": "Check whether the file is in jif format"
   },
   {
+    "id": "claude-code",
+    "title": "claude code 国内使用注意事项",
+    "summary": "在国内如何稳定使用 Claude Code 的完整指南，涵盖网络环境搭建、sing-box 配置与订阅购买。",
+    "content": "去年 11 月换了新公司之后，没有了 AI 工具的使用限制，我开始尝试 Claude Code、GitHub Copilot 等工具来提升工作效率。\nCopilot 没什么特别要说的，我用国内银行开的万事达卡购买了 Pro+ 会员，整体体验不错（Claude 模型时有时无，这点需要接受）。这里先分享一下我在项目中使用的 Copilot 提示词模板。\ntext\n~/sing-box/config.json~/.zshrc~/.bash_profilesource ~/.zshrcHTTP/2 200\"country\": \"US\"https://ippure.com`，确认：\nIP 属性：住宅 IP\nIPPure 系数：小于 15\n两项均满足，说明浏览器的网络环境也已配置完毕。\n---\n购买 Claude 订阅\n由于国内万事达卡无法直接绑定美区 Apple ID 作为支付方式，推荐使用 Apple 官方礼品卡充值：\n通过 Apple 官网购买礼品卡并充值到账户余额\n在 iPhone 或 iPad 上下载 Claude 客户端\n直接在 App 内购买 Pro 或 Max 套餐（价格会比官网略高，这是 Apple 收取的渠道费）\n---\n日常使用建议\n终端：使用 Claude Code，所有请求走 sing-box 代理\n浏览器：通过指纹浏览器访问 Claude 官网网页版\n理论上，通过 App Store 内购的订阅费用即使遭遇封号，苹果也会将余额退回 Apple ID 账户，风险相对可控。",
+    "tags": [
+      "claude code"
+    ],
+    "date": "2026-03-26",
+    "readingTime": "10 min read",
+    "url": "/blog/claude-code",
+    "searchText": "claude code 国内使用注意事项 去年 11 月换了新公司之后 没有了 AI 工具的使用限制 我开始尝试 Claude Code GitHub Copilot 等工具来提升工作效率 Copilot 没什么特别要说的 我用国内银行开的万事达卡购买了 Pro 会员 整体体验不错 Claude 模型时有时无 这点需要接受 这里先分享一下我在项目中使用的 Copilot 提示词模板 text sing box config json zshrc bash_profilesource zshrcHTTP 2 200 country US https ippure com 确认 IP 属性 住宅 IP IPPure 系数 小于 15 两项均满足 说明浏览器的网络环境也已配置完毕 购买 Claude 订阅 由于国内万事达卡无法直接绑定美区 Apple ID 作为支付方式 推荐使用 Apple 官方礼品卡充值 通过 Apple 官网购买礼品卡并充值到账户余额 在 iPhone 或 iPad 上下载 Claude 客户端 直接在 App 内购买 Pro 或 Max 套餐 价格会比官网略高 这是 Apple 收取的渠道费 日常使用建议 终端 使用 Claude Code 所有请求走 sing box 代理 浏览器 通过指纹浏览器访问 Claude 官网网页版 理论上 通过 App Store 内购的订阅费用即使遭遇封号 苹果也会将余额退回 Apple ID 账户 风险相对可控"
+  },
+  {
     "id": "convert-the-React-SVG-component-into-a-Base64-URL",
     "title": "Convert the React SVG component into a Base64 URL",
     "summary": "One way to convert the React SVG component into a real DOM element and then into a Base64 URL",
