@@ -86,7 +86,14 @@ describe('ThemeSwitch Component', () => {
     render(<ThemeSwitch />)
 
     const button = screen.getByRole('button')
-    expect(button).toHaveClass('ml-1', 'mr-1', 'h-8', 'w-8', 'rounded-sm', 'p-1')
+    expect(button).toHaveClass(
+      'inline-flex',
+      'h-8',
+      'w-8',
+      'items-center',
+      'justify-center',
+      'rounded-md'
+    )
   })
 
   it('renders SVG icon', () => {

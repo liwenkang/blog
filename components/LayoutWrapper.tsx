@@ -80,34 +80,56 @@ const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
               </ol>
             </div>
 
-            {/* 搜索按钮 */}
-            <button
-              type="button"
-              className="ml-4 mr-2 p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md transition-colors duration-200"
-              onClick={() => {
-                setIsSearchOpen(true)
-                announceToScreenReader('搜索已打开，输入关键词进行搜索')
-              }}
-              aria-label="打开搜索 (Ctrl+K)"
-              title="搜索 (Ctrl+K)"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
+            <div className="ml-4 flex items-center gap-1">
+              {/* 搜索按钮 */}
+              <button
+                type="button"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-gray-600 transition-colors duration-200 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100"
+                onClick={() => {
+                  setIsSearchOpen(true)
+                  announceToScreenReader('搜索已打开，输入关键词进行搜索')
+                }}
+                aria-label="打开搜索 (Ctrl+K)"
+                title="搜索 (Ctrl+K)"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </button>
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </button>
 
-            <ThemeSwitch />
+              {/* RSS 订阅按钮 */}
+              <Link
+                href={`${siteMetadata.siteUrl}/feed.xml`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-gray-600 transition-colors duration-200 hover:text-orange-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-orange-400"
+                aria-label="订阅 RSS"
+                title="订阅 RSS Feed"
+              >
+                <svg
+                  className="h-5 w-5"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="6.18" cy="17.82" r="2.18" />
+                  <path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z" />
+                </svg>
+              </Link>
+
+              <ThemeSwitch />
+            </div>
             <MobileNav />
           </nav>
         </header>

@@ -7,8 +7,8 @@ import {
 } from 'react'
 import Link from './Link'
 import headerNavLinks from '@/data/headerNavLinks'
-import { trapFocus } from '@/lib/focus-management'
-import { announceToScreenReader } from '@/lib/focus-management'
+import siteMetadata from '@/data/siteMetadata'
+import { trapFocus, announceToScreenReader } from '@/lib/focus-management'
 
 const MobileNav = () => {
   const [navShow, setNavShow] = useState(false)
@@ -165,6 +165,26 @@ const MobileNav = () => {
                 </Link>
               </li>
             ))}
+            <li className="border-t border-gray-300 dark:border-gray-700 my-4 pt-4">
+              <Link
+                href={`${siteMetadata.siteUrl}/feed.xml`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center text-xl font-medium tracking-wide text-gray-900 dark:text-gray-100 hover:text-orange-500 dark:hover:text-orange-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md py-2 px-3"
+                onClick={onToggleNav}
+              >
+                <svg
+                  className="w-6 h-6 mr-3"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="6.18" cy="17.82" r="2.18" />
+                  <path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z" />
+                </svg>
+                Subscribe RSS
+              </Link>
+            </li>
           </ul>
         </nav>
       </div>

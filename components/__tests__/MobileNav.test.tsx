@@ -160,7 +160,7 @@ describe('MobileNav Component', () => {
     fireEvent.click(menuButton)
 
     const links = screen.getAllByRole('link')
-    expect(links).toHaveLength(3) // Home, Blog, About
+    expect(links).toHaveLength(4) // Home, Blog, About, Subscribe RSS
   })
 
   it('has correct href attributes', () => {

@@ -14,14 +14,14 @@ const ThemeSwitch = () => {
       <button
         aria-label="Toggle Dark Mode"
         type="button"
-        className="ml-1 mr-1 h-8 w-8 rounded-sm p-1 sm:ml-4"
+        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-gray-900 dark:text-gray-100"
         disabled
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
           fill="currentColor"
-          className="text-gray-900 dark:text-gray-100"
+          className="h-5 w-5 text-gray-900 dark:text-gray-100"
         >
           <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
         </svg>
@@ -33,7 +33,7 @@ const ThemeSwitch = () => {
     <button
       aria-label={`Toggle ${theme === 'dark' || resolvedTheme === 'dark' ? 'light' : 'dark'} mode`}
       type="button"
-      className="ml-1 mr-1 h-8 w-8 rounded-sm p-1 sm:ml-4 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+      className="inline-flex h-8 w-8 items-center justify-center rounded-md text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
       onClick={() => setTheme(theme === 'dark' || resolvedTheme === 'dark' ? 'light' : 'dark')}
       onKeyDown={(e: KeyboardEvent<HTMLButtonElement>) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -46,7 +46,7 @@ const ThemeSwitch = () => {
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"
         fill="currentColor"
-        className="text-gray-900 dark:text-gray-100"
+        className="h-5 w-5 text-gray-900 dark:text-gray-100"
       >
         {theme === 'dark' || resolvedTheme === 'dark' ? (
           <path

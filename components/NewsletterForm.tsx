@@ -95,13 +95,8 @@ const NewsletterForm = ({ title = 'Subscribe to the newsletter' }: NewsletterFor
         aria-label="Newsletter subscription form"
       >
         <div className="flex flex-col">
-          <label
-            htmlFor="email-input"
-            className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-          >
-            Email address
-          </label>
           <input
+            aria-label="Email address"
             autoComplete="email"
             className="w-72 rounded-md px-4 py-2 border border-gray-300 dark:border-gray-600 focus:border-transparent focus:outline-hidden focus:ring-2 focus:ring-primary-600 dark:bg-black text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
             id="email-input"
